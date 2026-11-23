@@ -3,16 +3,16 @@
     <color name="control_button_color">#4CC4C4C4</color>
     <color name="control_button_pressed_color">#4D000000</color>
 
-    <!-- Pojav widget colors re-tinted with the Aerix glass palette (aerix_colors.xml). -->
-    <color name="minebutton_color">@color/aerix_action</color>
-    <color name="minebutton_secondary">@color/aerix_panel_solid</color>
-    <color name="background_app">@color/aerix_canvas</color>
+    <!-- Pojav widget colors re-tinted with the CLEAVE glass palette (cleave_colors.xml). -->
+    <color name="minebutton_color">@color/cleave_action</color>
+    <color name="minebutton_secondary">@color/cleave_panel_solid</color>
+    <color name="background_app">@color/cleave_canvas</color>
     <color name="divider">@color/background_overlay</color>
-    <color name="background_overlay">@color/aerix_panel_raised_solid</color>
-    <color name="background_status_bar">@color/aerix_panel_solid</color>
-    <color name="background_bottom_bar">@color/aerix_panel_solid</color>
+    <color name="background_overlay">@color/cleave_panel_raised_solid</color>
+    <color name="background_status_bar">@color/cleave_panel_solid</color>
+    <color name="background_bottom_bar">@color/cleave_panel_solid</color>
     <color name="icon_outline_color">#FFFFFF</color>
 
-    <color name="primary_text">@color/aerix_text_primary</color>
-    <color name="secondary_text">@color/aerix_text_secondary</color>
+    <color name="primary_text">@color/cleave_text_primary</color>
+    <color name="secondary_text">@color/cleave_text_secondary</color>
 </resources>

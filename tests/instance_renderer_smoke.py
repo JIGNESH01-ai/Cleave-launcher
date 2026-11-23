@@ -29,7 +29,7 @@ public class GLESRenderSpec extends Stub {
 public class MesaRenderSpec extends Stub { public static class ZinkRenderSpec extends Stub {} public static class FreedrenoRenderSpec extends Stub {} public static class ExtMesaRenderSpec extends Stub {} public static class LegacyZinkRenderSpec extends Stub {} }''',
     'net/kdt/pojavlaunch/game/renderer/impl/ProtonRenderSpec.java': 'package net.kdt.pojavlaunch.game.renderer.impl; public class ProtonRenderSpec extends Stub {}',
     'net/kdt/pojavlaunch/game/renderer/impl/EmesisRenderSpec.java': 'package net.kdt.pojavlaunch.game.renderer.impl; public class EmesisRenderSpec extends Stub { public static boolean available(){return false;} }',
-    'net/kdt/pojavlaunch/aerix/bridge/AerixRendererPlugin.java': 'package net.kdt.pojavlaunch.aerix.bridge; public class AerixRendererPlugin extends net.kdt.pojavlaunch.game.renderer.impl.Stub {}',
+    'net/kdt/pojavlaunch/cleave/bridge/CleaveRendererPlugin.java': 'package net.kdt.pojavlaunch.cleave.bridge; public class CleaveRendererPlugin extends net.kdt.pojavlaunch.game.renderer.impl.Stub {}',
     'RendererSmoke.java': '''import net.kdt.pojavlaunch.game.renderer.*; import net.kdt.pojavlaunch.game.renderer.impl.Stub;
 public class RendererSmoke {
  static class Choice extends Stub { boolean ok; String gl; Choice(boolean ok, String gl){this.ok=ok;this.gl=gl;} public String name(){return "choice";} public String tag(){return "choice";} public boolean setupRenderer(){return ok;} public String glLibraryPath(){return gl;} }

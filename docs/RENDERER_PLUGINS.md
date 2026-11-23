@@ -1,8 +1,8 @@
 # Renderer plugins
 
-Aerix can use renderer plugin APKs installed by the user, the same way Fold Craft
+Cleave can use renderer plugin APKs installed by the user, the same way Fold Craft
 Launcher (FCL) and Zalith Launcher 2 do. A plugin is a normal APK that ships its
-own native renderer libraries; Aerix picks it up, lists it as a renderer, and
+own native renderer libraries; Cleave picks it up, lists it as a renderer, and
 hands the launch environment to it.
 
 ## Accepted plugin formats
@@ -15,13 +15,13 @@ A plugin APK declares itself with a boolean `<meta-data>` entry inside the
 | `fclPlugin` | Fold Craft Launcher renderer plugins |
 | `zalithRendererPlugin` | Zalith Launcher 2 renderer plugins |
 | `pojavRendererPlugin` | PojavLauncher-style renderer plugins |
-| `aerixPlugin` | Aerix-native renderer plugins |
+| `cleavePlugin` | Cleave-native renderer plugins |
 | `emesisPlugin` | Emesis renderer plugins |
 | `fclPlugin_V2` | FCL renderer plugins using the V2 JSON config |
 
 Packages inside the `com.emesis` space are treated as `emesisPlugin` even when
 the marker is missing. V2 plugins declare their config through `fclPlugin_V2`
-(a string or a string resource) and Aerix validates their ELF ABI and GLES level
+(a string or a string resource) and Cleave validates their ELF ABI and GLES level
 before listing them. A plugin that sets no marker at all is ignored, so
 unrelated apps never show up in the renderer list.
 
@@ -44,14 +44,14 @@ unrelated apps never show up in the renderer list.
 
 * `renderer` — the renderer id, the GL library and the EGL entry library. A path
   starting with `/` is resolved inside the plugin's native library directory.
-* `des` — display name. Without it Aerix uses the app label.
+* `des` — display name. Without it Cleave uses the app label.
 * `pojavEnv` — `KEY=VALUE` pairs separated by `:`. `POJAV_RENDERER` overrides the
   renderer id, `DLOPEN` lists extra libraries to load before the renderer
   starts, and `LIB_MESA_NAME` / `MESA_LIBRARY` values are resolved against the
   plugin's native library directory.
 * `minMCVer` / `maxMCVer` — informative version range shown next to the renderer.
 
-Emesis-style plugins may omit `renderer` entirely; Aerix then assumes the id
+Emesis-style plugins may omit `renderer` entirely; Cleave then assumes the id
 `emesis` and the libraries `libemesis.so`.
 
 ## How it works
@@ -77,9 +77,9 @@ cannot prevent the game from starting.
 ## Package visibility
 
 Android 11 and newer hide other apps from `getInstalledApplications()` unless the
-launcher can see them. Aerix declares
+launcher can see them. Cleave declares
 `android.permission.QUERY_ALL_PACKAGES` in its manifest for exactly that reason,
-plus a `<queries>` fallback for plugin APKs that carry a launcher activity. Aerix
+plus a `<queries>` fallback for plugin APKs that carry a launcher activity. Cleave
 is distributed as an APK from GitHub Releases, so the Play Store policy that
 restricts this permission for store apps does not apply. A Play build would need
 the permission removed and the plugin list limited to the packages named in

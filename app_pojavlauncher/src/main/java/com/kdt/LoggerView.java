@@ -7,13 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import net.kdt.pojavlaunch.aerix.log.AerixLogHost;
+import net.kdt.pojavlaunch.cleave.log.CleaveLogHost;
 
 /**
  * A class able to display logs to the user.
- * The view itself is now the Aerix log box, the port of mirai-launcher-
+ * The view itself is now the CLEAVE log box, the port of mirai-launcher-
  *   MiraiLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/game/elements/LogBox.kt
- * via net.kdt.pojavlaunch.aerix.log.AerixLogBox, which consumes the same
+ * via net.kdt.pojavlaunch.cleave.log.CleaveLogBox, which consumes the same
  * net.kdt.pojavlaunch.Logger.setLogListener contract this view used before.
  * Visibility is the log switch: VISIBLE registers the log listener, anything else releases it, exactly
  * like the "Output" toggle the previous implementation drew.
@@ -35,12 +35,12 @@ public class LoggerView extends ConstraintLayout {
     public void setVisibility(int visibility) {
         if (visibility == VISIBLE && !mAttached) {
             mAttached = true;
-            AerixLogHost.attach(this);
+            CleaveLogHost.attach(this);
         }
         super.setVisibility(visibility);
         mLogVisible = visibility == VISIBLE;
         if (mAttached) {
-            AerixLogHost.setVisible(mLogVisible);
+            CleaveLogHost.setVisible(mLogVisible);
         }
     }
 

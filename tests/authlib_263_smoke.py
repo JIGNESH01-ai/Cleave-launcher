@@ -92,7 +92,7 @@ public class AgentSmoke {
     server = ThreadingHTTPServer(('127.0.0.1', 0), SkinServer)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    metadata = base64.b64encode(json.dumps({'skinDomains':['127.0.0.1', 'localhost', '.minecraft.net', '.mojang.com'], 'meta':{'serverName':'Aerix test', 'feature.no_mojang_namespace':True}}).encode()).decode()
+    metadata = base64.b64encode(json.dumps({'skinDomains':['127.0.0.1', 'localhost', '.minecraft.net', '.mojang.com'], 'meta':{'serverName':'Cleave test', 'feature.no_mojang_namespace':True}}).encode()).decode()
     try:
         subprocess.run(['java', '-Dauthlibinjector.yggdrasil.prefetched=' + metadata,
             f'-javaagent:{agent}=http://127.0.0.1:{server.server_port}', '-cp', str(temp), 'AgentSmoke'],

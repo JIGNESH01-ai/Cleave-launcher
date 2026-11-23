@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- App name part -->
-    <string name="app_short_name">Aerix Launcher</string>
+    <string name="app_short_name">CLEAVE Launcher</string>
 
     <!-- Action bar part -->
 
@@ -21,7 +21,7 @@
     <string name="alerttitle_installmod">Select a mod installer</string>
 
     <!-- Error messages -->
-    <string name="error_fatal">Aerix Launcher has unexpectedly crashed</string>
+    <string name="error_fatal">CLEAVE Launcher has unexpectedly crashed</string>
     <string name="error_no_version">No version!</string>
     <string name="error_show_more">Show more</string>
     <string name="error_show_less">Show less</string>
@@ -74,19 +74,19 @@
     <string name="mcl_setting_renderer_mobileglues">MobileGlues (OpenGL ES) - 1.17+ only, experimental</string>
     <string name="mcl_setting_renderer_sfpew">SFPEW/MobileGlues (OpenGL ES) - (all versions)</string>
     <string name="mcl_setting_renderer_proton">Proton (OpenGL over PowerVR) - 32-bit devices only</string>
-    <string name="aerix_wallpaper_tab_wallpaper">Wallpapers</string>
-    <string name="aerix_wallpaper_tab_animations">Animations</string>
-    <string name="aerix_animation_live">LIVE</string>
-    <string name="aerix_wallpaper_video_button">Add animation</string>
-    <string name="aerix_wallpaper_video_active">Your clip is playing</string>
-    <string name="aerix_clip_badge">CLIP</string>
-    <string name="aerix_clip_real">REAL</string>
-    <string name="aerix_clip_kind">Real footage · loops</string>
-    <string name="aerix_wallpaper_blur">Blur %1$d dp</string>
-    <string name="aerix_wallpaper_motion_on">Motion on</string>
-    <string name="aerix_wallpaper_motion_off">Motion off</string>
-    <string name="aerix_settings_theme_motion">Animated theme</string>
-    <string name="aerix_settings_theme_motion_sub">The accent pulses, selected items glow, and every wallpaper drifts with its own particles. Turning this off applies immediately.</string>
+    <string name="cleave_wallpaper_tab_wallpaper">Wallpapers</string>
+    <string name="cleave_wallpaper_tab_animations">Animations</string>
+    <string name="cleave_animation_live">LIVE</string>
+    <string name="cleave_wallpaper_video_button">Add animation</string>
+    <string name="cleave_wallpaper_video_active">Your clip is playing</string>
+    <string name="cleave_clip_badge">CLIP</string>
+    <string name="cleave_clip_real">REAL</string>
+    <string name="cleave_clip_kind">Real footage · loops</string>
+    <string name="cleave_wallpaper_blur">Blur %1$d dp</string>
+    <string name="cleave_wallpaper_motion_on">Motion on</string>
+    <string name="cleave_wallpaper_motion_off">Motion off</string>
+    <string name="cleave_settings_theme_motion">Animated theme</string>
+    <string name="cleave_settings_theme_motion_sub">The accent pulses, selected items glow, and every wallpaper drifts with its own particles. Turning this off applies immediately.</string>
     <string name="mcl_setting_renderer_emesis">Emesis (OpenGL 3.2+ core) - all versions</string>
     <string name="mcl_setting_renderer_emesis_description">A super performant renderer built only to outmatch and outperform every other renderer, supporting all devices and versions.</string>
     <string name="mcl_setting_renderer_freedreno_kgsl">Freedreno (KGSL) - all versions</string>
@@ -154,7 +154,7 @@
     <string name="import_control_verifying_file">File is being verified, please wait and try again…</string>
     <string name="import_control_invalid_name">Invalid name or file already exists</string>
     <string name="import_control_compatibility_title">Control layout compatibility</string>
-    <string name="import_control_compatibility_warning">%1$s layout detected. Buttons and supported joystick/key bindings will be adapted to Aerix. Layers are flattened; layer switching, text/chat macros, text widgets, source-specific images and some visual/gesture effects cannot be reproduced exactly.
+    <string name="import_control_compatibility_warning">%1$s layout detected. Buttons and supported joystick/key bindings will be adapted to CLEAVE. Layers are flattened; layer switching, text/chat macros, text widgets, source-specific images and some visual/gesture effects cannot be reproduced exactly.
 
 Skipped widgets: %2$d
 Buttons without an action: %3$d
@@ -281,7 +281,7 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="color_default_hex" translatable="false">FFFF0000</string>
     <string name="notif_channel_name">General</string>
     <string name="notif_channel_id" translatable="false">channel_id</string>
-    <string name="lazy_service_default_title">Aerix Foreground Service</string>
+    <string name="lazy_service_default_title">CLEAVE Foreground Service</string>
     <string name="mcl_setting_veroption_installed">Installed</string>
     <string name="use_global_default">(Use global default)</string>
     <string name="default_control">Default controlmap</string>
@@ -311,7 +311,7 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="preference_gyro_sample_rate_title">Gyroscope sampling rate</string>
     <string name="preference_gyro_sample_rate_description">If you have performance issues with gyroscope controls, increase this.</string>
     <string name="microsoft_login_retry_later">Too many requests, please try again later.</string>
-    <string name="storage_required">Aerix Launcher requires external storage to be attached. Please reconnect it and restart the app.</string>
+    <string name="storage_required">CLEAVE Launcher requires external storage to be attached. Please reconnect it and restart the app.</string>
     <string name="microsoft_login_generic">Error: %s</string>
     <string name="mcl_setting_title_buttonallcaps">Only use capital letters in button labels</string>
     <string name="mcl_setting_subtitle_buttonallcaps">Disable this if you want to use lowercase letters in your controls.</string>
@@ -384,7 +384,7 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="modpack_download_downloading_mods">Downloading mods (%.2f MB / %.2f MB)</string>
     <string name="modpack_download_downloading_mods_fc">Downloading mods (File %d out of %d)</string>
     <string name="modpack_download_applying_overrides">Applying overrides (%d/%d)</string>
-    <string name="modpack_install_notification_title">Aerix Modpack Installer</string>
+    <string name="modpack_install_notification_title">CLEAVE Modpack Installer</string>
     <string name="modpack_install_notification_success">Click here to finish modpack installation</string>
     <string name="modpack_install_notification_data_not_available">Failed to download mod loader information</string>
     <string name="modpack_install_modloader_download_failed">Failed to download the mod loader files</string>
@@ -417,7 +417,7 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="preference_category_miscellaneous">Miscellaneous settings</string>
     <string name="preference_category_video">Video settings</string>
     <string name="notification_permission_dialog_title">Permission request</string>
-    <string name="notification_permission_dialog_text">Aerix Launcher requires a permission to post notifications to prevent game/modpack downloads from stopping when you leave the app. Without this permission, Android may shut down your downloads when you put Aerix Launcher in background mode.</string>
+    <string name="notification_permission_dialog_text">CLEAVE Launcher requires a permission to post notifications to prevent game/modpack downloads from stopping when you leave the app. Without this permission, Android may shut down your downloads when you put CLEAVE Launcher in background mode.</string>
     <string name="notification_permission_toast">You can always change your mind later by going into Settings</string>
     <string name="preference_ask_for_notification_title">Allow notifications</string>
     <string name="preference_ask_for_notification_description">Click to re-request the notification permission, required for game/modpack background downloads to work properly.</string>
@@ -472,7 +472,7 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="mcl_button_social_media">Discord</string>
     <string name="ltw_render_distance_warning_msg">Your GPU is not capable of rendering above 7 render distance without Sodium or other similar mods. The render distance will be automatically reduced when you click "OK".</string>
     <string name="mcl_button_open_directory">Open game directory</string>
-    <string name="social_media_invite" translatable="false">https://discord.gg/RS7q9KaCm6</string>
+    <string name="social_media_invite" translatable="false">https://discord.gg/nyn75Un9MR</string>
     <string name="local_login_bad_username_title">Unsuitable username</string>
     <string name="local_login_bad_username_text">The username must be between 3–16 characters long, and must only contain latin letters, numbers 0–9 and underscores.</string>
     <string name="quick_setting_title">Quick settings</string>
@@ -533,7 +533,7 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="preference_keyboard_autopan_summary">Allows on-screen keyboard to move the game window instead of overlapping it if the last touch was below the visible zone. Has no effect on custom control layout buttons with the same function</string>
     <string name="preference_data_migration_title">Import data</string>
     <string name="preference_data_migration_summary">Begin importing data (instances, control maps) from the old app installation</string>
-    <string name="migration_progress_foreign">Choose an Aerix or PojavLauncher installation.</string>
+    <string name="migration_progress_foreign">Choose an CLEAVE or PojavLauncher installation.</string>
     <string name="migration_progress_failed">Import failed. The source installation was not changed; you can retry from settings.</string>
     <string name="migration_progress_finish">Data migration finished!</string>
     <string name="migration_progress_self">You cannot import data from the same app!</string>
@@ -633,35 +633,35 @@ Your original layout is kept unchanged. Continue importing?</string>
     <plurals name="dock_tasks"><item quantity="one">%d active task</item><item quantity="other">%d active tasks</item></plurals>
     <string name="fps_overlay_waiting">-- FPS</string>
     <string name="fps_overlay_unavailable">FPS unavailable</string>
-    <string name="fps_overlay_unavailable_reason">FPS unavailable - no frame source (install the Aerix client mod or use the GLFW renderer)</string>
+    <string name="fps_overlay_unavailable_reason">FPS unavailable - no frame source (install the CLEAVE client mod or use the GLFW renderer)</string>
     <string name="fps_overlay_stalled">0 FPS - no frames</string>
     <string name="fps_overlay_value">%1$d FPS (avg. %2$d)</string>
     <string name="fps_overlay_drag">Drag the FPS counter to move it</string>
     <string name="fps_overlay_value_hz">%1$d FPS (avg. %2$d) @ %3$d Hz</string>
-    <string name="aerix_max_refresh_title">Request max refresh rate</string>
-    <string name="aerix_max_refresh_desc">Switch the display to the fastest refresh rate it supports at the game\'s current resolution, lifting the 60 Hz cap on devices that keep Minecraft there. Costs battery; the in-game FPS readout and the log report the rate actually reached.</string>
-    <string name="aerix_max_refresh_summary">This screen tops out at %1$d Hz and is running at %2$d Hz now</string>
-    <string name="aerix_max_refresh_unavailable">No refresh mode faster than %1$d Hz exists at this resolution</string>
-    <string name="aerix_max_refresh_refused">Android kept this screen at %1$d Hz: this device does not accept a faster refresh rate while the game is in the foreground</string>
-    <string name="aerix_max_refresh_done">Display switched to %1$d Hz for the game</string>
+    <string name="cleave_max_refresh_title">Request max refresh rate</string>
+    <string name="cleave_max_refresh_desc">Switch the display to the fastest refresh rate it supports at the game\'s current resolution, lifting the 60 Hz cap on devices that keep Minecraft there. Costs battery; the in-game FPS readout and the log report the rate actually reached.</string>
+    <string name="cleave_max_refresh_summary">This screen tops out at %1$d Hz and is running at %2$d Hz now</string>
+    <string name="cleave_max_refresh_unavailable">No refresh mode faster than %1$d Hz exists at this resolution</string>
+    <string name="cleave_max_refresh_refused">Android kept this screen at %1$d Hz: this device does not accept a faster refresh rate while the game is in the foreground</string>
+    <string name="cleave_max_refresh_done">Display switched to %1$d Hz for the game</string>
 
     <!-- First-run guide, after Zalith Launcher 2's spotlight tour. -->
-    <string name="aerix_guide_welcome_title">Welcome to %1$s</string>
-    <string name="aerix_guide_welcome_body">A short tour of the four places you will use most. Tap anywhere to move on; it will not show again.</string>
-    <string name="aerix_guide_create_title">Create an instance</string>
-    <string name="aerix_guide_create_body">Every world starts here: pick a Minecraft version, name it, and Aerix sets up the rest. Vanilla or modded, it is the same button.</string>
-    <string name="aerix_guide_library_title">Your library</string>
-    <string name="aerix_guide_library_body">All your instances live here. Tap one to select it, hold it to edit the version, mods and renderer for that instance only.</string>
-    <string name="aerix_guide_play_title">Pick, then play</string>
-    <string name="aerix_guide_play_body">The panel on the right always shows the selected instance. Play launches it; the gear beside it opens the settings for that instance.</string>
-    <string name="aerix_guide_renderer_title">Renderers</string>
-    <string name="aerix_guide_renderer_body">Emesis is bundled and works everywhere. If a game will not start, this is the first setting to try - another renderer, or a lower resolution.</string>
-    <string name="aerix_guide_modpacks_title">Packs, one press</string>
-    <string name="aerix_guide_modpacks_body">Our own modpacks, ready to play. One press downloads the pack and builds its instance: Minecraft version, mod loader and mods included.</string>
-    <string name="aerix_guide_end_title">That is everything</string>
-    <string name="aerix_guide_end_body">Add an account from the avatar at the bottom of the rail, then create your first instance. The guide can be shown again from Settings.</string>
-    <string name="aerix_guide_replay">Show the guide again</string>
-    <string name="aerix_guide_replay_body">Replays the tour of the launcher from the start. It only runs by itself the first time.</string>
+    <string name="cleave_guide_welcome_title">Welcome to %1$s</string>
+    <string name="cleave_guide_welcome_body">A short tour of the four places you will use most. Tap anywhere to move on; it will not show again.</string>
+    <string name="cleave_guide_create_title">Create an instance</string>
+    <string name="cleave_guide_create_body">Every world starts here: pick a Minecraft version, name it, and CLEAVE sets up the rest. Vanilla or modded, it is the same button.</string>
+    <string name="cleave_guide_library_title">Your library</string>
+    <string name="cleave_guide_library_body">All your instances live here. Tap one to select it, hold it to edit the version, mods and renderer for that instance only.</string>
+    <string name="cleave_guide_play_title">Pick, then play</string>
+    <string name="cleave_guide_play_body">The panel on the right always shows the selected instance. Play launches it; the gear beside it opens the settings for that instance.</string>
+    <string name="cleave_guide_renderer_title">Renderers</string>
+    <string name="cleave_guide_renderer_body">Emesis is bundled and works everywhere. If a game will not start, this is the first setting to try - another renderer, or a lower resolution.</string>
+    <string name="cleave_guide_modpacks_title">Packs, one press</string>
+    <string name="cleave_guide_modpacks_body">Our own modpacks, ready to play. One press downloads the pack and builds its instance: Minecraft version, mod loader and mods included.</string>
+    <string name="cleave_guide_end_title">That is everything</string>
+    <string name="cleave_guide_end_body">Add an account from the avatar at the bottom of the rail, then create your first instance. The guide can be shown again from Settings.</string>
+    <string name="cleave_guide_replay">Show the guide again</string>
+    <string name="cleave_guide_replay_body">Replays the tour of the launcher from the start. It only runs by itself the first time.</string>
 
     <!-- Control themes: the animated looks a control can wear, picked in the control editor. -->
     <string name="ctrl_theme_title">Control themes</string>
@@ -684,5 +684,5 @@ Your original layout is kept unchanged. Continue importing?</string>
     <string name="ctrl_theme_static">Static</string>
     <string name="ctrl_theme_starcross">Star Cross</string>
     <string name="ctrl_theme_comet">Comet Grid</string>
-    <string name="aerix_instance_renderer_unavailable">The renderer selected for this instance is unavailable or could not start. Choose another renderer in the instance settings.</string>
+    <string name="cleave_instance_renderer_unavailable">The renderer selected for this instance is unavailable or could not start. Choose another renderer in the instance settings.</string>
 </resources>

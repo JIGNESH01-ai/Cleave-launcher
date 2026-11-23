@@ -1,4 +1,4 @@
-package aerix.client.mod;
+package cleave.client.mod;
 import java.util.Properties;
 
 public final class ModernTelemetrySmokeTest {

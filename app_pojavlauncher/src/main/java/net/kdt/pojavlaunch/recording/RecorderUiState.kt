@@ -1,5 +1,5 @@
 /*
- * Aerix Launcher - the screen recorder's options panel.
+ * CLEAVE Launcher - the screen recorder's options panel.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

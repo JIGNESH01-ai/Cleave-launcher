@@ -23,7 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         // Compose updates immediately; apply the same font to native launcher/editor views when
         // they inflate. Leave the game's own native controls and renderer untouched.
         if (!(this instanceof net.kdt.pojavlaunch.game.GameActivity)) {
-            net.kdt.pojavlaunch.aerix.theme.AerixFonts.applyNativeTheme(this);
+            net.kdt.pojavlaunch.cleave.theme.CleaveFonts.applyNativeTheme(this);
         }
         LocaleUtils.setLocale(this);
         Tools.setInsetsMode(this, setFullscreen(), shouldIgnoreNotch());

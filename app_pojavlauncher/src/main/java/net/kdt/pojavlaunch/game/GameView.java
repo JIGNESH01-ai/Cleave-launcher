@@ -160,7 +160,7 @@ public class GameView extends FrameLayout implements PlatformGrabListener, Surfa
             boolean pointerCapable = accessibility != null
                 && accessibility.isTouchExplorationEnabled();
             net.kdt.pojavlaunch.Logger.appendToLog(
-                "Aerix mouse: " + (present ? "a physical pointer was seen" : "no physical pointer")
+                "CLEAVE mouse: " + (present ? "a physical pointer was seen" : "no physical pointer")
                     + "; Android draws a system pointer only when accessibility is on, which is "
                     + (pointerCapable ? "on" : "OFF") + " for this device.\n");
         } catch (Throwable ignored) { }

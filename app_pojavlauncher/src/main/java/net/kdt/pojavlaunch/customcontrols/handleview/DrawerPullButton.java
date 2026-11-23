@@ -93,9 +93,9 @@ public class DrawerPullButton extends View {
     private void init(){
         mSizeDp = MenuButtonSize.read(getContext());
         mHiddenWhilePlaying = MenuButtonVisibility.isHiddenWhilePlaying(getContext());
-        setContentDescription(getContext().getString(R.string.aerix_logo_size_accessibility));
+        setContentDescription(getContext().getString(R.string.cleave_logo_size_accessibility));
         setOnLongClickListener(view -> { showSizeDialog(); return true; });
-        mDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_aerix_mark);
+        mDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_cleave_mark);
         mBackgroundPaint.setColor(0xB0121A24);
         mBorderPaint.setStyle(Paint.Style.STROKE);
         mBorderPaint.setStrokeWidth(getResources().getDisplayMetrics().density);
@@ -317,10 +317,10 @@ public class DrawerPullButton extends View {
         // Hide-while-playing sits above the size slider: it is the decision a player makes once,
         // while the size is the one they come back to tune.
         Switch hideSwitch = new Switch(getContext());
-        hideSwitch.setText(R.string.aerix_logo_hide_while_playing);
+        hideSwitch.setText(R.string.cleave_logo_hide_while_playing);
         hideSwitch.setChecked(mHiddenWhilePlaying);
         hideSwitch.setContentDescription(getContext()
-                .getString(R.string.aerix_logo_hide_while_playing));
+                .getString(R.string.cleave_logo_hide_while_playing));
         hideSwitch.setOnCheckedChangeListener((button, checked) -> {
             mHiddenWhilePlaying = checked;
             // Live, like the size: the point is to see whether the screen is cleaner without it.
@@ -330,7 +330,7 @@ public class DrawerPullButton extends View {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView hideHint = new TextView(getContext());
-        hideHint.setText(R.string.aerix_logo_hide_while_playing_hint);
+        hideHint.setText(R.string.cleave_logo_hide_while_playing_hint);
         hideHint.setPadding(dpToPx(4), 0, 0, dpToPx(8));
         hideHint.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 12);
         hideHint.setAlpha(0.75f);
@@ -339,33 +339,33 @@ public class DrawerPullButton extends View {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
         TextView label = new TextView(getContext());
-        label.setText(getContext().getString(R.string.aerix_logo_size_value, mSizeDp));
+        label.setText(getContext().getString(R.string.cleave_logo_size_value, mSizeDp));
         panel.addView(label);
         SeekBar slider = new SeekBar(getContext());
         slider.setMax(MenuButtonSize.MAX_DP - MenuButtonSize.MIN_DP);
         slider.setProgress(mSizeDp - MenuButtonSize.MIN_DP);
-        slider.setContentDescription(getContext().getString(R.string.aerix_logo_size_title));
+        slider.setContentDescription(getContext().getString(R.string.cleave_logo_size_title));
         panel.addView(slider, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         TextView hint = new TextView(getContext());
-        hint.setText(R.string.aerix_logo_size_hint);
+        hint.setText(R.string.cleave_logo_size_hint);
         panel.addView(hint);
         slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
                 setSizeDp(progress + MenuButtonSize.MIN_DP);
-                label.setText(getContext().getString(R.string.aerix_logo_size_value, mSizeDp));
+                label.setText(getContext().getString(R.string.cleave_logo_size_value, mSizeDp));
             }
             public void onStartTrackingTouch(SeekBar bar) { }
             public void onStopTrackingTouch(SeekBar bar) { }
         });
         mSizeDialog = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.aerix_logo_size_title).setView(panel)
+                .setTitle(R.string.cleave_logo_size_title).setView(panel)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     MenuButtonSize.save(getContext(), mSizeDp);
                     MenuButtonVisibility.setHiddenWhilePlaying(getContext(), mHiddenWhilePlaying);
                     applyVisibility();
                 })
                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> restorePreview.run())
-                .setNeutralButton(R.string.aerix_logo_size_default, (dialog, which) -> {
+                .setNeutralButton(R.string.cleave_logo_size_default, (dialog, which) -> {
                     // Default means the default size. The hide switch is its own decision, so it is
                     // left alone here rather than silently reset with the slider.
                     setSizeDp(MenuButtonSize.DEFAULT_DP);

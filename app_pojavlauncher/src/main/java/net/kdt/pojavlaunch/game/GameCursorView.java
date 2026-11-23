@@ -21,15 +21,15 @@ import net.kdt.pojavlaunch.R;
  */
 public class GameCursorView extends View implements PlatformCursorImplementor {
     private final Paint customCursorPaint = new Paint();
-    private final Paint aerixSkinPaint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
-    private final android.graphics.RectF aerixSkinRect = new android.graphics.RectF();
+    private final Paint cleaveSkinPaint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
+    private final android.graphics.RectF cleaveSkinRect = new android.graphics.RectF();
     private final Drawable cursorDrawable;
     private boolean noDraw = false;
     private float mouseScale = 1f;
     /** The skin the player picked in Settings -> Mouse settings; null keeps the built-in arrow. */
-    private android.graphics.Bitmap aerixSkin;
+    private android.graphics.Bitmap cleaveSkin;
     /** True when the image sits on the pointer rather than having its tip there. */
-    private boolean aerixSkinCentered = true;
+    private boolean cleaveSkinCentered = true;
     /**
      * A physical mouse or trackpad is present.
      *
@@ -79,17 +79,17 @@ public class GameCursorView extends View implements PlatformCursorImplementor {
         canvas.translate(dx, dy);
         PlatformCursor cursor = Platform.getCursor();
         canvas.scale(mouseScale, mouseScale);
-        if (cursor == null && aerixSkin != null && !aerixSkin.isRecycled()) {
+        if (cursor == null && cleaveSkin != null && !cleaveSkin.isRecycled()) {
             // Pojav draws this cursor itself, so the player's image replaces the white arrow here
             // and only here - the game's own crosshair comes through the branch below untouched.
             float box = 54f * mouseScale;
-            float ratio = Math.min(box / aerixSkin.getWidth(), box / aerixSkin.getHeight());
-            float width = aerixSkin.getWidth() * ratio;
-            float height = aerixSkin.getHeight() * ratio;
-            float left = aerixSkinCentered ? -width / 2f : 0f;
-            float top = aerixSkinCentered ? -height / 2f : 0f;
-            aerixSkinRect.set(left, top, left + width, top + height);
-            canvas.drawBitmap(aerixSkin, null, aerixSkinRect, aerixSkinPaint);
+            float ratio = Math.min(box / cleaveSkin.getWidth(), box / cleaveSkin.getHeight());
+            float width = cleaveSkin.getWidth() * ratio;
+            float height = cleaveSkin.getHeight() * ratio;
+            float left = cleaveSkinCentered ? -width / 2f : 0f;
+            float top = cleaveSkinCentered ? -height / 2f : 0f;
+            cleaveSkinRect.set(left, top, left + width, top + height);
+            canvas.drawBitmap(cleaveSkin, null, cleaveSkinRect, cleaveSkinPaint);
         } else if (cursor == null) {
             cursorDrawable.draw(canvas);
         } else {
@@ -134,9 +134,9 @@ public class GameCursorView extends View implements PlatformCursorImplementor {
 
     /** Apply the player's cursor skin, its opacity and its anchor. Null [bitmap] restores the arrow. */
     public void setCursorSkin(android.graphics.Bitmap bitmap, int opacityPercent, boolean centered) {
-        aerixSkin = bitmap;
-        aerixSkinCentered = centered;
-        aerixSkinPaint.setAlpha(Math.max(20, Math.min(100, opacityPercent)) * 255 / 100);
+        cleaveSkin = bitmap;
+        cleaveSkinCentered = centered;
+        cleaveSkinPaint.setAlpha(Math.max(20, Math.min(100, opacityPercent)) * 255 / 100);
         invalidate();
     }
 }

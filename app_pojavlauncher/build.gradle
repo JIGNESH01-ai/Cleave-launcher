@@ -21,17 +21,17 @@ static def getDateSeconds() {
 }
 
 // One version source: the APK, About page and updater all read this same value.
-def aerixVersion = new Properties()
-rootProject.file('version.properties').withInputStream { aerixVersion.load(it) }
-def AERIX_VERSION_NAME = aerixVersion.getProperty('versionName')
-if (!(AERIX_VERSION_NAME ==~ /\d+\.\d+\.\d+/)) throw new GradleException('versionName must be major.minor.patch')
-def versionParts = AERIX_VERSION_NAME.split('\\.').collect { it.toInteger() }
+def cleaveVersion = new Properties()
+rootProject.file('version.properties').withInputStream { cleaveVersion.load(it) }
+def CLEAVE_VERSION_NAME = cleaveVersion.getProperty('versionName')
+if (!(CLEAVE_VERSION_NAME ==~ /\d+\.\d+\.\d+/)) throw new GradleException('versionName must be major.minor.patch')
+def versionParts = CLEAVE_VERSION_NAME.split('\\.').collect { it.toInteger() }
 if (versionParts[1] >= 100 || versionParts[2] >= 100) throw new GradleException('Minor/patch must be below 100')
-def AERIX_VERSION_CODE = versionParts[0] * 10000 + versionParts[1] * 100 + versionParts[2]
+def CLEAVE_VERSION_CODE = versionParts[0] * 10000 + versionParts[1] * 100 + versionParts[2]
 // Debug testing APKs advance monotonically on every build so installing a new debug APK over an
-// existing net.al.aerixlauncher.debug install never fails with
+// existing com.cleave.launcher.debug install never fails with
 // INSTALL_FAILED_VERSION_DOWNGRADE ("App not installed as package appears to be invalid").
-def AERIX_DEBUG_VERSION_CODE = ((long) (System.currentTimeMillis() / 1000L) - 1700000000L).toInteger()
+def CLEAVE_DEBUG_VERSION_CODE = ((long) (System.currentTimeMillis() / 1000L) - 1700000000L).toInteger()
 
 def getVersionName = {
     def currentBranch = grgit.branch.current()
@@ -86,43 +86,43 @@ android {
             keyPassword "android"
         }
         // Inherited from upstream, whose keystores are no longer kept in this repository. Left
-        // configurable for a builder who holds the upstream key; nothing in Aerix CI references it.
+        // configurable for a builder who holds the upstream key; nothing in Cleave CI references it.
         customRelease {
             // Upstream's key, kept in the tree because its password is NOT: without
-            // POJAV_KEYSTORE_PASSWORD these builds simply go unsigned. Only aerixRelease below is a key
+            // POJAV_KEYSTORE_PASSWORD these builds simply go unsigned. Only cleaveRelease below is a key
             // whose password was public, and that is why that one left the repository.
             storeFile file("pojav_release.jks")
             storePassword System.getenv("POJAV_KEYSTORE_PASSWORD")
             keyAlias "android_github_release"
             keyPassword System.getenv("POJAV_KEYSTORE_PASSWORD")
         }
-        // The key the published Aerix builds are signed with. It is NOT in this repository, and it
+        // The key the published Cleave builds are signed with. It is NOT in this repository, and it
         // must never be: a release key that travels with the project is a release key anyone can
         // use, and whoever holds it can push an update that every installed copy accepts as ours -
         // same package, same signature, any code inside. The line that used to fall back to a
         // password written down in this file is what let a public key sign public releases.
         //
-        // Release CI decodes AERIX_KEYSTORE_P12 into RUNNER_TEMP and exports AERIX_KEYSTORE_FILE and
-        // AERIX_KEYSTORE_PASSWORD (see .github/workflows/release.yml). A local release build without
+        // Release CI decodes CLEAVE_KEYSTORE_P12 into RUNNER_TEMP and exports CLEAVE_KEYSTORE_FILE and
+        // CLEAVE_KEYSTORE_PASSWORD (see .github/workflows/release.yml). A local release build without
         // them goes unsigned instead: assembleRelease still compiles, and that APK is for looking at,
         // never for publishing. The release workflow refuses to publish an unsigned APK, and refuses
         // one signed by the retired key, so forgetting the secret is loud rather than implicit.
-        aerixRelease {
-            def keyFile = System.getenv("AERIX_KEYSTORE_FILE")
-            def keyPass = System.getenv("AERIX_KEYSTORE_PASSWORD")
+        cleaveRelease {
+            def keyFile = System.getenv("CLEAVE_KEYSTORE_FILE")
+            def keyPass = System.getenv("CLEAVE_KEYSTORE_PASSWORD")
             if (keyFile != null && keyPass != null && new File(keyFile).isFile()) {
                 storeFile new File(keyFile)
                 storeType "PKCS12"
                 storePassword keyPass
-                keyAlias System.getenv("AERIX_KEYSTORE_ALIAS") ?: "aerix"
+                keyAlias System.getenv("CLEAVE_KEYSTORE_ALIAS") ?: "cleave"
                 keyPassword keyPass
             } else {
-                logger.warn("aerixRelease: no AERIX_KEYSTORE_FILE - the release APK will be UNSIGNED")
+                logger.warn("cleaveRelease: no CLEAVE_KEYSTORE_FILE - the release APK will be UNSIGNED")
             }
         }
         googlePlayBuild {
             // Upstream's key, kept in the tree because its password is NOT: without
-            // POJAV_GPLAY_KEYSTORE_PASSWORD these builds simply go unsigned. Only aerixRelease below is a key
+            // POJAV_GPLAY_KEYSTORE_PASSWORD these builds simply go unsigned. Only cleaveRelease below is a key
             // whose password was public, and that is why that one left the repository.
             storeFile file("pojav_gplay.jks")
             storePassword System.getenv("POJAV_GPLAY_KEYSTORE_PASSWORD")
@@ -131,7 +131,7 @@ android {
         }
         upload {
             // Upstream's key, kept in the tree because its password is NOT: without
-            // UPLOAD_KEYSTORE_PASSWORD these builds simply go unsigned. Only aerixRelease below is a key
+            // UPLOAD_KEYSTORE_PASSWORD these builds simply go unsigned. Only cleaveRelease below is a key
             // whose password was public, and that is why that one left the repository.
             storeFile file("pojav_upload.jks")
             storePassword System.getenv("UPLOAD_KEYSTORE_PASSWORD")
@@ -140,7 +140,7 @@ android {
         }
         publicBuild {
             // Upstream's key, kept in the tree because its password is NOT: without
-            // POJAVPUB_KEYSTORE_PASSWORD these builds simply go unsigned. Only aerixRelease below is a key
+            // POJAVPUB_KEYSTORE_PASSWORD these builds simply go unsigned. Only cleaveRelease below is a key
             // whose password was public, and that is why that one left the repository.
             storeFile file("pojav_pub.jks")
             storePassword System.getenv("POJAVPUB_KEYSTORE_PASSWORD")
@@ -160,11 +160,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "net.al.aerixlauncher"
+        applicationId "com.cleave.launcher"
         minSdkVersion 23
         targetSdkVersion 36
-        versionCode AERIX_VERSION_CODE
-        versionName AERIX_VERSION_NAME
+        versionCode CLEAVE_VERSION_CODE
+        versionName CLEAVE_VERSION_NAME
         multiDexEnabled false //important
         resValue 'string', 'curseforge_api_key', getCFApiKey()
     }
@@ -220,22 +220,22 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.customDebug
-            resValue "string", "app_name", "Aerix Launcher (Debug)"
-            resValue "string", "app_short_name", "Aerix Launcher (Debug)"
-            resValue "string", "aerix_app_label", "Aerix Launcher (Debug)"
-            resValue 'string', 'application_package', 'net.al.aerixlauncher.debug'
-            resValue 'string', 'storageProviderAuthorities', 'net.al.aerixlauncher.scoped.gamefolder.debug'
+            resValue "string", "app_name", "CLEAVE Launcher (Debug)"
+            resValue "string", "app_short_name", "CLEAVE Launcher (Debug)"
+            resValue "string", "cleave_app_label", "CLEAVE Launcher (Debug)"
+            resValue 'string', 'application_package', 'com.cleave.launcher.debug'
+            resValue 'string', 'storageProviderAuthorities', 'com.cleave.launcher.scoped.gamefolder.debug'
         }
-        // Aerix Nightly is the testing channel. It keeps the debug applicationId, signing key and
+        // CLEAVE Nightly is the testing channel. It keeps the debug applicationId, signing key and
         // versionCode, so it installs over an existing debug build and behaves exactly like it.
         // Only the launcher label changes.
         nightly {
             initWith debug
             signingConfig signingConfigs.customDebug
             matchingFallbacks += List.of("debug")
-            resValue "string", "app_name", "Aerix Nightly"
-            resValue "string", "app_short_name", "Aerix Nightly"
-            resValue "string", "aerix_app_label", "Aerix Nightly"
+            resValue "string", "app_name", "CLEAVE Nightly"
+            resValue "string", "app_short_name", "CLEAVE Nightly"
+            resValue "string", "cleave_app_label", "CLEAVE Nightly"
         }
         proguard {
             initWith debug
@@ -252,12 +252,12 @@ android {
             // Don't set to true or java.awt will be a.a or something similar.
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.aerixRelease
-            resValue "string", "app_name", "Aerix Launcher"
-            resValue "string", "app_short_name", "Aerix Launcher"
-            resValue "string", "aerix_app_label", "Aerix Launcher"
-            resValue 'string', 'application_package', 'net.al.aerixlauncher'
-            resValue 'string', 'storageProviderAuthorities', 'net.al.aerixlauncher.scoped.gamefolder'
+            signingConfig signingConfigs.cleaveRelease
+            resValue "string", "app_name", "CLEAVE Launcher"
+            resValue "string", "app_short_name", "CLEAVE Launcher"
+            resValue "string", "cleave_app_label", "CLEAVE Launcher"
+            resValue 'string', 'application_package', 'com.cleave.launcher'
+            resValue 'string', 'storageProviderAuthorities', 'com.cleave.launcher.scoped.gamefolder'
         }
         gplay {
             initWith release
@@ -268,11 +268,11 @@ android {
             initWith release
             signingConfig signingConfigs.customDebug // WIP, changeme
             applicationIdSuffix '.pub'
-            resValue "string", "app_name", "Aerix Launcher (Nightly)"
-            resValue "string", "app_short_name", "Aerix Launcher (Nightly)"
-            resValue "string", "aerix_app_label", "Aerix Launcher (Nightly)"
-            resValue 'string', 'application_package', 'net.al.aerixlauncher.pub'
-            resValue 'string', 'storageProviderAuthorities', 'net.al.aerixlauncher.pub.scoped.gamefolder'
+            resValue "string", "app_name", "CLEAVE Launcher (Nightly)"
+            resValue "string", "app_short_name", "CLEAVE Launcher (Nightly)"
+            resValue "string", "cleave_app_label", "CLEAVE Launcher (Nightly)"
+            resValue 'string', 'application_package', 'com.cleave.launcher.pub'
+            resValue 'string', 'storageProviderAuthorities', 'com.cleave.launcher.pub.scoped.gamefolder'
             matchingFallbacks += List.of("release")
         }
     }
@@ -317,14 +317,14 @@ android {
 androidComponents {
     onVariants(selector().withBuildType("debug")) { variant ->
         variant.outputs.each { output ->
-            output.versionCode.set(AERIX_DEBUG_VERSION_CODE)
+            output.versionCode.set(CLEAVE_DEBUG_VERSION_CODE)
         }
     }
     // Nightly shares the debug applicationId, so it needs the same monotonically increasing
     // versionCode. Otherwise installing it over a debug build would be a downgrade.
     onVariants(selector().withBuildType("nightly")) { variant ->
         variant.outputs.each { output ->
-            output.versionCode.set(AERIX_DEBUG_VERSION_CODE)
+            output.versionCode.set(CLEAVE_DEBUG_VERSION_CODE)
         }
     }
 }
@@ -450,8 +450,8 @@ afterEvaluate {
 
         registrar.projectJarDependency project(":forge_installer"), "components/forge_installer"
         // The Client's in-game half (capes, live options, ZOOM, Server Boost) ships as an asset and is
-        // copied into every managed instance by AerixClientModBridge before the game starts.
-        registrar.projectJarDependency project(":aerix_client_mod"), "components/aerix_client_mod"
+        // copied into every managed instance by CleaveClientModBridge before the game starts.
+        registrar.projectJarDependency project(":cleave_client_mod"), "components/cleave_client_mod"
 		if (variant.getName().toLowerCase().contains("full")) {
             registrar.jreRuntimeDependency 8, "components/jre"
         }

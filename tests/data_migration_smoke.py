@@ -15,7 +15,7 @@ class DataMigrationSmoke(unittest.TestCase):
         self.assertIn("calculateBytesToCopy(source, destinationRoot, 0)", migrator)
         self.assertIn("DataMigrationPolicy.missingMegabytes(availableBytes, bytesToCopy)", migrator)
         self.assertIn("if (destinationEntry.exists())", migrator)
-        self.assertIn('File.createTempFile(".aerix-migration-", ".part", parent)', migrator)
+        self.assertIn('File.createTempFile(".cleave-migration-", ".part", parent)', migrator)
         self.assertIn("Files.move(temporary.toPath(), destination.toPath())", migrator)
         self.assertIn("Os.link(temporary.getAbsolutePath(), destination.getAbsolutePath())", migrator)
         self.assertNotIn("temporary.renameTo(destination)", migrator)
@@ -29,9 +29,9 @@ class DataMigrationSmoke(unittest.TestCase):
             "net.kdt.pojavlaunch.scoped.gamefolder",
             "net.kdt.pojavlaunch.scoped.gamefolder.debug",
             "net.kdt.pojavlaunch.pub.scoped.gamefolder",
-            "net.al.aerixlauncher.scoped.gamefolder",
-            "net.al.aerixlauncher.scoped.gamefolder.debug",
-            "net.al.aerixlauncher.pub.scoped.gamefolder",
+            "com.cleave.launcher.scoped.gamefolder",
+            "com.cleave.launcher.scoped.gamefolder.debug",
+            "com.cleave.launcher.pub.scoped.gamefolder",
         ):
             self.assertIn(f'"{authority}"', policy)
 

@@ -34,11 +34,11 @@ with zipfile.ZipFile(Path(sys.argv[1])) as apk:
         # embedded because no launcher code deploys it any more: an asset nothing reads is weight the
         # user carries for a feature that was deliberately thrown out.
         assert 'trinkies' not in name.lower(), f'{name}: a removed Trinkies asset is packaged again'
-        assert not name.endswith('components/aerix_client/aerix_client_mod.jar'), (
+        assert not name.endswith('components/cleave_client/cleave_client_mod.jar'), (
             f'{name}: the client mod JAR is packaged but nothing installs it'
         )
     for dex_name in [n for n in names if n.startswith('classes') and n.endswith('.dex')]:
         dex = apk.read(dex_name)
         assert b'TrinkiesWardrobeScreen' not in dex, f'{dex_name} still contains the wardrobe screen'
-        assert b'aerix/client/mod/TrinkiesLoadout' not in dex, f'{dex_name} still contains the reader'
+        assert b'cleave/client/mod/TrinkiesLoadout' not in dex, f'{dex_name} still contains the reader'
 print('APK carries no Trinkies catalog, reader, or wardrobe screen')

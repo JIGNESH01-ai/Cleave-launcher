@@ -56,12 +56,12 @@ import net.kdt.pojavlaunch.utils.KeycodeUtils;
 import net.kdt.pojavlaunch.Logger;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts;
-import net.kdt.pojavlaunch.aerix.bridge.AerixPreferences;
-import net.kdt.pojavlaunch.aerix.bridge.AerixAccount;
-import net.kdt.pojavlaunch.aerix.vulkan.VulkanDriverManager;
-import net.kdt.pojavlaunch.aerix.ui.game.GameMenuCallbacks;
-import net.kdt.pojavlaunch.aerix.ui.game.GameMenuOverlayView;
-import net.kdt.pojavlaunch.aerix.log.PreviousLaunchLog;
+import net.kdt.pojavlaunch.cleave.bridge.CleavePreferences;
+import net.kdt.pojavlaunch.cleave.bridge.CleaveAccount;
+import net.kdt.pojavlaunch.cleave.vulkan.VulkanDriverManager;
+import net.kdt.pojavlaunch.cleave.ui.game.GameMenuCallbacks;
+import net.kdt.pojavlaunch.cleave.ui.game.GameMenuOverlayView;
+import net.kdt.pojavlaunch.cleave.log.PreviousLaunchLog;
 import net.kdt.pojavlaunch.customcontrols.ControlButtonMenuListener;
 import net.kdt.pojavlaunch.customcontrols.ControlData;
 import net.kdt.pojavlaunch.customcontrols.ControlDrawerData;
@@ -113,14 +113,14 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     private DrawerLayout drawerLayout;
     private ListView navDrawer;
     /**
-     * The floating Aerix logo. Typed as the button rather than a View because it owns the rules for
+     * The floating CLEAVE logo. Typed as the button rather than a View because it owns the rules for
      * when it is drawn: the layout can have its own MENU button, the menu can be open, the player
      * can have asked for it to stay out of the way during play.
      */
     private net.kdt.pojavlaunch.customcontrols.handleview.DrawerPullButton mDrawerPullButton;
     private FpsView mFpsView;
     private GameMenuOverlayView mGameMenuOverlay;
-    private net.kdt.pojavlaunch.aerix.client.AerixClientOverlayView mAerixClientOverlay;
+    private net.kdt.pojavlaunch.cleave.client.CleaveClientOverlayView mCleaveClientOverlay;
     private GyroControl mGyroControl = null;
     /**
      * The refresh rate the window last asked the display for, or 0 for "nothing outstanding". Only
@@ -169,9 +169,9 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             if (!latestLogFile.exists() && !latestLogFile.createNewFile())
                 throw new IOException("Failed to create a new log file");
             Logger.begin(latestLogFile.getAbsolutePath());
-            Logger.appendToLog("Aerix: game activity created; starting launch setup");
+            Logger.appendToLog("CLEAVE: game activity created; starting launch setup");
             if (archived != null) {
-                Logger.appendToLog("Aerix: kept the log of the previous launch at " + archived.getName()
+                Logger.appendToLog("CLEAVE: kept the log of the previous launch at " + archived.getName()
                         + " (Settings -> Log, or " + PreviousLaunchLog.ARCHIVE_DIR_NAME + "/)");
             }
         } catch (Throwable error) {
@@ -180,7 +180,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             return;
         }
         try {
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.attach(getApplicationContext());
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.attach(getApplicationContext());
         } catch (Throwable ignored) {}
         // Explicit process policy before Minecraft creates its native audio tracks.
         // Per-track/backend restrictions and OEM privacy controls can still disallow capture.
@@ -191,7 +191,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             } catch (RuntimeException error) {
                 // Audio capture is optional; an OEM policy failure must not abort game startup.
                 Log.w("GameActivity", "Audio capture policy unavailable", error);
-                Logger.appendToLog("Aerix: audio capture policy unavailable; continuing game launch");
+                Logger.appendToLog("CLEAVE: audio capture policy unavailable; continuing game launch");
             }
         }
         String instanceId = getIntent().getStringExtra(INTENT_INSTANCE_ID);
@@ -204,7 +204,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         account = Accounts.getCurrent();
         if(instance == null) {
             LaunchDiagnostics.fail(this, "Stopped: the selected instance could not be loaded", null);
-            Logger.appendToLog("Aerix: selected instance could not be loaded");
+            Logger.appendToLog("CLEAVE: selected instance could not be loaded");
             Toast.makeText(this, R.string.instance_dir_missing, Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -216,24 +216,24 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         String launchRenderer = instanceRenderer ? instance.renderer :
                 (Tools.isValidString(globalRenderer) ? globalRenderer : instance.getLaunchRenderer());
         String resolvedRenderer = instanceRenderer ? launchRenderer :
-                net.kdt.pojavlaunch.aerix.bridge.PojavPluginBridge.resolveLaunchTag(this, launchRenderer);
+                net.kdt.pojavlaunch.cleave.bridge.PojavPluginBridge.resolveLaunchTag(this, launchRenderer);
         if (resolvedRenderer == null) resolvedRenderer = launchRenderer;
         boolean plugin = resolvedRenderer.startsWith("plugin:");
         if (instanceRenderer && !plugin && GameRenderer.getKnownRenderer(resolvedRenderer) == null) {
             LaunchDiagnostics.fail(this,
                     "Stopped: this instance asks for renderer '" + resolvedRenderer
                             + "', which this build does not have", null);
-            Toast.makeText(this, R.string.aerix_instance_renderer_unavailable, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.cleave_instance_renderer_unavailable, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
         LaunchDiagnostics.mark(this, "Preparing renderer and game window");
         mGameRenderer = new GameRenderer(resolvedRenderer, instanceRenderer);
-        net.kdt.pojavlaunch.aerix.bridge.PojavPluginBridge.applyLaunchOverride(this, mGameRenderer, resolvedRenderer);
+        net.kdt.pojavlaunch.cleave.bridge.PojavPluginBridge.applyLaunchOverride(this, mGameRenderer, resolvedRenderer);
         if (instanceRenderer && plugin && !resolvedRenderer.equals(mGameRenderer.getCurrentRenderer().tag())) {
             LaunchDiagnostics.fail(this,
                     "Stopped: renderer plugin '" + resolvedRenderer + "' did not load", null);
-            Toast.makeText(this, R.string.aerix_instance_renderer_unavailable, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.cleave_instance_renderer_unavailable, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -377,7 +377,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             }
 
             /**
-             * The readout's own answer, not the raw preference: an Aerix Client instance ignores
+             * The readout's own answer, not the raw preference: an CLEAVE Client instance ignores
              * `show_fps` and follows its overlay switch instead, so a row that read the preference
              * directly would show the opposite of what is on screen.
              */
@@ -388,9 +388,9 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
             @Override
             public void onToggleFpsCounter(boolean enabled) {
-                if (instance != null && instance.isAerixClient) {
-                    net.kdt.pojavlaunch.aerix.client.AerixClientStore.INSTANCE.setFpsOverlayEnabled(enabled);
-                    net.kdt.pojavlaunch.aerix.client.AerixClientStore.INSTANCE.persist();
+                if (instance != null && instance.isCleaveClient) {
+                    net.kdt.pojavlaunch.cleave.client.CleaveClientStore.INSTANCE.setFpsOverlayEnabled(enabled);
+                    net.kdt.pojavlaunch.cleave.client.CleaveClientStore.INSTANCE.persist();
                 } else {
                     LauncherPreferences.PREF_SHOW_FPS = enabled;
                     LauncherPreferences.DEFAULT_PREF.edit().putBoolean("show_fps", enabled).apply();
@@ -439,12 +439,12 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             }
 
             @Override
-            public void onSwitchAccount(AerixAccount account) {
+            public void onSwitchAccount(CleaveAccount account) {
                 switchAccount(account);
             }
         });
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        applyAerixPointerPreferences();
+        applyCleavePointerPreferences();
         weakCursor = new WeakReference<>(launcherGLView.mCursorView);
 
         try {
@@ -461,8 +461,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             setIntent(activityIntent);
 
             GameRunner.setPendingServerAddress(launchServer);
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.onGameStarted(this, instance, version);
-            net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onGameStarted(
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.onGameStarted(this, instance, version);
+            net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onGameStarted(
                     this,
                     instance != null ? instance.name : null,
                     version,
@@ -508,7 +508,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             mStartupPrepared = true;
         } catch (Throwable e) {
             LaunchDiagnostics.fail(this, "Stopped: game setup failed", e);
-            Logger.appendToLog("Aerix: game setup failed: " + e.getClass().getName());
+            Logger.appendToLog("CLEAVE: game setup failed: " + e.getClass().getName());
             Tools.showError(this, e, true);
         }
     }
@@ -579,15 +579,15 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         mDrawerPullButton = findViewById(R.id.drawer_button);
         mFpsView = findViewById(R.id.main_fps_view);
         mGameMenuOverlay = findViewById(R.id.game_menu_overlay);
-        mAerixClientOverlay = findViewById(R.id.aerix_client_overlay);
+        mCleaveClientOverlay = findViewById(R.id.cleave_client_overlay);
         mHotbarView = findViewById(R.id.hotbar_view);
-        if (instance != null && instance.isAerixClient && mAerixClientOverlay != null) {
-            mAerixClientOverlay.attachForInstance(instance);
+        if (instance != null && instance.isCleaveClient && mCleaveClientOverlay != null) {
+            mCleaveClientOverlay.attachForInstance(instance);
         } else if (mControlLayout != null) {
             // The wallpaper that can stand in for the black screen while the game starts. It is added
             // inside the control layout, above the game surface and under the buttons, so the controls
-            // and the Aerix menu button stay usable and visible the whole time.
-            net.kdt.pojavlaunch.aerix.loading.AerixLoadingWallpaper.attach(mControlLayout);
+            // and the CLEAVE menu button stay usable and visible the whole time.
+            net.kdt.pojavlaunch.cleave.loading.CleaveLoadingWallpaper.attach(mControlLayout);
         }
     }
 
@@ -603,7 +603,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         if (mDrawerPullButton != null) mDrawerPullButton.refreshVisibility();
     }
 
-    /** Show the frame rate readout only when the player asked for it and the Aerix menu is hidden. */
+    /** Show the frame rate readout only when the player asked for it and the CLEAVE menu is hidden. */
     private void updateFpsViewVisibility() {
         updateFpsViewVisibility(false, true);
     }
@@ -617,12 +617,12 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
      */
     private boolean updateFpsViewVisibility(boolean askOnly, boolean requireMenuHidden) {
         if (mFpsView == null && !askOnly) return false;
-        boolean isClient = instance != null && instance.isAerixClient;
-        // An Aerix Client instance used to have no readout at all, so "turn the FPS overlay off" was
+        boolean isClient = instance != null && instance.isCleaveClient;
+        // An CLEAVE Client instance used to have no readout at all, so "turn the FPS overlay off" was
         // a setting nobody could reach there and "turn it on" nobody could obey: the A overlay now
         // owns that switch, and the launcher's preference still rules everywhere else.
         boolean wanted = isClient
-                ? net.kdt.pojavlaunch.aerix.client.AerixClientStore.INSTANCE.getFpsOverlayEnabled()
+                ? net.kdt.pojavlaunch.cleave.client.CleaveClientStore.INSTANCE.getFpsOverlayEnabled()
                 : LauncherPreferences.PREF_SHOW_FPS;
         if (askOnly) return wanted;
         boolean show = wanted
@@ -653,14 +653,14 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     protected void onStart() {
         super.onStart();
         PLATFORM.setVisible(true);
-        net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onGameResumed(this);
+        net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onGameResumed(this);
     }
 
     @Override
     protected void onStop() {
         if (mRecorder != null) mRecorder.onGameStopped();
         PLATFORM.setVisible(false);
-        net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onGameStopped(this);
+        net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onGameStopped(this);
         super.onStop();
     }
 
@@ -716,24 +716,24 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         Logger.appendToLog("Display refresh: " + (honoured ? "confirmed at " : "device kept the panel at ")
                 + reachedHz + "Hz (asked for " + (int) Math.round(mRequestedRefreshHz) + "Hz)");
         runOnUiThread(() -> Toast.makeText(GameActivity.this,
-                getString(honoured ? R.string.aerix_max_refresh_done : R.string.aerix_max_refresh_refused,
+                getString(honoured ? R.string.cleave_max_refresh_done : R.string.cleave_max_refresh_refused,
                         reachedHz),
                 honoured ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show());
     }
 
     @Override
     protected void onDestroy() {
-        net.kdt.pojavlaunch.aerix.social.SocialBackend.onGameStopped();
-        net.kdt.pojavlaunch.aerix.social.SocialBackend.shutdownBackgroundActivity(getApplicationContext());
-        net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onGameStopped(this);
+        net.kdt.pojavlaunch.cleave.social.SocialBackend.onGameStopped();
+        net.kdt.pojavlaunch.cleave.social.SocialBackend.shutdownBackgroundActivity(getApplicationContext());
+        net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onGameStopped(this);
         // Nothing of ours outlives the activity: if the player backs out during the boot, the
         // wallpaper goes with the screen.
-        net.kdt.pojavlaunch.aerix.loading.AerixLoadingWallpaper.detach();
-        if (mAerixClientOverlay != null) mAerixClientOverlay.onHostDestroy();
+        net.kdt.pojavlaunch.cleave.loading.CleaveLoadingWallpaper.detach();
+        if (mCleaveClientOverlay != null) mCleaveClientOverlay.onHostDestroy();
         // The loopback endpoint that gave the game its profile and skin is done with the game.
-        net.kdt.pojavlaunch.aerix.bridge.AerixSkinServer.stop();
+        net.kdt.pojavlaunch.cleave.bridge.CleaveSkinServer.stop();
         if (mRecorder != null) mRecorder.destroy();
-        net.kdt.pojavlaunch.aerix.client.AerixKeyTapWindow.dismiss();
+        net.kdt.pojavlaunch.cleave.client.CleaveKeyTapWindow.dismiss();
         super.onDestroy();
         ContextExecutor.clearActivity();
     }
@@ -814,8 +814,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             Toast.makeText(this, R.string.angelica_found_sfpew_notice, Toast.LENGTH_LONG).show();
         }
 
-        if (instance.isAerixClient) {
-            net.kdt.pojavlaunch.aerix.client.AerixClientInstaller.syncLocalAssetsAtGameStart(this, instance);
+        if (instance.isCleaveClient) {
+            net.kdt.pojavlaunch.cleave.client.CleaveClientInstaller.syncLocalAssetsAtGameStart(this, instance);
         }
         GameRunner.launchGame(this, account, instance, versionId, classpath, mGameRenderer);
         //Note that we actually stall in the above function, even if the game crashes. But let's be safe.
@@ -830,7 +830,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
      * start the game again - what a player would otherwise have to do by hand, from the dashboard,
      * which is exactly the trip this panel used to send them on instead of switching.
      */
-    private void switchAccount(AerixAccount account) {
+    private void switchAccount(CleaveAccount account) {
         if (account == null) return;
         Logger.appendToLog("Switching account to " + account.getUsername()
                 + "; restarting the game");
@@ -857,7 +857,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
      * where it belongs and leaves the activity owning only the press itself.
      */
     private void openKeyTapPanel() {
-        net.kdt.pojavlaunch.aerix.client.AerixKeyTapWindow.show(this, this::sendHeldKeyPress);
+        net.kdt.pojavlaunch.cleave.client.CleaveKeyTapWindow.show(this, this::sendHeldKeyPress);
     }
 
     /**
@@ -880,7 +880,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 } catch (Throwable ignored) { }
             }, holdMs);
         } catch (Throwable t) {
-            net.kdt.pojavlaunch.Logger.appendToLog("Aerix key tap failed: " + t + "\n");
+            net.kdt.pojavlaunch.Logger.appendToLog("CLEAVE key tap failed: " + t + "\n");
         }
     }
 
@@ -908,18 +908,18 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         loggerView.setVisibility(View.VISIBLE);
     }
 
-    /** Opens the existing in-game launcher settings (including resolution) from Aerix Client. */
+    /** Opens the existing in-game launcher settings (including resolution) from CLEAVE Client. */
     /** The on-screen cursor is drawn by the launcher, so its scale can follow the slider at once. */
-    public void applyAerixPointerPreferences() {
+    public void applyCleavePointerPreferences() {
         if (launcherGLView == null || launcherGLView.mCursorView == null) return;
         launcherGLView.mCursorView.setCursorScale(LauncherPreferences.PREF_MOUSESCALE);
         // The chosen cursor image, its opacity and its anchor, straight from the settings page. The
         // skin object caches the decode, so this is cheap to call on every cursor-related change.
         launcherGLView.mCursorView.setCursorSkin(
-                net.kdt.pojavlaunch.aerix.client.AerixCursorSkin.INSTANCE.currentBitmap(this),
-                net.kdt.pojavlaunch.aerix.client.AerixCursorSkin.INSTANCE.getOpacityPercent(),
-                net.kdt.pojavlaunch.aerix.client.AerixCursorSkin.INSTANCE.getAnchoredCenter());
-        Logger.appendToLog("Aerix cursor: " + net.kdt.pojavlaunch.aerix.client.AerixCursorSkin.INSTANCE.report(this) + "\n");
+                net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.currentBitmap(this),
+                net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.getOpacityPercent(),
+                net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.getAnchoredCenter());
+        Logger.appendToLog("CLEAVE cursor: " + net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.report(this) + "\n");
     }
 
     /**
@@ -932,14 +932,14 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
         return true;
     }
 
-    public void openAerixQuickSettings() { openQuickSettings(); }
+    public void openCleaveQuickSettings() { openQuickSettings(); }
 
     /** Re-evaluate the frame rate readout, for when the A overlay flips its switch mid-game. */
     public void refreshFpsViewVisibility() {
         updateFpsViewVisibility();
     }
 
-    public void openAerixScreenRecorder() {
+    public void openCleaveScreenRecorder() {
         if (mRecorder != null) mRecorder.show();
     }
 
@@ -950,7 +950,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
      * here and calls back through [net.kdt.pojavlaunch.recording.RecorderController.startWithChoice],
      * so there is exactly one copy of "which quality is selected" and one owner of the lifecycle.
      */
-    public net.kdt.pojavlaunch.recording.RecorderController getAerixRecorder() {
+    public net.kdt.pojavlaunch.recording.RecorderController getCleaveRecorder() {
         return mRecorder;
     }
 
@@ -981,13 +981,13 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
 
                 @Override
                 public void onCursorScaleChanged() {
-                    applyAerixPointerPreferences();
+                    applyCleavePointerPreferences();
                 }
 
                 @Override
                 public void onZoomStrengthChanged() {
                     // The bridge reads the strength from the request file, so push it again.
-                    net.kdt.pojavlaunch.aerix.client.ClientLiveOptionsBridge.syncAll();
+                    net.kdt.pojavlaunch.cleave.client.ClientLiveOptionsBridge.syncAll();
                 }
             };
         }
@@ -1038,7 +1038,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             super.dispatchKeyEvent(event);
             return true;
         }
-        if (mAerixClientOverlay != null && mAerixClientOverlay.isBlockingModalOpen()) {
+        if (mCleaveClientOverlay != null && mCleaveClientOverlay.isBlockingModalOpen()) {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
                     || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) {
@@ -1046,7 +1046,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             }
             if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_ESCAPE) {
                 if (event.getAction() == KeyEvent.ACTION_UP) {
-                    mAerixClientOverlay.handleBackPress();
+                    mCleaveClientOverlay.handleBackPress();
                 }
                 return true;
             }
@@ -1095,8 +1095,8 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
     public void hideLoadingScreen(){
         updateFpsViewVisibility();
         // The game window is here: the wallpaper, and anything decoding it, goes now.
-        net.kdt.pojavlaunch.aerix.loading.AerixLoadingWallpaper.detach();
-        if (mAerixClientOverlay != null) mAerixClientOverlay.onGlWindowReady();
+        net.kdt.pojavlaunch.cleave.loading.CleaveLoadingWallpaper.detach();
+        if (mCleaveClientOverlay != null) mCleaveClientOverlay.onGlWindowReady();
     }
 
     @Override
@@ -1155,7 +1155,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
             requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_STORAGE_PERMISSION);
         } else {
-            Toast.makeText(this, R.string.aerix_ingame_download_storage_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.cleave_ingame_download_storage_error, Toast.LENGTH_LONG).show();
         }
     }
 

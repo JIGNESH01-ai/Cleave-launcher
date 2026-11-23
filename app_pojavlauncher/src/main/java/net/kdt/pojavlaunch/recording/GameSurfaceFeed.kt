@@ -492,8 +492,8 @@ class GameSurfaceFeed(
     }
 
     private companion object {
-        private const val TAG = "AerixGameFeed"
-        private const val FEED_THREAD = "AerixGameFeed"
+        private const val TAG = "CleaveGameFeed"
+        private const val FEED_THREAD = "CleaveGameFeed"
         private const val MAX_IMAGES = 4
         private const val DEFAULT_FPS = 30
         private const val MIN_GRACE_MS = 1_200L

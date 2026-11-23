@@ -20,7 +20,7 @@
 #
 # What that costs, stated plainly so no one has to rediscover it:
 #
-#   * This private key is public. It is committed at tests/aerix_legacy.p12.b64, and its password is
+#   * This private key is public. It is committed at tests/cleave_legacy.p12.b64, and its password is
 #     the default in the release workflow. Anyone with repository access can build an APK that
 #     installs over a player's launcher.
 #   * "The retired key is banned" is no longer true, and the 2.4.0-2.4.3 gate that enforced it has
@@ -36,8 +36,8 @@
 # and security decision for the owner, not a code change.
 #
 # fba0764460bf766ac2491c714ded1859201e5bf7ef3e8c276e49261845b279db
-#   app_pojavlauncher/aerix_release.p12 - shipped v2.3.0 through v2.3.2 before the rotation, and again
-#   from 2.4.4 as the second signer. 2048-bit RSA, subject "C = NP, O = Aerix, CN = Aerix Launcher".
+#   app_pojavlauncher/cleave_release.p12 - shipped v2.3.0 through v2.3.2 before the rotation, and again
+#   from 2.4.4 as the second signer. 2048-bit RSA, subject "C = NP, O = Cleave, CN = Cleave Launcher".
 #   The release job requires exactly this certificate on every published APK.
 #
 # The debug/nightly channel is signed with app_pojavlauncher/debug.keystore, which is the public AOSP

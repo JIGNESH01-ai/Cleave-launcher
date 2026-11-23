@@ -34,7 +34,7 @@ public class GameService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent != null && intent.getBooleanExtra("kill", false)) {
             try {
-                net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onProcessExiting(this);
+                net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onProcessExiting(this);
             } catch (Throwable ignored) {}
             stopSelf();
             Process.killProcess(Process.myPid());
@@ -69,7 +69,7 @@ public class GameService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         //At this point in time  only the game runs and the user poofed the window, time to die
         try {
-            net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onProcessExiting(this);
+            net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onProcessExiting(this);
         } catch (Throwable ignored) {}
         stopSelf();
         Process.killProcess(Process.myPid());

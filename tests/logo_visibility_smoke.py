@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The floating Aerix logo can be put away during play - without taking the menu with it.
+"""The floating Cleave logo can be put away during play - without taking the menu with it.
 
 The logo is how the in-game menu opens on a layout that has no MENU button, and the default layout
 has none. So hiding it freely would be a way for a player to lock themselves out of the pause menu
@@ -14,8 +14,8 @@ JAVA = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch"
 button = (JAVA / "customcontrols/handleview/DrawerPullButton.java").read_text()
 visibility = (JAVA / "customcontrols/handleview/MenuButtonVisibility.java").read_text()
 activity = (JAVA / "game/GameActivity.java").read_text()
-settings = (JAVA / "aerix/ui/screens/SettingsScreen.kt").read_text()
-strings = (ROOT / "app_pojavlauncher/src/main/res/values/aerix_strings.xml").read_text()
+settings = (JAVA / "cleave/ui/screens/SettingsScreen.kt").read_text()
+strings = (ROOT / "app_pojavlauncher/src/main/res/values/cleave_strings.xml").read_text()
 
 problems = []
 
@@ -37,9 +37,9 @@ check("MenuButtonSize.PREFERENCES" in visibility,
       "it belongs in the same file as the size and position: same decision, same place")
 
 # ── The switch in the long-press card ───────────────────────────────────────────────────────
-check("R.string.aerix_logo_hide_while_playing" in button,
+check("R.string.cleave_logo_hide_while_playing" in button,
       "the switch belongs in the card the player already opens by holding the logo")
-check("aerix_logo_hide_while_playing" in strings,
+check("cleave_logo_hide_while_playing" in strings,
       "a switch needs a label a player can read")
 check("hideSwitch.setOnCheckedChangeListener" in button,
       "the switch has to do something")
@@ -104,7 +104,7 @@ check("private View mDrawerPullButton;" not in activity
 check("MenuButtonVisibility" in settings,
       "the logo is the only way into the menu on the default layout, so the switch needs a second "
       "home that does not require opening that menu")
-check("aerix_logo_hide_while_playing_hint" in strings,
+check("cleave_logo_hide_while_playing_hint" in strings,
       "the switch has to say what happens if the layout has no MENU button")
 
 if problems:

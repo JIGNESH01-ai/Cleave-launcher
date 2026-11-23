@@ -30,7 +30,7 @@ public class Account {
     public boolean isMicrosoft = false;
     public String refreshToken = "0";
     public String xuid;
-    public String aerixOwnerId;
+    public String cleaveOwnerId;
     public long expiresAt;
     private transient Bitmap mFaceCache;
 

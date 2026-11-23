@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-MOD = ROOT / 'aerix_client_mod/src/main/java/aerix/client/mod/ModernCapeBridge.java'
+MOD = ROOT / 'cleave_client_mod/src/main/java/cleave/client/mod/ModernCapeBridge.java'
 
 
 def fixtures(named):
@@ -64,11 +64,11 @@ def fixtures(named):
     add('mc', '''public class $CLASS$ {{public {player} {playerfield}; public {manager} manager=new {manager}();
       public {manager} {getmanager}() {{return manager;}} }}''')
     suffix = 'Named' if named else 'Mapped'
-    test = '''package aerix.client.mod;
+    test = '''package cleave.client.mod;
       public class Test$SUFFIX$ {{
         static void check(boolean x, String why) {{if (!x) throw new AssertionError(why);}}
         public static void main(String[] args) throws Exception {{
-          java.io.File dir=new java.io.File(args[0],"config/aerix_cape_frames");dir.mkdirs();
+          java.io.File dir=new java.io.File(args[0],"config/cleave_cape_frames");dir.mkdirs();
           java.nio.file.Files.write(new java.io.File(dir,"frame_00.png").toPath(),new byte[]{{11}});
           java.nio.file.Files.write(new java.io.File(dir,"frame_01.png").toPath(),new byte[]{{22}});
           java.io.File meta=new java.io.File(dir,"meta.properties"); java.nio.file.Files.write(meta.toPath(),new byte[]{{1}}); meta.setLastModified(100000);
@@ -82,7 +82,7 @@ def fixtures(named):
           check(overridden!=original && overridden.b==body && overridden.m.equals("slim") && overridden.s,"preserve skin ["+bridge.status()+"]");
           check(overridden.c!=null && overridden.c==overridden.e,"cape and elytra");
           check(remote.{getskin}()==original,"remote player unchanged");
-          {id} capeId={id}.{mkid}("aerix","local_cape");
+          {id} capeId={id}.{mkid}("cleave","local_cape");
           {dynamic} tex=({dynamic})mc.manager.{gettexture}(capeId);
           check(tex!=null && tex.image.value==11,"first frame");
           bridge.tick(mc,new java.io.File(args[0])); check(tex.image.value==22 && tex.uploads==1,"frame cycling");
@@ -101,12 +101,12 @@ def fixtures(named):
           System.out.println("$SUFFIX$ cape bridge passed");
         }}
       }}'''.replace('$SUFFIX$', suffix).replace('$NAMED$', str(named).lower()).format(**n)
-    sources['aerix.client.mod.Test' + suffix] = test
+    sources['cleave.client.mod.Test' + suffix] = test
     return sources
 
 
 def main():
-    with tempfile.TemporaryDirectory(prefix='aerix-cape-test-') as temp:
+    with tempfile.TemporaryDirectory(prefix='cleave-cape-test-') as temp:
         base = Path(temp); files = []
         for variant in (True, False):
             for fqcn, text in fixtures(variant).items():
@@ -116,7 +116,7 @@ def main():
         subprocess.run([os.environ.get('JAVAC', 'javac'), '-d', str(classes), str(MOD), *files], check=True)
         for variant in ('Named', 'Mapped'):
             game = base / variant; game.mkdir()
-            subprocess.run([os.environ.get('JAVA', 'java'), '-cp', str(classes), 'aerix.client.mod.Test' + variant, str(game)], check=True)
+            subprocess.run([os.environ.get('JAVA', 'java'), '-cp', str(classes), 'cleave.client.mod.Test' + variant, str(game)], check=True)
 
 
 if __name__ == '__main__': main()

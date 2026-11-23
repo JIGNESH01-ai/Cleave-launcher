@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 JAVA = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch"
 view = (JAVA / "game/FpsView.java").read_text()
 strings = (ROOT / "app_pojavlauncher/src/main/res/values/strings.xml").read_text()
-overlay = (JAVA / "aerix/client/AerixClientOverlayView.kt").read_text()
-store = (JAVA / "aerix/client/AerixClientStore.kt").read_text()
+overlay = (JAVA / "cleave/client/CleaveClientOverlayView.kt").read_text()
+store = (JAVA / "cleave/client/CleaveClientStore.kt").read_text()
 activity = (JAVA / "game/GameActivity.java").read_text()
 
 problems = []
@@ -79,11 +79,11 @@ tile = overlay[overlay.index('id = "fps_counter"'):]
 tile = tile[:tile.index("ClientSquareModule(")]
 check('title = "FPS overlay"' in tile, "the tile must be called FPS overlay")
 check("FPS overlay" in overlay, "the grid must list it")
-check("AerixClientStore.fpsOverlayEnabled" in tile,
+check("CleaveClientStore.fpsOverlayEnabled" in tile,
       "the tile must read the same switch the launcher shows")
-check("AerixClientStore.fpsOverlayEnabled = !AerixClientStore.fpsOverlayEnabled" in tile,
+check("CleaveClientStore.fpsOverlayEnabled = !CleaveClientStore.fpsOverlayEnabled" in tile,
       "tapping it must toggle the counter on and off")
-check("AerixClientStore.persist()" in tile, "the choice must survive the session")
+check("CleaveClientStore.persist()" in tile, "the choice must survive the session")
 # Flipping the flag is not the whole job. FpsView is a plain View whose visibility is only decided
 # when the activity resumes or the menu closes, so without an explicit refresh the tile read ENABLED
 # while the counter stayed gone until the player left the game.
@@ -95,7 +95,7 @@ check('id = "fps_counter"' in overlay and '"fps"' not in tile,
       "the new tile must not be confused with the in-HUD performance pill")
 
 # 5. That switch must be what actually shows or hides the readout.
-check("AerixClientStore.INSTANCE.getFpsOverlayEnabled()" in activity,
+check("CleaveClientStore.INSTANCE.getFpsOverlayEnabled()" in activity,
       "GameActivity must show the readout according to the switch the tile toggles")
 check("var fpsOverlayEnabled by mutableStateOf(" in store,
       "the switch must be Compose state, so the tile updates when it flips")
@@ -103,10 +103,10 @@ check('putBoolean("fpsOverlayEnabled", fpsOverlayEnabled)' in store,
       "the switch must be saved")
 
 # 5. The pause menu the player is actually looking at must carry the switch too.
-#    The A-overlay tile only exists on Aerix Client instances; everyone else opens this menu and
+#    The A-overlay tile only exists on Cleave Client instances; everyone else opens this menu and
 #    found no FPS control in it at all.
-screen = (JAVA / "aerix/ui/game/GameMenuScreen.kt").read_text()
-menu_view = (JAVA / "aerix/ui/game/GameMenuOverlayView.kt").read_text()
+screen = (JAVA / "cleave/ui/game/GameMenuScreen.kt").read_text()
+menu_view = (JAVA / "cleave/ui/game/GameMenuOverlayView.kt").read_text()
 check("fun isFpsCounterOn(): Boolean" in screen and "fun onToggleFpsCounter(enabled: Boolean)" in screen,
       "the pause menu must expose the readout switch through its callbacks")
 # Assert on the rendered row, not on a mention in a comment: the mutation that replaced the
@@ -153,9 +153,9 @@ check("FPS pill on screen" not in overlay,
       "the same setting must not be offered under a third name")
 check(overlay.count('"FPS overlay"') >= 2,
       "the tile and the information page must both call it FPS overlay")
-check("label = stringResource(R.string.aerix_ingame_menu_fps_counter)" in row,
+check("label = stringResource(R.string.cleave_ingame_menu_fps_counter)" in row,
       "the row must be labelled from resources")
-check("aerix_ingame_menu_fps_counter" in screen,
+check("cleave_ingame_menu_fps_counter" in screen,
       "the row must have a label string, not a hardcoded title")
 check("override fun isFpsCounterOn()" in menu_view and "override fun onToggleFpsCounter(" in menu_view,
       "the placeholder callbacks must satisfy the interface, or the menu cannot compile")
@@ -173,8 +173,8 @@ check("updateFpsViewVisibility(true, false)" in getter,
       "the row must ask for the setting without the menu-open discount")
 check("PREF_SHOW_FPS = enabled" in activity and '"show_fps"' in activity,
       "toggling it must save the same preference the video options own")
-check("setFpsOverlayEnabled(enabled)" in activity and "AerixClientStore.INSTANCE.persist()" in activity,
-      "an Aerix Client instance keeps its own switch, and it must be the one written")
+check("setFpsOverlayEnabled(enabled)" in activity and "CleaveClientStore.INSTANCE.persist()" in activity,
+      "an Cleave Client instance keeps its own switch, and it must be the one written")
 
 if problems:
     print("fps counter check: FAILED")

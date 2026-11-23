@@ -152,7 +152,7 @@ internal class RecordingAudio(
         ) {
             "${source.label} must be available"
         }
-        reader = Thread({ readLoop() }, "Aerix audio capture").apply { start() }
+        reader = Thread({ readLoop() }, "CLEAVE audio capture").apply { start() }
     }
 
     private fun readLoop() {

@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.aerix.resourcepack;
+package net.kdt.pojavlaunch.cleave.resourcepack;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -33,7 +33,7 @@ public class ResourcePackOptimizerSmokeTest {
         z.putNextEntry(new ZipEntry(name)); z.write(value.getBytes(java.nio.charset.StandardCharsets.UTF_8)); z.closeEntry();
     }
     public static void main(String[] args) throws Exception {
-        File dir=Files.createTempDirectory("aerix-pack-test").toFile();
+        File dir=Files.createTempDirectory("cleave-pack-test").toFile();
         try {
             File src = new File(dir,"original.zip");
             try (ZipOutputStream z=new ZipOutputStream(new FileOutputStream(src))) {

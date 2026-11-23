@@ -17,7 +17,7 @@ name: Publish HD clips
 on:
   workflow_dispatch:
   push:
-    branches: [ "arena/2f1249a3-aerix-launcher" ]
+    branches: [ "arena/2f1249a3-cleave-launcher" ]
     paths: [ "hd-clips/**", ".github/workflows/hd-clips-publish.yml" ]
 
 permissions:
@@ -40,8 +40,8 @@ jobs:
           TAG=clips-hd-v2
           if ! gh release view "$TAG" > /dev/null 2>&1; then
             gh release create "$TAG" --prerelease \
-              --title "Aerix HD clips (4K/1440p pack)" \
-              --notes "Full-quality clip pack for Aerix Launcher, downloaded on demand so the APK stays small. Nothing here is re-encoded: the files are the originals, and the launcher checks each one against the sha256 baked into the app."
+              --title "Cleave HD clips (4K/1440p pack)" \
+              --notes "Full-quality clip pack for Cleave Launcher, downloaded on demand so the APK stays small. Nothing here is re-encoded: the files are the originals, and the launcher checks each one against the sha256 baked into the app."
           fi
           existing=$(gh release view "$TAG" --json assets -q '.assets[].name')
           for file in hd-clips/*.mp4; do

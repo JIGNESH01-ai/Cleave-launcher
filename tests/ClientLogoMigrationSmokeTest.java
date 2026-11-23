@@ -1,4 +1,4 @@
-import net.kdt.pojavlaunch.aerix.client.ClientLogoMigration;
+import net.kdt.pojavlaunch.cleave.client.ClientLogoMigration;
 
 public class ClientLogoMigrationSmokeTest {
     private static void check(boolean value) { if (!value) throw new AssertionError(); }

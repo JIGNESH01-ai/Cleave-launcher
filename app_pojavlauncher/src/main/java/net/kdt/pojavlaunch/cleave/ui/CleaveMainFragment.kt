@@ -1,0 +1,109 @@
+/*
+ * CLEAVE Launcher UI layer for PojavLauncher.
+ * Root fragment of LauncherActivity's R.id.container_fragment. Hosts the CLEAVE Compose UI in place of
+ * Pojav's MainMenuFragment and wires the adapters to Pojav's backend singletons.
+ * Plays the role of mirai-launcher-
+ *   MiraiLauncher/src/main/java/com/movtery/zalithlauncher/ui/activities/MainActivity.kt (setContent host)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/gpl-3.0.txt>.
+ */
+
+package net.kdt.pojavlaunch.cleave.ui
+
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.activity.findViewTreeOnBackPressedDispatcherOwner
+import androidx.activity.setViewTreeOnBackPressedDispatcherOwner
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
+import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import net.kdt.pojavlaunch.cleave.bridge.CleavePreferences
+import net.kdt.pojavlaunch.cleave.bridge.CleaveIconCropper
+import net.kdt.pojavlaunch.cleave.bridge.PojavAccountBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavCreateInstanceBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavInstanceEditorBridge
+import net.kdt.pojavlaunch.utils.CropperUtils
+import net.kdt.pojavlaunch.cleave.bridge.PojavFileBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavInstanceBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavSettingsBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavTaskBridge
+import net.kdt.pojavlaunch.cleave.theme.CleaveLauncherTheme
+import net.kdt.pojavlaunch.extra.ExtraConstants
+import net.kdt.pojavlaunch.extra.ExtraCore
+
+class CleaveMainFragment : Fragment() {
+    companion object {
+        const val TAG = "CleaveMainFragment"
+    }
+
+    // Registered at construction like InstanceEditorFragment.mCropperLauncher; used by the Compose instance pages.
+    private val cropperLauncher = CropperUtils.registerCropper(this, CleaveIconCropper)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        CleavePreferences.init(context)
+        val retentionDays = CleavePreferences.logRetentionDays
+        Thread({ runCatching { PojavFileBridge.pruneOldLogs(retentionDays) } }, "CleaveLogPrune").start()
+        PojavTaskBridge.attach()
+        PojavInstanceBridge.attach(context)
+        PojavAccountBridge.attach(context)
+        PojavCreateInstanceBridge.attach()
+        CleaveNav.init()
+        CleaveIconCropper.launcher = cropperLauncher
+    }
+
+    override fun onDestroy() {
+        if (CleaveIconCropper.launcher === cropperLauncher) CleaveIconCropper.launcher = null
+        super.onDestroy()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val activity = requireActivity()
+        // Compose installs its window recomposer on the content root and looks the owners up from
+        // there. AppCompat versions before 1.3 do not set them in setContentView, which crashed with
+        // "ViewTreeLifecycleOwner not found"; set them on the decor view the same way ComponentActivity does.
+        activity.window.decorView.let { decor ->
+            if (decor.findViewTreeLifecycleOwner() == null) decor.setViewTreeLifecycleOwner(activity)
+            if (decor.findViewTreeViewModelStoreOwner() == null) decor.setViewTreeViewModelStoreOwner(activity)
+            if (decor.findViewTreeSavedStateRegistryOwner() == null) decor.setViewTreeSavedStateRegistryOwner(activity)
+            if (decor.findViewTreeOnBackPressedDispatcherOwner() == null) decor.setViewTreeOnBackPressedDispatcherOwner(activity)
+        }
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                CleaveLauncherTheme {
+                    CleaveLauncherScreen(activity)
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        PojavInstanceBridge.reload()
+        PojavSettingsBridge.touch()
+        PojavInstanceEditorBridge.consumeFileSelectorResult()
+        // Same signal MainMenuFragment.onResume raised for AccountSpinner.
+        ExtraCore.setValue(ExtraConstants.REFRESH_ACCOUNT_SPINNER, true)
+    }
+}

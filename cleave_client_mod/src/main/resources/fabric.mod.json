@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "cleave_client",
+  "version": "1.2.0",
+  "name": "Cleave Client",
+  "description": "Client-side bridge for launcher-served capes, live client options (Fullbright, ZOOM, Server Boost) and adaptive render distance.",
+  "authors": [
+    "Cleave"
+  ],
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "cleave.client.mod.CleaveClientMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.12.0"
+  }
+}

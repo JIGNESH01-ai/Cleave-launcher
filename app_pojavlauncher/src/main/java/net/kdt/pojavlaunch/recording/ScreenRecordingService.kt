@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit
  */
 class ScreenRecordingService : Service() {
     private val main = Handler(Looper.getMainLooper())
-    private val thread = HandlerThread("Aerix screen recorder")
+    private val thread = HandlerThread("CLEAVE screen recorder")
     private lateinit var worker: Handler
 
     private var projection: MediaProjection? = null
@@ -478,7 +478,7 @@ class ScreenRecordingService : Service() {
     private fun attachDisplay(config: RecordingOptions.Config) {
         val projection = this.projection ?: error("Screen capture session expired")
         display = requireNotNull(projection.createVirtualDisplay(
-            "AerixRecorder",
+            "CleaveRecorder",
             config.width,
             config.height,
             resources.displayMetrics.densityDpi.coerceAtLeast(160),
@@ -663,7 +663,7 @@ class ScreenRecordingService : Service() {
         }
         val result = when {
             saved?.playable == true -> if (saved.mediaUri != null)
-                    "Saved to Movies/Aerix - open it from any gallery, or from Recordings below"
+                    "Saved to Movies/CLEAVE - open it from any gallery, or from Recordings below"
                 else
                     "Saved to ${saved.path}"
             saved != null -> "Recording incomplete; kept for recovery at ${saved.path}"
@@ -722,9 +722,9 @@ class ScreenRecordingService : Service() {
     companion object {
         const val START = "net.kdt.pojavlaunch.recording.START"
         const val STOP = "net.kdt.pojavlaunch.recording.STOP"
-        private const val CHANNEL = "aerix_screen_recorder"
+        private const val CHANNEL = "cleave_screen_recorder"
         private const val NOTIFICATION = 4109
-        private const val TAG = "AerixRecorder"
+        private const val TAG = "CleaveRecorder"
 
         /** The recorder waits a little longer than the game's own readback grace, so a slow first frame
          *  is never mistaken for an unusable render path. */

@@ -1,0 +1,416 @@
+package net.kdt.pojavlaunch.cleave.ui.screens
+
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
+import kotlinx.coroutines.launch
+import net.kdt.pojavlaunch.cleave.bridge.PojavInstanceBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavLaunchBridge
+import net.kdt.pojavlaunch.cleave.client.CleaveClientInstaller
+import net.kdt.pojavlaunch.cleave.client.CleaveClientStore
+import net.kdt.pojavlaunch.cleave.components.GlassPanel
+import net.kdt.pojavlaunch.cleave.components.liquidGlass
+import net.kdt.pojavlaunch.cleave.theme.CleaveRadii
+import net.kdt.pojavlaunch.cleave.theme.CleaveSpacing
+import net.kdt.pojavlaunch.cleave.theme.CleaveSurface
+import net.kdt.pojavlaunch.instances.Instances
+
+/**
+ * Minimal Liquid Glass `CLEAVE Client` Sidebar Tab:
+ * Transparent backdrop over the launcher's live wallpaper, showing ONLY `CLEAVE Client`
+ * and Liquid Glass client version download / launch cards below it.
+ */
+@Composable
+fun CleaveClientScreen(activity: FragmentActivity, onBack: () -> Unit) {
+    LaunchedEffect(Unit) {
+        CleaveClientStore.init(activity)
+    }
+
+    var refreshTick by remember { mutableIntStateOf(0) }
+    var modpackSearchOpen by remember { mutableStateOf(false) }
+    var preparingLaunchVer by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    val accent = CleaveSurface.accent
+
+    CleavePage(
+        title = "CLEAVE Client",
+        subtitle = null,
+        trailing = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                // Modpacks used to be reachable only from the Discover tab, which does not know
+                // that the player is here to set up a client: searching for a pack and installing it
+                // with or without CLEAVE Client belongs on this page.
+                Text(
+                    text = "Search modpacks",
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(CleaveRadii.card))
+                        .background(accent.copy(alpha = 0.18f))
+                        .border(1.dp, accent.copy(alpha = 0.45f), RoundedCornerShape(CleaveRadii.card))
+                        .clickable { modpackSearchOpen = true }
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                ClientOwnerBackButton(onBack)
+            }
+        }
+    ) {
+        // Active download progress banner in Liquid Glass
+        if (CleaveClientInstaller.isInstalling) {
+            GlassPanel(
+                modifier = Modifier.fillMaxWidth(),
+                radius = CleaveRadii.card,
+                strength = 1.0f,
+                color = CleaveSurface.panelRaised
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = CleaveClientInstaller.statusHeadline,
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${(CleaveClientInstaller.progressFraction * 100).toInt()}%",
+                        color = accent,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+                Spacer(Modifier.height(4.dp))
+                LinearProgressIndicator(
+                    progress = { CleaveClientInstaller.progressFraction },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = accent,
+                    trackColor = Color.White.copy(alpha = 0.16f)
+                )
+            }
+        }
+
+        CleaveClientInstaller.lastError?.takeIf { it.isNotBlank() && !CleaveClientInstaller.isInstalling }?.let { err ->
+            GlassPanel(
+                modifier = Modifier.fillMaxWidth(),
+                radius = CleaveRadii.card,
+                color = CleaveSurface.errorDarkContainer.copy(alpha = 0.55f)
+            ) {
+                Text(text = err, color = Color.White, fontSize = 12.sp)
+            }
+        }
+
+        if (modpackSearchOpen) {
+            CleavePackSearchDialog(activity, ClientOwnerPage.SAHIL, onDismiss = { modpackSearchOpen = false }) {
+                // A pack creates its own instance, so the version list below is stale.
+                refreshTick++
+            }
+        }
+
+        // Load the instance list once, rather than scanning disk for every version card.
+        val installedClients = remember(refreshTick, CleaveClientInstaller.isInstalling) {
+            runCatching { Instances.loadAllInstances() }.getOrDefault(emptyList())
+        }
+        // Liquid Glass Version Download & Launch List (Nothing More)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(CleaveSpacing.sm)
+        ) {
+            CleaveClientInstaller.availableVersions.forEach { spec ->
+                val installed = remember(refreshTick, CleaveClientInstaller.isInstalling, spec.mcVersion) {
+                    CleaveClientInstaller.findInstalledClientInstance(spec.mcVersion, installedClients)
+                }
+                val isSelected = CleaveClientStore.selectedClientVersion == spec.mcVersion
+                val rowShape = RoundedCornerShape(CleaveRadii.card)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .liquidGlass(
+                            shape = rowShape,
+                            tint = if (isSelected) accent else CleaveSurface.glassTint,
+                            strength = if (isSelected) 1.0f else 0.90f
+                        )
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = if (isSelected) {
+                                    listOf(
+                                        Color.White.copy(alpha = 0.20f),
+                                        accent.copy(alpha = 0.14f),
+                                        CleaveSurface.panelRaised
+                                    )
+                                } else {
+                                    listOf(
+                                        Color.White.copy(alpha = 0.12f),
+                                        CleaveSurface.panel
+                                    )
+                                }
+                            ),
+                            shape = rowShape
+                        )
+                        .clickable {
+                            CleaveClientStore.selectedClientVersion = spec.mcVersion
+                            CleaveClientStore.persist()
+                            if (installed != null) {
+                                Instances.setSelectedInstance(installed)
+                                PojavInstanceBridge.reload()
+                            }
+                        }
+                        .padding(horizontal = 18.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "Minecraft ${spec.mcVersion}",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            if (installed != null) {
+                                val badgeShape = RoundedCornerShape(999.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .clip(badgeShape)
+                                        .background(accent.copy(alpha = 0.22f))
+                                        .border(0.9.dp, accent.copy(alpha = 0.65f), badgeShape)
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "INSTALLED",
+                                        color = Color.White,
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.ExtraBold
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = spec.summary,
+                            color = Color.White.copy(alpha = 0.76f),
+                            fontSize = 12.sp
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val busy = CleaveClientInstaller.isInstalling || preparingLaunchVer != null
+                        val pillShape = RoundedCornerShape(999.dp)
+
+                        // Liquid Glass Download / Re-download Pill
+                        Box(
+                            modifier = Modifier
+                                .liquidGlass(
+                                    shape = pillShape,
+                                    tint = if (installed == null) accent else CleaveSurface.glassTint,
+                                    strength = 0.95f
+                                )
+                                .background(
+                                    brush = if (installed == null) {
+                                        Brush.horizontalGradient(
+                                            listOf(
+                                                accent.copy(alpha = 0.42f),
+                                                CleaveSurface.glassBlue.copy(alpha = 0.30f)
+                                            )
+                                        )
+                                    } else {
+                                        Brush.horizontalGradient(
+                                            listOf(
+                                                Color.White.copy(alpha = 0.14f),
+                                                Color.White.copy(alpha = 0.07f)
+                                            )
+                                        )
+                                    },
+                                    shape = pillShape
+                                )
+                                .clickable(enabled = !busy) {
+                                    CleaveClientStore.selectedClientVersion = spec.mcVersion
+                                    CleaveClientStore.persist()
+                                    scope.launch {
+                                        val res = CleaveClientInstaller.installClientVersion(activity, spec.mcVersion)
+                                        refreshTick++
+                                        PojavInstanceBridge.reload()
+                                        res.onSuccess {
+                                            Toast.makeText(
+                                                activity,
+                                                "CLEAVE Client ${spec.mcVersion} ready!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }.onFailure { err ->
+                                            Toast.makeText(
+                                                activity,
+                                                err.message ?: "Download failed",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                                }
+                                .padding(horizontal = 16.dp, vertical = 9.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            val isThisDownloading =
+                                CleaveClientInstaller.isInstalling && CleaveClientInstaller.installingVersion == spec.mcVersion
+                            Text(
+                                text = when {
+                                    isThisDownloading -> "Downloading..."
+                                    installed == null -> "Download"
+                                    else -> "Re-download"
+                                },
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
+
+                        // "Update my mods" - the only path that writes jars of ours into an
+                        // instance folder, and it needs a tap. The answer is shown, not swallowed,
+                        // so a Modrinth that did not answer reads as "unavailable" instead of success.
+                        if (installed != null) {
+                            Box(
+                                modifier = Modifier
+                                    .liquidGlass(
+                                        shape = pillShape,
+                                        tint = CleaveSurface.glassTint,
+                                        strength = 0.9f
+                                    )
+                                    .background(
+                                        brush = Brush.horizontalGradient(
+                                            listOf(
+                                                Color.White.copy(alpha = 0.14f),
+                                                CleaveSurface.glassBlue.copy(alpha = 0.22f)
+                                            )
+                                        ),
+                                        shape = pillShape
+                                    )
+                                    .clickable(enabled = !busy && !CleaveClientInstaller.isUpdatingMods) {
+                                        scope.launch {
+                                            val summary = CleaveClientInstaller.updateOwnMods(activity, installed)
+                                            refreshTick++
+                                            summary.onSuccess { text ->
+                                                Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
+                                            }.onFailure { err ->
+                                                Toast.makeText(
+                                                    activity,
+                                                    err.message ?: "The mod update failed",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
+                                        }
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 9.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (CleaveClientInstaller.isUpdatingMods)
+                                        CleaveClientInstaller.modUpdateState.ifBlank { "Updating mods..." }
+                                    else "Update my mods",
+                                    color = Color.White,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+
+                        // Liquid Glass Launch Pill (upgrades existing instance pack + WaveyCapes + FPS before launch!)
+                        if (installed != null) {
+                            Box(
+                                modifier = Modifier
+                                    .liquidGlass(
+                                        shape = pillShape,
+                                        tint = accent,
+                                        strength = 1.0f
+                                    )
+                                    .background(
+                                        brush = Brush.horizontalGradient(
+                                            listOf(
+                                                accent.copy(alpha = 0.55f),
+                                                CleaveSurface.glassBlue.copy(alpha = 0.38f)
+                                            )
+                                        ),
+                                        shape = pillShape
+                                    )
+                                    .clickable(enabled = !busy) {
+                                        CleaveClientStore.selectedClientVersion = spec.mcVersion
+                                        CleaveClientStore.persist()
+                                        scope.launch {
+                                            preparingLaunchVer = spec.mcVersion
+                                            val sync = CleaveClientInstaller.syncExistingInstanceForLaunch(
+                                                activity,
+                                                installed,
+                                                spec.mcVersion
+                                            )
+                                            sync.onFailure { error ->
+                                                Toast.makeText(activity, "Client update failed: ${error.message}", Toast.LENGTH_LONG).show()
+                                            }
+                                            preparingLaunchVer = null
+                                            Instances.setSelectedInstance(installed)
+                                            PojavInstanceBridge.reload()
+                                            PojavLaunchBridge.play(activity)
+                                        }
+                                    }
+                                    .padding(horizontal = 16.dp, vertical = 9.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (preparingLaunchVer == spec.mcVersion) "Syncing..." else "Launch",
+                                    color = Color.White,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.ExtraBold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

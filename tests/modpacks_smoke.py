@@ -3,7 +3,7 @@
 
 The tab downloads packs instead of shipping them, so the checks are about wiring: the catalogue URL
 must not compete with the APK release's "latest" slot, the installer must understand the instance
-export Team Aerix packs are published in, and the Wallpapers rail entry must be gone.
+export Team Cleave packs are published in, and the Wallpapers rail entry must be gone.
 """
 import json
 import pathlib
@@ -12,13 +12,13 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 APP = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch"
-AERIX = APP / "aerix"
+CLEAVE = APP / "cleave"
 
-CATALOG = AERIX / "modpacks/AerixModpackCatalog.kt"
-INSTALLER = AERIX / "modpacks/AerixModpackInstaller.kt"
-SCREEN = AERIX / "ui/screens/ModpacksScreen.kt"
-RAIL = AERIX / "ui/AerixNavigationRail.kt"
-SHELL = AERIX / "ui/AerixLauncherScreen.kt"
+CATALOG = CLEAVE / "modpacks/CleaveModpackCatalog.kt"
+INSTALLER = CLEAVE / "modpacks/CleaveModpackInstaller.kt"
+SCREEN = CLEAVE / "ui/screens/ModpacksScreen.kt"
+RAIL = CLEAVE / "ui/CleaveNavigationRail.kt"
+SHELL = CLEAVE / "ui/CleaveLauncherScreen.kt"
 MANIFEST = ROOT / "modpacks/modpacks.json"
 
 problems = []
@@ -77,12 +77,12 @@ check("LauncherSection.WALLPAPERS" not in shell,
       "the shell must not still route a Wallpapers section that no longer exists")
 
 # ---------------------------------------------------------------- versions
-check("AerixModpackVersion" in catalog, "a pack must be able to offer more than one build")
+check("CleaveModpackVersion" in catalog, "a pack must be able to offer more than one build")
 check("parseVersions" in catalog, "the catalogue must read a pack's versions array")
 check("offeredVersions" in catalog,
       "a pack entry without a versions array must still offer its single build")
 check("iconUrls" in catalog, "pack artwork must resolve against the same mirrors as the archives")
-check("AerixModpackVersion" in installer,
+check("CleaveModpackVersion" in installer,
       "the installer must install the build the user picked, not always the first one")
 check("version.downloadUrls" in installer,
       "the download must follow the chosen build's mirrors, or a two-version pack installs the "
@@ -95,7 +95,7 @@ packs = data["packs"]
 check(isinstance(packs, list) and packs, "the catalogue must list at least one pack")
 
 # ---------------------------------------------------------------- pack marks
-ICONS = AERIX / "modpacks/AerixModpackIcons.kt"
+ICONS = CLEAVE / "modpacks/CleaveModpackIcons.kt"
 icons = ICONS.read_text()
 check("drawableFor" in icons, "the installed pack needs a bundled mark to fall back on")
 check("writeOnto" in icons,
@@ -109,7 +109,7 @@ for pack in packs:
     if not key:
         continue
     res = ROOT / "app_pojavlauncher/src/main/res"
-    name = f"aerix_modpack_{pack_id.replace('-', '_')}"
+    name = f"cleave_modpack_{pack_id.replace('-', '_')}"
     # The mark may be a vector or a small bitmap; a logo that is lettering is not something to trace
     # into paths, and a 384px WebP of it costs a few kilobytes.
     marks = [res / "drawable" / f"{name}.xml", res / "drawable-nodpi" / f"{name}.webp",
@@ -126,18 +126,18 @@ for pack in packs:
 
 # A pack with a bundled mark must not then have the archive's own artwork written over it, which is
 # how the right logo got replaced by whatever the export happened to carry.
-check('AerixModpackIcons.drawableFor(pack.id) == 0' in installer,
+check('CleaveModpackIcons.drawableFor(pack.id) == 0' in installer,
       "the archive's own icon must only be used when the app ships no mark for the pack")
 
-check("aerixPackId" in installer,
+check("cleavePackId" in installer,
       "the instance must record which catalogue pack it came from, or its icon cannot be restored")
-check("aerixPackId" in pathlib.Path(
+check("cleavePackId" in pathlib.Path(
     APP / "instances/Instance.java").read_text(),
     "Instance must carry the catalogue pack id")
 
 # ---------------------------------------------------------------- screen wiring
 screen = SCREEN.read_text()
-check("AerixModpackInstaller.install(context, pack, selected)" in screen,
+check("CleaveModpackInstaller.install(context, pack, selected)" in screen,
       "the button must install the build the version picker has selected")
 check("load(force = true)" in screen, "a failed catalogue read must offer a retry")
 check("sizeBytes" in screen, "the screen reports the download size when the catalogue has one")
@@ -149,8 +149,8 @@ check("LazyVerticalGrid" in screen, "packs are drawn as a grid of folders, not a
 check("rememberPackArtwork" in screen, "each folder must show the pack's own artwork")
 
 # The installer must prefer the bundled mark, and only reach for the network when it has none.
-check("AerixModpackIcons.writeOnto(context, instance, pack.id)" in installer,
-      "a Team Aerix pack must get its bundled mark the moment the instance is created")
+check("CleaveModpackIcons.writeOnto(context, instance, pack.id)" in installer,
+      "a Team Cleave pack must get its bundled mark the moment the instance is created")
 
 # ---------------------------------------------------------------- catalogue entries
 for pack in packs:

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Aerix launcher host. The Aerix Compose UI (AerixMainFragment) is the root of container_fragment;
+  Cleave launcher host. The Cleave Compose UI (CleaveMainFragment) is the root of container_fragment;
   Pojav screens are pushed on top of it with Tools.swapFragment. ProgressLayout keeps Pojav's task
-  list at the bottom, and the floating button returns to the Aerix home when the back stack is not empty.
+  list at the bottom, and the floating button returns to the Cleave home when the back stack is not empty.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/aerix_canvas"
+    android:background="@color/cleave_canvas"
     android:orientation="vertical">
 
     <FrameLayout
@@ -18,24 +18,24 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/container_fragment"
-            android:name="net.kdt.pojavlaunch.aerix.ui.AerixMainFragment"
+            android:name="net.kdt.pojavlaunch.cleave.ui.CleaveMainFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <ImageButton
-            android:id="@+id/aerix_home_button"
+            android:id="@+id/cleave_home_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="top|end"
             android:layout_margin="12dp"
-            android:background="@drawable/aerix_home_button_bg"
-            android:contentDescription="@string/aerix_nav_back_home"
+            android:background="@drawable/cleave_home_button_bg"
+            android:contentDescription="@string/cleave_nav_back_home"
             android:elevation="6dp"
             android:padding="12dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/aerix_ic_home_filled"
+            android:src="@drawable/cleave_ic_home_filled"
             android:visibility="gone"
-            app:tint="@color/aerix_accent" />
+            app:tint="@color/cleave_accent" />
     </FrameLayout>
 
     <com.kdt.mcgui.ProgressLayout

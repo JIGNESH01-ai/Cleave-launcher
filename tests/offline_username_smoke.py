@@ -2,7 +2,7 @@
 """Check every offline-account creation entry uses the same username policy."""
 from pathlib import Path
 
-root = Path(__file__).resolve().parents[1] / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix'
+root = Path(__file__).resolve().parents[1] / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave'
 auth = (root / 'bridge/PojavAuthBridge.kt').read_text()
 bridge = (root / 'bridge/PojavAccountBridge.kt').read_text()
 screen = (root / 'ui/screens/AccountsScreen.kt').read_text()
@@ -15,6 +15,6 @@ assert listener.index('isValidOfflineName(name)') < listener.index('Accounts.cre
 create = bridge.split('fun createOfflineAccount(username: String): Boolean', 1)[1].split('/**', 1)[0]
 assert 'isValidOfflineName(trimmed)' in create and 'return false' in create
 assert 'isValidOfflineName(offlineUsername.trim())' in screen
-assert 'enabled = validOfflineName' in screen and 'aerix_account_name_rule' in screen
+assert 'enabled = validOfflineName' in screen and 'cleave_account_name_rule' in screen
 assert 'PojavAuthBridge.isValidOfflineName(name)' in offline
 print('Offline username validation is wired through both forms and account creation')

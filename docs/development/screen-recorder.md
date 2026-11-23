@@ -45,8 +45,8 @@ OEM restrictions, muted game audio and competing microphone users can silence a
 source even after APIs initialize; audible capture needs device confirmation.
 Headphones are recommended to avoid the microphone re-recording speaker output.
 
-Android 10+ writes directly to a pending Movies/Aerix MediaStore item and publishes
-after finalization. Android 6–9 writes to external app-specific Movies/Aerix; that
+Android 10+ writes directly to a pending Movies/Cleave MediaStore item and publishes
+after finalization. Android 6–9 writes to external app-specific Movies/Cleave; that
 folder is removed on uninstall. Failed/empty outputs are deleted. Stop drains EOS
 with a bounded timeout and releases projection/display/codec/surface/file handles.
 Projection revocation stops recording; service restart is NOT_STICKY and never

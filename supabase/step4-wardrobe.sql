@@ -1,4 +1,4 @@
--- Aerix social layer, step 4 of 4 (optional) - the wardrobe backup.
+-- Cleave social layer, step 4 of 4 (optional) - the wardrobe backup.
 --
 -- Paste ONE file at a time into Supabase -> SQL Editor -> New query -> Run. Every statement here is
 -- idempotent, so running the step twice changes nothing. Steps 1 to 3 already created the social

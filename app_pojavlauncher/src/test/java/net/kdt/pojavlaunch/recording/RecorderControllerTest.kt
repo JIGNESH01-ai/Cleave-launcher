@@ -32,7 +32,7 @@ class RecorderControllerTest {
     @Before fun setup() {
         activity = Robolectric.buildActivity(Activity::class.java).setup().visible().get()
         shadowOf(activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
-        activity.getSharedPreferences("aerix_recorder", 0).edit().clear().commit()
+        activity.getSharedPreferences("cleave_recorder", 0).edit().clear().commit()
         RecordingState.update(RecordingState.Phase.IDLE)
         idle()
         controller = RecorderController(activity)
@@ -150,12 +150,12 @@ class RecorderControllerTest {
             assertEquals(RecorderController.REQUEST_CAPTURE, shadowOf(activity).nextStartedActivityForResult.requestCode)
             controller.onActivityResult(RecorderController.REQUEST_CAPTURE, Activity.RESULT_OK, Intent("test-consent"))
             assertEquals(source.name, shadowOf(activity.application).nextStartedService.getStringExtra("audio_source"))
-            assertEquals(source.name, activity.getSharedPreferences("aerix_recorder", 0).getString("audio_source", null))
+            assertEquals(source.name, activity.getSharedPreferences("cleave_recorder", 0).getString("audio_source", null))
         }
     }
 
     @Test fun audioSourceSelectionSurvivesControllerRecreation() {
-        activity.getSharedPreferences("aerix_recorder", 0).edit().putString("audio_source", "GAME").commit()
+        activity.getSharedPreferences("cleave_recorder", 0).edit().putString("audio_source", "GAME").commit()
         controller.destroy()
         controller = RecorderController(activity)
         assertEquals("Game audio", allSpinners(options().window!!.decorView)[2].selectedItem)

@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-/** Copies supported files from another Aerix/Pojav launcher installation without deleting its data. */
+/** Copies supported files from another CLEAVE/Pojav launcher installation without deleting its data. */
 public class DataMigrator {
     private static final String TAG = "DataMigration";
     private static final int MAX_TREE_DEPTH = 256;
@@ -296,7 +296,7 @@ public class DataMigrator {
             throw new IOException("Unable to create parent folder for " + destination);
         }
 
-        File temporary = File.createTempFile(".aerix-migration-", ".part", parent);
+        File temporary = File.createTempFile(".cleave-migration-", ".part", parent);
         long bytesCopied = 0;
         try {
             InputStream input = resolver.openInputStream(source);

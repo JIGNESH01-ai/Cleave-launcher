@@ -19,13 +19,13 @@ for path in [root / 'app_pojavlauncher/build.gradle',
              app / 'java/net/kdt/pojavlaunch/PojavApplication.java',
              *list((root / '.github/workflows').glob('*.yml'))]:
     text = path.read_text()
-    for removed in ('prepareHorizon', 'AERIX_HORIZON_LIB_DIR', 'horizon-native-check', ':horizon'):
+    for removed in ('prepareHorizon', 'CLEAVE_HORIZON_LIB_DIR', 'horizon-native-check', ':horizon'):
         assert removed not in text, (path, removed)
-shell = (app / 'java/net/kdt/pojavlaunch/aerix/ui/AerixLauncherScreen.kt').read_text()
-rail = (app / 'java/net/kdt/pojavlaunch/aerix/ui/AerixNavigationRail.kt').read_text()
-home = (app / 'java/net/kdt/pojavlaunch/aerix/ui/screens/HomeScreen.kt').read_text()
+shell = (app / 'java/net/kdt/pojavlaunch/cleave/ui/CleaveLauncherScreen.kt').read_text()
+rail = (app / 'java/net/kdt/pojavlaunch/cleave/ui/CleaveNavigationRail.kt').read_text()
+home = (app / 'java/net/kdt/pojavlaunch/cleave/ui/screens/HomeScreen.kt').read_text()
 assert 'HorizonScreen' not in shell and 'HORIZON' not in rail
-assert 'AerixNavigationRail(' in shell and 'HomeScreen(activity, navigate)' in shell
+assert 'CleaveNavigationRail(' in shell and 'HomeScreen(activity, navigate)' in shell
 assert 'PojavLaunchBridge.play(activity)' in home
 assert 'CompactSkinStageCard' not in home
 print('Rust integration removed; original navigation and Java play remain wired')

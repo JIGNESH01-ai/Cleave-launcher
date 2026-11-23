@@ -73,7 +73,7 @@ button can never promise a renderer the action does not write.
 `tests/renderer_defaults_smoke.py` compiles and runs `RendererDefaults` and `MobileGluesWarning`
 against Android stubs, checks 20+ real version ids on both sides of 1.17, and then asserts the wiring:
 the launch path asks the rule and only for automatic picks, new instances are pinned, the automatic
-default is not MobileGlues, and every picker above goes through the warning. It runs in the Aerix
+default is not MobileGlues, and every picker above goes through the warning. It runs in the Cleave
 Nightly test step next to `instance_renderer_smoke.py`.
 
 Device testing is still required for the dialogs themselves (font scaling, landscape, long text).

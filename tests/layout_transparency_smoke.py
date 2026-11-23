@@ -10,12 +10,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JAVA = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch"
-RES = ROOT / "app_pojavlauncher/src/main/res/values/aerix_strings.xml"
+RES = ROOT / "app_pojavlauncher/src/main/res/values/cleave_strings.xml"
 
-prefs = (JAVA / "aerix/bridge/AerixPreferences.kt").read_text()
-surface = (JAVA / "aerix/theme/AerixSurface.kt").read_text()
-theme = (JAVA / "aerix/theme/AerixTheme.kt").read_text()
-settings = (JAVA / "aerix/ui/screens/SettingsScreen.kt").read_text()
+prefs = (JAVA / "cleave/bridge/CleavePreferences.kt").read_text()
+surface = (JAVA / "cleave/theme/CleaveSurface.kt").read_text()
+theme = (JAVA / "cleave/theme/CleaveTheme.kt").read_text()
+settings = (JAVA / "cleave/ui/screens/SettingsScreen.kt").read_text()
 strings = RES.read_text()
 
 problems = []
@@ -51,8 +51,8 @@ check('private fun glass(base: Color): Color' in surface,
 for name, argb in (("panel", "0x66343839"), ("panelRaised", "0x80515858"),
                    ("panelTrack", "0x604A5050"), ("panelGlassTint", "0x3D596362")):
     check(f'val {name}: Color get() = glass(Color({argb}))' in surface,
-          f"AerixSurface.{name} must go through glass(), not stay a fixed colour")
-check('AerixPreferences.layoutTransparency' in surface,
+          f"CleaveSurface.{name} must go through glass(), not stay a fixed colour")
+check('CleavePreferences.layoutTransparency' in surface,
       "the glass helper must read the preference")
 check('base.alpha * percent / 100f' in surface,
       "the setting must scale the design's own alpha, so 100% is unchanged")
@@ -60,19 +60,19 @@ check('if (percent >= 100) return base' in surface,
       "100% must return the original colour untouched")
 
 # Material's surface roles are built from the same colours, so the scheme must be rebuilt per pass.
-check('private fun aerixDark(): ColorScheme' in theme,
+check('private fun cleaveDark(): ColorScheme' in theme,
       "the colour scheme reads the glass colours, so it must be built inside composition")
-check('AerixColorTheme.AERIX -> aerixDark()' in theme,
+check('CleaveColorTheme.CLEAVE -> cleaveDark()' in theme,
       "the theme must call the scheme builder, not a cached property")
 
 # 3. The control exists, on the renderer tab, as a percentage.
-check('aerix_settings_layout_transparency' in strings,
+check('cleave_settings_layout_transparency' in strings,
       "the control needs a title string")
-check('aerix_settings_layout_transparency_sub' in strings,
+check('cleave_settings_layout_transparency_sub' in strings,
       "the control needs a summary string")
-check('R.string.aerix_settings_layout_transparency)' in settings,
+check('R.string.cleave_settings_layout_transparency)' in settings,
       "the renderer tab must show the control")
-check('onValueChange = { AerixPreferences.saveLayoutTransparency(it) }' in settings,
+check('onValueChange = { CleavePreferences.saveLayoutTransparency(it) }' in settings,
       "moving the slider must save the setting")
 check('range = 25..100' in settings, "the slider range must match what the preference clamps to")
 check('range = 25..100' in settings and 'coerceIn(25, 100)' in prefs,
@@ -87,11 +87,11 @@ def function_body(text, name):
 
 renderer_tab = settings[settings.index("private fun RendererTabContent("):]
 renderer_tab = renderer_tab[:renderer_tab.index("\n@Composable\nprivate fun")]
-check('R.string.aerix_settings_layout_transparency)' in renderer_tab,
+check('R.string.cleave_settings_layout_transparency)' in renderer_tab,
       "the control belongs on the Renderer tab")
 
 # It sits above the renderer/driver cards, where the removed Global Renderer card was.
-transparency_at = renderer_tab.index("aerix_settings_layout_transparency")
+transparency_at = renderer_tab.index("cleave_settings_layout_transparency")
 driver_at = renderer_tab.index("SelectCard") if "SelectCard" in renderer_tab else -1
 check(driver_at == -1 or transparency_at < driver_at,
       "the transparency card must come before the renderer and driver cards")
@@ -101,7 +101,7 @@ check("Global Renderer" not in renderer_tab.replace("globalVulkanDriver", "").re
           "Global Renderer list is gone", ""),
       "the removed Global Renderer card must not come back")
 
-for workflow in ("aerix-debug.yml", "release.yml"):
+for workflow in ("cleave-debug.yml", "release.yml"):
     text = (ROOT / ".github/workflows" / workflow).read_text()
     check("layout_transparency_smoke.py" in text, f"{workflow} must run this check")
 

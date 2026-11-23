@@ -14,8 +14,8 @@ import net.kdt.pojavlaunch.Architecture;
 import net.kdt.pojavlaunch.JVersionList;
 import net.kdt.pojavlaunch.Logger;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.aerix.bridge.AerixSkinServer;
-import net.kdt.pojavlaunch.aerix.bridge.PojavAccountBridge;
+import net.kdt.pojavlaunch.cleave.bridge.CleaveSkinServer;
+import net.kdt.pojavlaunch.cleave.bridge.PojavAccountBridge;
 import net.kdt.pojavlaunch.authenticator.accounts.Account;
 import net.kdt.pojavlaunch.game.renderer.def.Renderers;
 import net.kdt.pojavlaunch.game.renderer.impl.GLESRenderSpec;
@@ -242,12 +242,12 @@ public class GameRunner {
 
     public static void launchGame(final AppCompatActivity activity, Account account,
                                   Instance instance, String versionId, File[] classpath, GameRenderer gameRenderer) throws Throwable {
-        if(account.authType == net.kdt.pojavlaunch.authenticator.AuthType.AERIX &&
-                (account.aerixOwnerId == null ||
-                 !account.aerixOwnerId.equals(net.kdt.pojavlaunch.aerix.social.SocialBackend.myUserId()) ||
+        if(account.authType == net.kdt.pojavlaunch.authenticator.AuthType.CLEAVE &&
+                (account.cleaveOwnerId == null ||
+                 !account.cleaveOwnerId.equals(net.kdt.pojavlaunch.cleave.social.SocialBackend.myUserId()) ||
                  account.expiresAt <= System.currentTimeMillis() ||
                  account.accessToken == null || !account.accessToken.matches("[0-9a-f]{64}"))) {
-            throw new java.io.IOException("Sign in to your Aerix account and renew the game session before launching");
+            throw new java.io.IOException("Sign in to your CLEAVE account and renew the game session before launching");
         }
         int freeDeviceMemory = Tools.getFreeDeviceMemory(activity);
         int localeString;
@@ -415,7 +415,7 @@ public class GameRunner {
         // from the session service, so the launcher serves that profile (with the skin, cape and arm
         // model) from a loopback endpoint and points the shipped authlib-injector at it. With nothing
         // equipped this adds nothing and the launch is unchanged.
-        javaArgList.addAll(AerixSkinServer.launchArguments(activity, account));
+        javaArgList.addAll(CleaveSkinServer.launchArguments(activity, account));
         addAuthlibInjectorArgs(javaArgList, account);
 
         mergeMoJsonArgs(javaArgList, getMoJsonJvmArgs(versionId));
@@ -436,7 +436,7 @@ public class GameRunner {
 
         if(!gameRenderer.maybeSetupRenderer()) {
             int message = Tools.isValidString(instance.renderer)
-                    ? R.string.aerix_instance_renderer_unavailable : R.string.gr_err_renderer_load_Failed;
+                    ? R.string.cleave_instance_renderer_unavailable : R.string.gr_err_renderer_load_Failed;
             if(showDialog(activity, message)) return;
             System.exit(0);
         }
@@ -446,7 +446,7 @@ public class GameRunner {
         // so the renderer is only used when its library is really on disk.
         RenderSpec activeRenderer = gameRenderer.getLaunchableRenderer();
         if (activeRenderer == null) {
-            if (showDialog(activity, R.string.aerix_instance_renderer_unavailable)) return;
+            if (showDialog(activity, R.string.cleave_instance_renderer_unavailable)) return;
             System.exit(0);
             return;
         }
@@ -458,7 +458,7 @@ public class GameRunner {
         // (Emesis does), so state the version instead of letting them guess from the classpath.
         if (versionId != null && !versionId.isEmpty()) {
             javaArgList.add("-Dpojav.mc.version=" + versionId);
-            if (activeRenderer instanceof net.kdt.pojavlaunch.aerix.bridge.AerixRendererPlugin) {
+            if (activeRenderer instanceof net.kdt.pojavlaunch.cleave.bridge.CleaveRendererPlugin) {
                 // The same value as an environment variable: a plugin reads /proc/self/cmdline for
                 // the -D form, and that file holds the application's command line, not the JVM
                 // arguments of an in-process VM. Without it the plugin cannot tell which core to

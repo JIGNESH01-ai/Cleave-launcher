@@ -16,17 +16,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 JAVA = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch"
 
-panel = (JAVA / "aerix/client/AerixKeyTapPanel.kt").read_text()
-window = (JAVA / "aerix/client/AerixKeyTapWindow.kt").read_text()
+panel = (JAVA / "cleave/client/CleaveKeyTapPanel.kt").read_text()
+window = (JAVA / "cleave/client/CleaveKeyTapWindow.kt").read_text()
 activity = (JAVA / "game/GameActivity.java").read_text()
-menu = (JAVA / "aerix/ui/game/GameMenuScreen.kt").read_text()
-menu_view = (JAVA / "aerix/ui/game/GameMenuOverlayView.kt").read_text()
+menu = (JAVA / "cleave/ui/game/GameMenuScreen.kt").read_text()
+menu_view = (JAVA / "cleave/ui/game/GameMenuOverlayView.kt").read_text()
 game_view = (JAVA / "game/GameView.java").read_text()
 cursor_view = (JAVA / "game/GameCursorView.java").read_text()
 diagnostics = (JAVA / "lifecycle/LaunchDiagnostics.java").read_text()
 app = (JAVA / "PojavApplication.java").read_text()
-log_screen = (JAVA / "aerix/ui/screens/LogScreen.kt").read_text()
-mouse_screen = (JAVA / "aerix/ui/screens/AerixMouseSettingsSection.kt").read_text()
+log_screen = (JAVA / "cleave/ui/screens/LogScreen.kt").read_text()
+mouse_screen = (JAVA / "cleave/ui/screens/CleaveMouseSettingsSection.kt").read_text()
 keycodes = (JAVA / "utils/KeycodeUtils.java").read_text()
 
 problems = []
@@ -38,7 +38,7 @@ def check(condition, message):
 
 
 # ── 1. Tap a key ───────────────────────────────────────────────────────────────────────────────
-check("fun AerixKeyTapPanel(" in panel, "the panel must exist as a composable")
+check("fun CleaveKeyTapPanel(" in panel, "the panel must exist as a composable")
 check("KeycodeUtils.generateKeyName()" in panel and "KeycodeUtils.getValueByIndex" in panel,
       "the key list must come from the launcher's own table, not a second hand-written one")
 check("KeyEvent.KEYCODE_SHIFT_RIGHT" in panel,
@@ -47,13 +47,13 @@ check("suggested" in panel, "the likely keys must be offered first, not buried i
 check("onDismiss" in panel, "the player must be able to close it")
 
 # Java cannot call a @Composable, so the window has to be Kotlin.
-check("AerixLauncherTheme(" not in activity,
+check("CleaveLauncherTheme(" not in activity,
       "a @Composable cannot be called from Java; the window must be hosted in Kotlin")
-check("AerixKeyTapWindow.show(" in activity,
+check("CleaveKeyTapWindow.show(" in activity,
       "the activity must ask the Kotlin host to show the panel")
-check("fun AerixKeyTapPanel(" in window or "AerixKeyTapPanel(" in window,
+check("fun CleaveKeyTapPanel(" in window or "CleaveKeyTapPanel(" in window,
       "the Kotlin host is what composes the panel")
-check("fun interface AerixKeyTapCallback" in window,
+check("fun interface CleaveKeyTapCallback" in window,
       "Java cannot pass a method reference to a Kotlin function type: the lambda returns Unit, "
       "so void does not match. A named interface is what the activity can implement.")
 check("setViewTreeLifecycleOwner" in window and "findViewTreeLifecycleOwner" in window,
@@ -81,10 +81,10 @@ check("setModifiers(keyCode, true)" in held,
 check("fun onOpenKeyTap()" in menu, "the pause menu must expose the panel")
 check("override fun onOpenKeyTap()" in menu_view,
       "the placeholder callbacks must satisfy the interface or the menu cannot compile")
-row_at = menu.find("aerix_ingame_menu_tap_key")
+row_at = menu.find("cleave_ingame_menu_tap_key")
 check(row_at >= 0, "the row must use a string resource")
-check("onOpenKeyTap()" in menu[menu.find("aerix_ingame_menu_tap_key") - 400:
-                              menu.find("aerix_ingame_menu_tap_key") + 400],
+check("onOpenKeyTap()" in menu[menu.find("cleave_ingame_menu_tap_key") - 400:
+                              menu.find("cleave_ingame_menu_tap_key") + 400],
       "the row must call the callback, not just exist")
 
 # ── 2. The physical mouse ─────────────────────────────────────────────────────────────────────

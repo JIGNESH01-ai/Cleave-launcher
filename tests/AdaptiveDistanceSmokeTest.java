@@ -1,4 +1,4 @@
-import net.kdt.pojavlaunch.aerix.client.AdaptiveDistanceController;
+import net.kdt.pojavlaunch.cleave.client.AdaptiveDistanceController;
 public final class AdaptiveDistanceSmokeTest {
     private static void eq(int a, int b) { if (a != b) throw new AssertionError(a + " != " + b); }
     public static void main(String[] args) {

@@ -69,14 +69,14 @@ check("no raw upload left in the asset folder",
 
 print("2. the skin is applied where the cursor is drawn")
 view = read(os.path.join(JAVA, "game", "GameCursorView.java"))
-check("GameCursorView can take a bitmap skin", "setCursorSkin" in view and "aerixSkin" in view)
-check("the skin honours the chosen opacity", "aerixSkinPaint.setAlpha" in view)
-check("the skin honours the chosen anchor", "aerixSkinCentered" in view)
+check("GameCursorView can take a bitmap skin", "setCursorSkin" in view and "cleaveSkin" in view)
+check("the skin honours the chosen opacity", "cleaveSkinPaint.setAlpha" in view)
+check("the skin honours the chosen anchor", "cleaveSkinCentered" in view)
 check("the built-in arrow still draws when no skin is set", "cursorDrawable.draw(canvas)" in view)
 activity = read(os.path.join(JAVA, "game", "GameActivity.java"))
 check("the launcher applies the skin and reports it",
-      "AerixCursorSkin.INSTANCE.currentBitmap" in activity and "Aerix cursor:" in activity)
-skin = read(os.path.join(JAVA, "aerix", "client"), "AerixCursorSkin.kt")
+      "CleaveCursorSkin.INSTANCE.currentBitmap" in activity and "Cleave cursor:" in activity)
+skin = read(os.path.join(JAVA, "cleave", "client"), "CleaveCursorSkin.kt")
 check("the skin persists its choice", 'putString(KEY_SKIN' in skin and "fun select" in skin)
 check("the gallery import explains its outcome", "could not be decoded" in skin)
 check("opacity is clamped, not trusted", "coerceIn(20, 100)" in skin)
@@ -114,7 +114,7 @@ check("polling no longer waits for window focus",
 check("a stall is reported instead of silence", "fps_overlay_stalled" in fps)
 check("a missing source names its remedy", "fps_overlay_unavailable_reason" in fps)
 check("the game's own counter is the second source", "ClientFpsProbe.read()" in fps)
-probe = read(os.path.join(JAVA, "aerix", "client"), "ClientFpsProbe.kt")
+probe = read(os.path.join(JAVA, "cleave", "client"), "ClientFpsProbe.kt")
 check("the probe reads the running instance only", "activeGameDir" in probe)
 strings = read(os.path.join(MAIN, "res", "values", "strings.xml"))
 check("the waiting text is still a waiting text", ">-- FPS<" in strings)
@@ -132,33 +132,33 @@ check("the policy itself stays free of Android types, so it can be compiled alon
 runner = read(os.path.join(JAVA, "utils", "jre"), "GameRunner.java")
 check("the launch clamps and says so", "LaunchMemory.clamp" in runner and "autoram_capped_msg" in runner)
 check("the toast reports the device total", "deviceRamMb" in runner)
-bridge = read(os.path.join(JAVA, "aerix", "bridge"), "PojavSettingsBridge.kt")
+bridge = read(os.path.join(JAVA, "cleave", "bridge"), "PojavSettingsBridge.kt")
 check("the settings slider is capped to the ceiling", "max = { safeMaxRam(it) }" in bridge)
-settings = read(os.path.join(JAVA, "aerix", "ui", "screens"), "SettingsScreen.kt")
+settings = read(os.path.join(JAVA, "cleave", "ui", "screens"), "SettingsScreen.kt")
 check("the Compose slider is capped too", "safeMaxRam(activity)" in settings)
 java_fragment = read(os.path.join(JAVA, "prefs", "screens"), "LauncherPreferenceJavaFragment.java")
 check("Pojav's own page shares the ceiling", "InstanceMemory.safeMb" in java_fragment)
 check("the capped message takes the device total", "%1$d MB of %2$d MB device RAM" in strings)
 
 print("7. Discord says what the player is doing")
-presence = read(os.path.join(JAVA, "aerix", "discord"), "AerixDiscordPresence.kt")
+presence = read(os.path.join(JAVA, "cleave", "discord"), "CleaveDiscordPresence.kt")
 check("the activity line reaches the card", "fun launcherActivity" in presence)
 check("the card falls back to the page name", "launcherActivityDetail ?: InLauncher.stateFor(section)" in presence)
 check("leaving for the game clears the line", "launcherActivityDetail = null" in presence)
-backend = read(os.path.join(JAVA, "aerix", "social"), "SocialBackend.kt")
+backend = read(os.path.join(JAVA, "cleave", "social"), "SocialBackend.kt")
 check("reporting an activity hands it to Discord before sign-in",
-      backend.index("AerixDiscordPresence.launcherActivity") < backend.index("if (!signedIn) return"))
+      backend.index("CleaveDiscordPresence.launcherActivity") < backend.index("if (!signedIn) return"))
 check("clearing only removes this screen's line", "fun clearLauncherActivity" in backend)
-discover = read(os.path.join(JAVA, "aerix", "ui", "screens"), "DiscoverScreen.kt")
+discover = read(os.path.join(JAVA, "cleave", "ui", "screens"), "DiscoverScreen.kt")
 check("the pack search is announced", "Hunting for" in discover)
-editor = read(os.path.join(JAVA, "aerix", "ui", "screens"), "InstanceEditorScreen.kt")
-check("editing an instance is announced", 'aerixLauncherActivity("Editing' in editor)
+editor = read(os.path.join(JAVA, "cleave", "ui", "screens"), "InstanceEditorScreen.kt")
+check("editing an instance is announced", 'cleaveLauncherActivity("Editing' in editor)
 
 print("8. the launcher fills the display")
 launcher = read(os.path.join(JAVA, "LauncherActivity.java"))
 rail = launcher[launcher.index("setOnApplyWindowInsetsListener"):launcher.index("setContentView(R.layout.activity_pojav_launcher")]
 check("the cutout is not reserved as a black rail",
-      "AerixWindowInsets.INSTANCE.update(bars.left, top, bars.right, bottom)" in rail)
+      "CleaveWindowInsets.INSTANCE.update(bars.left, top, bars.right, bottom)" in rail)
 check("the bar is horizontal-only and never the cutout's depth",
       "Type.displayCutout()" in rail and "bars.left, top, bars.right, bottom" in rail)
 # androidx.core.graphics.Insets publishes fields; getLeft() et al. do not exist there and the
@@ -169,51 +169,51 @@ check("the reserve never double-counts the system bars",
       "int mask = WindowInsetsCompat.Type.displayCutout();" not in launcher)
 
 print("9. the dashboard skin switches without a restart")
-aerix_prefs = read(os.path.join(JAVA, "aerix", "bridge"), "AerixPreferences.kt")
+cleave_prefs = read(os.path.join(JAVA, "cleave", "bridge"), "CleavePreferences.kt")
 check("two skins, named as the players named them",
-      'PREMIUM("Old UI (dashboard)")' in aerix_prefs and 'CLEAN("New UI (hero)")' in aerix_prefs)
-check("the choice is persisted", 'putString(KEY_UI_STYLE, value.name)' in aerix_prefs)
+      'PREMIUM("Old UI (dashboard)")' in cleave_prefs and 'CLEAN("New UI (hero)")' in cleave_prefs)
+check("the choice is persisted", 'putString(KEY_UI_STYLE, value.name)' in cleave_prefs)
 check("the choice is Compose state, so no restart is needed",
-      "var uiStyle by mutableStateOf" in aerix_prefs)
-home = read(os.path.join(JAVA, "aerix", "ui", "screens"), "HomeScreen.kt")
-check("the switch sits at the top of the dashboard", "AerixUiStyleSwitch" in home)
+      "var uiStyle by mutableStateOf" in cleave_prefs)
+home = read(os.path.join(JAVA, "cleave", "ui", "screens"), "HomeScreen.kt")
+check("the switch sits at the top of the dashboard", "CleaveUiStyleSwitch" in home)
 check("the two layouts animate into position",
       "animateDpAsState" in home and "animateFloatAsState" in home)
 check("the pills move with a sliding highlight", 'label = "uiStylePill"' in home)
 # "The old UI" is a layout, not a colour scheme: the dashboard the players screenshotted put the
 # utility tiles and the active-world card on the left and the docked 3D skin card on the right. If
 # the switch only changed padding, picking "old UI" would show them a different launcher.
-classic_block = home[home.index("if (AerixPreferences.uiStyle == AerixLauncherUiStyle.PREMIUM)"):]
+classic_block = home[home.index("if (CleavePreferences.uiStyle == CleaveLauncherUiStyle.PREMIUM)"):]
 classic_block = classic_block[:classic_block.index("} else {")]
 check("the old skin is its own composition", "ClassicHomeDashboard(" in classic_block)
 check("the old skin keeps the switch, so it is never a dead end",
-      "AerixUiStyleSwitch" in classic_block)
+      "CleaveUiStyleSwitch" in classic_block)
 check("the dashboard and the docked skin card are both drawn",
       "WideHomeDashboard(" in home and "CompactHomeDashboard(" in home
       and "ActionMenuCard(" in home[home.index("private fun ClassicHomeDashboard"):])
 check("the split matches the layout the screenshot showed",
       "maxWidth >= 500.dp" in home and "ContentWeight" in home and "ActionMenuWeight" in home)
 check("the old sections are still the ones the page names",
-      "aerix_home_your_space" in home and "aerix_home_active_world" in home)
+      "cleave_home_your_space" in home and "cleave_home_active_world" in home)
 
 print("10. mouse settings live where they were asked for")
-section = read(os.path.join(JAVA, "aerix", "ui", "screens"), "AerixMouseSettingsSection.kt")
+section = read(os.path.join(JAVA, "cleave", "ui", "screens"), "CleaveMouseSettingsSection.kt")
 check("the section offers the presets and the gallery", "presets(context)" in section and "OpenDocument" in section)
-check("the preview uses the real size and opacity", "AerixCursorSkin.fitIn" in section and "graphicsLayer" in section)
+check("the preview uses the real size and opacity", "CleaveCursorSkin.fitIn" in section and "graphicsLayer" in section)
 check("size and opacity are both sliders", section.count("MiraiIntSliderSettingsCard(") >= 2)
 check("the two sensitivities are labelled apart",
       "Look sensitivity (in game)" in section and "Launcher cursor speed" in section)
 check("every import the file needs is declared",
       "import androidx.compose.foundation.combinedClickable" in section)
-settings_screen = read(os.path.join(JAVA, "aerix", "ui", "screens"), "SettingsScreen.kt")
-check("the settings page mounts the section", "AerixMouseSettingsSection()" in settings_screen)
-overlay = read(os.path.join(JAVA, "aerix", "client"), "AerixClientOverlayView.kt")
+settings_screen = read(os.path.join(JAVA, "cleave", "ui", "screens"), "SettingsScreen.kt")
+check("the settings page mounts the section", "CleaveMouseSettingsSection()" in settings_screen)
+overlay = read(os.path.join(JAVA, "cleave", "client"), "CleaveClientOverlayView.kt")
 # LocalContext.current is a composable getter, so the page hoists it once and the click handlers
 # use the hoisted value - asserting on the hoist is what keeps that from being "re-fixed" backwards.
-check("the in-game overlay gets cursor size", "AerixCursorSkin.setScale(pageContext" in overlay)
+check("the in-game overlay gets cursor size", "CleaveCursorSkin.setScale(pageContext" in overlay)
 check("the page hoists its context out of the callbacks", "val pageContext = LocalContext.current" in overlay)
 check("the in-game overlay switches the FPS pill", "fpsOverlayEnabled" in overlay)
-game_prefs = read(os.path.join(JAVA, "aerix", "client"), "AerixClientStore.kt")
+game_prefs = read(os.path.join(JAVA, "cleave", "client"), "CleaveClientStore.kt")
 check("that switch is persisted", 'putBoolean("fpsOverlayEnabled"' in game_prefs)
 check("and it drives the readout in client instances",
       "getFpsOverlayEnabled()" in activity)
@@ -233,18 +233,18 @@ check("the first characters still go immediately", "if (burst == 0) GLFW.sendBul
 check("chunking is by code point, not char", "offsetByCodePoints" in backend_glfw)
 
 print("13. modpacks: logos, a version to choose, and the client choice")
-client_screen = read(os.path.join(JAVA, "aerix", "ui", "screens"), "AerixClientScreen.kt")
-pack_dialog_path = os.path.join(JAVA, "aerix", "ui", "screens")
-pack_dialog = read(pack_dialog_path, "AerixPackSearchDialog.kt")
-check("the client tab can search for packs", "AerixPackSearchDialog(activity, ClientOwnerPage.SAHIL" in client_screen)
+client_screen = read(os.path.join(JAVA, "cleave", "ui", "screens"), "CleaveClientScreen.kt")
+pack_dialog_path = os.path.join(JAVA, "cleave", "ui", "screens")
+pack_dialog = read(pack_dialog_path, "CleavePackSearchDialog.kt")
+check("the client tab can search for packs", "CleavePackSearchDialog(activity, ClientOwnerPage.SAHIL" in client_screen)
 check("both client pages open the same search",
-      "AerixPackSearchDialog(activity, ClientOwnerPage.MX_INSPIRE"
+      "CleavePackSearchDialog(activity, ClientOwnerPage.MX_INSPIRE"
       in read(pack_dialog_path, "FastClientScreen.kt"))
 check("the row draws the pack's own logo",
       "rememberRemoteBitmap(project.iconUrl" in pack_dialog and "Image(bitmap = icon" in pack_dialog)
 # Modrinth v2 puts the logo in an "icon_urls" array on search rows; reading "icon_url" alone is what
 # left every result blank, on this page and on Discover.
-bridge = read(os.path.join(JAVA, "aerix", "bridge"), "PojavAssetBridge.kt")
+bridge = read(os.path.join(JAVA, "cleave", "bridge"), "PojavAssetBridge.kt")
 modrinth_search = bridge[bridge.index("private fun searchModrinth"):bridge.index("private fun modrinthDetails")]
 check("the logo is read where the search actually puts it",
       'hit.arr("icon_urls").strings()' in modrinth_search)
@@ -252,7 +252,7 @@ check("install no longer takes the first file it is handed", "offer.file) }" in 
 check("the version window names what it is asking", "Which version of Minecraft?" in pack_dialog)
 check("only versions the client exists for are offered",
       "PackVersionFilter.match(" in pack_dialog and "profile.minecraftVersions" in pack_dialog)
-check("Aerix Client's list is its own release table",
+check("Cleave Client's list is its own release table",
       "ClientVersions.RELEASES.toList()" in pack_dialog)
 check("FastClient's list is the builds it actually ships",
       "FastClientInstaller.builds.map { it.minecraft }" in pack_dialog)
@@ -267,9 +267,9 @@ check("the pack install goes through the launcher's own path",
       "PojavAssetBridge.install(context, project, offer.file)" in pack_dialog)
 check("the answer always says which version it did", "Minecraft ${offer.minecraft}" in pack_dialog)
 # The filter is pure Java, so CI runs it with javac rather than trusting this grep.
-workflow = read(os.path.join(ROOT, ".github", "workflows"), "aerix-debug.yml")
+workflow = read(os.path.join(ROOT, ".github", "workflows"), "cleave-debug.yml")
 check("the filter's own test runs in CI", "PackVersionFilterSmokeTest" in workflow)
-filter_java = read(os.path.join(JAVA, "aerix", "client"), "PackVersionFilter.java")
+filter_java = read(os.path.join(JAVA, "cleave", "client"), "PackVersionFilter.java")
 check("a file with no download is never offered", 'url == null || url.trim().isEmpty()' in filter_java)
 check("the wrong loader is never offered", "containsIgnoreCase(loaders, requiredLoader)" in filter_java)
 check("no neighbour version is guessed", "rankOf(version, clientVersions)" in filter_java)
@@ -277,7 +277,7 @@ check("the smoke test pins the real client list",
       "ClientVersions.RELEASES" in read(os.path.join(ROOT, "tests"), "PackVersionFilterSmokeTest.java"))
 
 print("14. the in-game A menu survives a tap the device reports twice")
-guard = read(os.path.join(JAVA, "aerix", "client"), "AerixOverlayInput.kt")
+guard = read(os.path.join(JAVA, "cleave", "client"), "CleaveOverlayInput.kt")
 check("the guard arms only once the menu has been drawn",
       "const val NOT_ARMED = Long.MAX_VALUE" in guard and "fun arm()" in guard)
 check("the grace window is a number, not a guess at a frame rate",
@@ -289,15 +289,15 @@ check("an early back/escape is swallowed too",
 check("the guard says what it did", "fun report(): String" in guard)
 check("every modal open re-arms it", "fun noteOpened()" in guard)
 check("every modal arms on the frame after it is drawn",
-      "withFrameNanos { }\n        AerixOverlayInput.arm()" in overlay
+      "withFrameNanos { }\n        CleaveOverlayInput.arm()" in overlay
       and "if (bootVisible || modal == InGameClientModal.NONE) return@LaunchedEffect" in overlay)
 check("the backdrop asks the guard before it closes",
-      "if (AerixOverlayInput.acceptTapDismiss()) onClose()" in overlay)
+      "if (CleaveOverlayInput.acceptTapDismiss()) onClose()" in overlay)
 check("the back path asks the guard as well",
-      "if (!AerixOverlayInput.acceptKeyDismiss()) return true" in overlay)
-check("opening the menu re-arms the guard", "AerixOverlayInput.noteOpened()" in overlay)
+      "if (!CleaveOverlayInput.acceptKeyDismiss()) return true" in overlay)
+check("opening the menu re-arms the guard", "CleaveOverlayInput.noteOpened()" in overlay)
 check("the page that shows FPS also shows the touch guard",
-      "AerixOverlayInput.report()" in overlay)
+      "CleaveOverlayInput.report()" in overlay)
 # Nineteen pixels off the top of the screen is inside the strip Android treats as a system gesture,
 # which is how a tap on the Client button can be delivered twice, or eaten, on some phones.
 check("the Client button is not parked in the system's edge gesture strip",

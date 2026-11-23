@@ -71,14 +71,14 @@ def main():
         err = None
         for i in range(3):
             try:
-                req = urllib.request.Request(url, headers={'User-Agent': 'Aerix-Launcher-ResourcePack-Diagnostics/1.0'})
+                req = urllib.request.Request(url, headers={'User-Agent': 'Cleave-Launcher-ResourcePack-Diagnostics/1.0'})
                 with urllib.request.urlopen(req, timeout=30) as response:
                     data = response.read(12_000_001)
                 if len(data) > 12_000_000 or hashlib.sha512(data).hexdigest() != digest:
                     raise ValueError('Pack size or SHA-512 does not match publisher metadata')
                 info = inspect(data)
-                if name == 'animated' and os.environ.get('AERIX_PACK_TEST_FILE'):
-                    with open(os.environ['AERIX_PACK_TEST_FILE'], 'wb') as target:
+                if name == 'animated' and os.environ.get('CLEAVE_PACK_TEST_FILE'):
+                    with open(os.environ['CLEAVE_PACK_TEST_FILE'], 'wb') as target:
                         target.write(data)
                 print('::notice title=SenpaiSpider ' + name + ' pack::' + json.dumps(info, ensure_ascii=True, separators=(',', ':')).replace('%', '%25'))
                 err = None

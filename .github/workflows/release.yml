@@ -2,7 +2,7 @@ name: Release CI
 
 # Public release build. It is only allowed to run after the owner asks for a
 # release and types the confirmation below. Everything else gets tested on the
-# debug APK built by aerix-debug.yml.
+# debug APK built by cleave-debug.yml.
 #
 # A marked push has to touch this file to be seen at all, so each release cuts a
 # one line note here recording what it shipped.
@@ -17,8 +17,8 @@ name: Release CI
 # published, which left releases/latest on v2.4.1 and the in-app updater correctly reporting "no
 # update": there was nothing newer to offer. This cut is that release again, plus the one thing it
 # was missing - a testing build now says out loud that it is a testing build and will never update
-# itself, because its package name is net.al.aerixlauncher.debug and Android will not install the
-# release APK (net.al.aerixlauncher) over it, whatever the signature says.
+# itself, because its package name is com.cleave.launcher.debug and Android will not install the
+# release APK (com.cleave.launcher) over it, whatever the signature says.
 #
 # Previous cut: v2.4.2 on 19 Nov 2026 - the FPS overlay switch now moves when it is flipped and sits
 # under Resume instead of below the fold; the floating logo can be put away while playing without
@@ -36,9 +36,9 @@ name: Release CI
 # RELEASE_MARK line below instead: bump it. Touching this file starts the job, the bumped value is
 # the confirmation, and the version.properties read below is still the final word on what ships.
 # Each edition goes up three times, named after version.properties:
-#   Aerix-Launcher-<version>-arm64-v8a.apk       64-bit phones
-#   Aerix-Launcher-<version>-armeabi-v7a.apk     32-bit phones
-#   Aerix-Launcher-<version>.apk                 universal, the fallback
+#   Cleave-Launcher-<version>-arm64-v8a.apk       64-bit phones
+#   Cleave-Launcher-<version>-armeabi-v7a.apk     32-bit phones
+#   Cleave-Launcher-<version>.apk                 universal, the fallback
 # plus the -noruntime editions of the same three. The in-app updater looks for
 # exactly those names, picks the one matching the device, and falls back to the
 # universal build if a split is missing.
@@ -117,55 +117,55 @@ jobs:
       - name: Unpack the release signing key
         # The key is a base64 secret, not a file in the tree, and it never touches the checkout: a
         # signing key published in a public repository can be used by anyone to push an update that
-        # every installed copy accepts as ours. Gradle reads AERIX_KEYSTORE_FILE from here.
+        # every installed copy accepts as ours. Gradle reads CLEAVE_KEYSTORE_FILE from here.
         env:
-          AERIX_KEYSTORE_P12_B64: ${{ secrets.AERIX_KEYSTORE_P12 }}
-          AERIX_KEYSTORE_PASSWORD_IN: ${{ secrets.AERIX_KEYSTORE_PASSWORD }}
-          AERIX_KEYSTORE_ALIAS_IN: ${{ secrets.AERIX_KEYSTORE_ALIAS }}
+          CLEAVE_KEYSTORE_P12_B64: ${{ secrets.CLEAVE_KEYSTORE_P12 }}
+          CLEAVE_KEYSTORE_PASSWORD_IN: ${{ secrets.CLEAVE_KEYSTORE_PASSWORD }}
+          CLEAVE_KEYSTORE_ALIAS_IN: ${{ secrets.CLEAVE_KEYSTORE_ALIAS }}
         run: |
           set -eu
-          test -n "$AERIX_KEYSTORE_P12_B64" || {
-            echo "::error::AERIX_KEYSTORE_P12 is not set. A public release is never signed with a key"
+          test -n "$CLEAVE_KEYSTORE_P12_B64" || {
+            echo "::error::CLEAVE_KEYSTORE_P12 is not set. A public release is never signed with a key"
             echo "   found in the repository, so this build stops instead of shipping something"
             echo "   unsigned or something signed by a key the whole world already has."
             exit 1
           }
-          test -n "$AERIX_KEYSTORE_PASSWORD_IN" || { echo "::error::AERIX_KEYSTORE_PASSWORD is not set"; exit 1; }
-          printf '%s' "$AERIX_KEYSTORE_P12_B64" | base64 -d > "$RUNNER_TEMP/aerix_release.p12"
-          echo "AERIX_KEYSTORE_FILE=$RUNNER_TEMP/aerix_release.p12" >> "$GITHUB_ENV"
-          echo "AERIX_KEYSTORE_PASSWORD=$AERIX_KEYSTORE_PASSWORD_IN" >> "$GITHUB_ENV"
-          # The alias is not a secret in practice (it is "aerix", and the docs say so), but it was
+          test -n "$CLEAVE_KEYSTORE_PASSWORD_IN" || { echo "::error::CLEAVE_KEYSTORE_PASSWORD is not set"; exit 1; }
+          printf '%s' "$CLEAVE_KEYSTORE_P12_B64" | base64 -d > "$RUNNER_TEMP/cleave_release.p12"
+          echo "CLEAVE_KEYSTORE_FILE=$RUNNER_TEMP/cleave_release.p12" >> "$GITHUB_ENV"
+          echo "CLEAVE_KEYSTORE_PASSWORD=$CLEAVE_KEYSTORE_PASSWORD_IN" >> "$GITHUB_ENV"
+          # The alias is not a secret in practice (it is "cleave", and the docs say so), but it was
           # never declared into this step either: `set -u` would abort here on a runner that does not
           # have it, long after the key itself was fine. Default it, and let a secret override.
-          echo "AERIX_KEYSTORE_ALIAS=${AERIX_KEYSTORE_ALIAS_IN:-aerix}" >> "$GITHUB_ENV"
+          echo "CLEAVE_KEYSTORE_ALIAS=${CLEAVE_KEYSTORE_ALIAS_IN:-cleave}" >> "$GITHUB_ENV"
 
       - name: Unpack the retired signing key for double-signing
         # From 2.4.4 every release carries both the current key and the retired key, permanently.
         # See docs/signing-policy.md for why AOSP requires an identical certificate set to update
         # over the multi-signed 2.4.1.
         env:
-          AERIX_LEGACY_P12_B64: ${{ secrets.AERIX_LEGACY_P12 }}
-          AERIX_LEGACY_PASSWORD_IN: ${{ secrets.AERIX_LEGACY_PASSWORD }}
+          CLEAVE_LEGACY_P12_B64: ${{ secrets.CLEAVE_LEGACY_P12 }}
+          CLEAVE_LEGACY_PASSWORD_IN: ${{ secrets.CLEAVE_LEGACY_PASSWORD }}
         run: |
           set -eu
           # Committed in this repository, so the secret is not needed and must not be preferred: the
           # key is public either way, and reading it from the tree means the file that was audited is
           # the file that signs. The secret still wins if it is set, for a rotation later.
-          if [ -n "${AERIX_LEGACY_P12_B64:-}" ]; then
-            printf '%s' "$AERIX_LEGACY_P12_B64" | base64 -d > "$RUNNER_TEMP/aerix_legacy.p12"
+          if [ -n "${CLEAVE_LEGACY_P12_B64:-}" ]; then
+            printf '%s' "$CLEAVE_LEGACY_P12_B64" | base64 -d > "$RUNNER_TEMP/cleave_legacy.p12"
             echo "Using the retired key from the secret."
           else
-            base64 -d tests/aerix_legacy.p12.b64 > "$RUNNER_TEMP/aerix_legacy.p12"
-            echo "Using the retired key committed at tests/aerix_legacy.p12.b64."
+            base64 -d tests/cleave_legacy.p12.b64 > "$RUNNER_TEMP/cleave_legacy.p12"
+            echo "Using the retired key committed at tests/cleave_legacy.p12.b64."
           fi
-          # The committed p12 was sealed with this password; AERIX_LEGACY_PASSWORD overrides it.
-          echo "AERIX_LEGACY_KEYSTORE_PASSWORD=${AERIX_LEGACY_PASSWORD_IN:-aerix-release}" >> "$GITHUB_ENV"
+          # The committed p12 was sealed with this password; CLEAVE_LEGACY_PASSWORD overrides it.
+          echo "CLEAVE_LEGACY_KEYSTORE_PASSWORD=${CLEAVE_LEGACY_PASSWORD_IN:-cleave-release}" >> "$GITHUB_ENV"
           echo "true" > "$RUNNER_TEMP/legacy_key_present"
           # Prove the file we are about to sign with is the certificate 2.4.1 shipped, before it signs.
           RETIRED=$(grep -v "^#" tests/leaked_cert_fingerprint.txt | grep -Eo "^[0-9a-f]{64}$" | head -1)
           test -n "$RETIRED" || { echo "::error::no retired fingerprint on record"; exit 1; }
-          keytool -list -keystore "$RUNNER_TEMP/aerix_legacy.p12" \
-            -storepass "${AERIX_LEGACY_PASSWORD_IN:-aerix-release}" -storetype PKCS12 \
+          keytool -list -keystore "$RUNNER_TEMP/cleave_legacy.p12" \
+            -storepass "${CLEAVE_LEGACY_PASSWORD_IN:-cleave-release}" -storetype PKCS12 \
             | tr -d ':' | tr '[:upper:]' '[:lower:]' | grep -q "$RETIRED" \
             || { echo "::error::the retired keystore is not the certificate the gate names"; exit 1; }
 
@@ -201,20 +201,20 @@ jobs:
           python3 tests/recorder_panel_smoke.py
           python3 tests/fastclient_performance_download_test.py
           python3 tests/recorder_wiring_smoke.py
-          mkdir -p "$RUNNER_TEMP/aerix-migration-smoke"
-          javac -d "$RUNNER_TEMP/aerix-migration-smoke" \
+          mkdir -p "$RUNNER_TEMP/cleave-migration-smoke"
+          javac -d "$RUNNER_TEMP/cleave-migration-smoke" \
             app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/tasks/DataMigrationPolicy.java \
             tests/DataMigrationPolicySmokeTest.java
-          java -cp "$RUNNER_TEMP/aerix-migration-smoke" net.kdt.pojavlaunch.tasks.DataMigrationPolicySmokeTest
-          mkdir -p "$RUNNER_TEMP/aerix-release-smoke"
-          javac -d "$RUNNER_TEMP/aerix-release-smoke" \
+          java -cp "$RUNNER_TEMP/cleave-migration-smoke" net.kdt.pojavlaunch.tasks.DataMigrationPolicySmokeTest
+          mkdir -p "$RUNNER_TEMP/cleave-release-smoke"
+          javac -d "$RUNNER_TEMP/cleave-release-smoke" \
             app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/recording/RecordingPaths.java \
             tests/RecordingPathsSmokeTest.java
-          java -cp "$RUNNER_TEMP/aerix-release-smoke" RecordingPathsSmokeTest
-          javac -d "$RUNNER_TEMP/aerix-release-smoke" \
-            app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/worldshare/WorldSharePolicy.java \
+          java -cp "$RUNNER_TEMP/cleave-release-smoke" RecordingPathsSmokeTest
+          javac -d "$RUNNER_TEMP/cleave-release-smoke" \
+            app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/worldshare/WorldSharePolicy.java \
             tests/WorldSharePolicySmokeTest.java
-          java -cp "$RUNNER_TEMP/aerix-release-smoke" WorldSharePolicySmokeTest
+          java -cp "$RUNNER_TEMP/cleave-release-smoke" WorldSharePolicySmokeTest
 
       - name: Create out directory
         run: mkdir out
@@ -244,7 +244,7 @@ jobs:
           APKSIGNER=$(ls "$SDK"/build-tools/*/apksigner 2>/dev/null | tail -1 || true)
           ZIPALIGN=$(ls "$SDK"/build-tools/*/zipalign 2>/dev/null | tail -1 || true)
           test -n "$APKSIGNER" && test -n "$ZIPALIGN"
-          test -n "${AERIX_KEYSTORE_FILE:-}" || { echo "::error::no signing key"; exit 1; }
+          test -n "${CLEAVE_KEYSTORE_FILE:-}" || { echo "::error::no signing key"; exit 1; }
           LEGACY="$(cat "$RUNNER_TEMP/legacy_key_present" 2>/dev/null || echo false)"
           # The retired key is back, deliberately and permanently. AOSP
           # SigningDetails.checkCapability: "multiple-signer packages cannot rotate signing certs, so
@@ -253,7 +253,7 @@ jobs:
           # and keep matching it. Once a release is double-signed every later one must be too.
           #
           # The owner accepted this with the cost stated: the retired private key is committed at
-          # tests/aerix_legacy.p12.b64 in this public repository, so "the retired key is banned" no
+          # tests/cleave_legacy.p12.b64 in this public repository, so "the retired key is banned" no
           # longer holds and anyone with repository access can build an APK that installs over a
           # player's launcher. The fingerprint gate below is therefore inverted on purpose: it now
           # REQUIRES the retired cert instead of banning it, so a build that quietly stops carrying
@@ -261,12 +261,12 @@ jobs:
           #
           # An assistant must not flip this back on its own initiative. See docs/signing-policy.md.
           LEGACY=true
-          ALIAS=aerix
+          ALIAS=cleave
           if [ "$LEGACY" = "true" ]; then
             # The retired p12 holds one key, but say which one out loud: an alias guessed wrong here
             # fails with "Keystore does not contain alias", not with a silently single-signed APK.
-            keytool -list -keystore "$RUNNER_TEMP/aerix_legacy.p12" \
-              -storepass "$AERIX_LEGACY_KEYSTORE_PASSWORD" -storetype PKCS12 | sed -n '1,8p'
+            keytool -list -keystore "$RUNNER_TEMP/cleave_legacy.p12" \
+              -storepass "$CLEAVE_LEGACY_KEYSTORE_PASSWORD" -storetype PKCS12 | sed -n '1,8p'
             echo "Signing with the retired key as alias: $ALIAS"
           fi
           shopt -s nullglob
@@ -281,16 +281,16 @@ jobs:
               "$APKSIGNER" sign \
                 --v1-signing-enabled false --v2-signing-enabled true --v3-signing-enabled false \
                 --min-sdk-version 24 \
-                --ks "$AERIX_KEYSTORE_FILE" --ks-key-alias "$AERIX_KEYSTORE_ALIAS" \
-                --ks-pass "env:AERIX_KEYSTORE_PASSWORD" --key-pass "env:AERIX_KEYSTORE_PASSWORD" \
+                --ks "$CLEAVE_KEYSTORE_FILE" --ks-key-alias "$CLEAVE_KEYSTORE_ALIAS" \
+                --ks-pass "env:CLEAVE_KEYSTORE_PASSWORD" --key-pass "env:CLEAVE_KEYSTORE_PASSWORD" \
                 --next-signer \
-                --ks "$RUNNER_TEMP/aerix_legacy.p12" --ks-key-alias "$ALIAS" \
-                --ks-pass "env:AERIX_LEGACY_KEYSTORE_PASSWORD" --key-pass "env:AERIX_LEGACY_KEYSTORE_PASSWORD" \
+                --ks "$RUNNER_TEMP/cleave_legacy.p12" --ks-key-alias "$ALIAS" \
+                --ks-pass "env:CLEAVE_LEGACY_KEYSTORE_PASSWORD" --key-pass "env:CLEAVE_LEGACY_KEYSTORE_PASSWORD" \
                 --out "$apk" "$RUNNER_TEMP/to-sign-aligned.apk"
             else
               "$APKSIGNER" sign \
-                --ks "$AERIX_KEYSTORE_FILE" --ks-key-alias "$AERIX_KEYSTORE_ALIAS" \
-                --ks-pass "env:AERIX_KEYSTORE_PASSWORD" --key-pass "env:AERIX_KEYSTORE_PASSWORD" \
+                --ks "$CLEAVE_KEYSTORE_FILE" --ks-key-alias "$CLEAVE_KEYSTORE_ALIAS" \
+                --ks-pass "env:CLEAVE_KEYSTORE_PASSWORD" --key-pass "env:CLEAVE_KEYSTORE_PASSWORD" \
                 --v1-signing-enabled false --v2-signing-enabled true --v3-signing-enabled true \
                 --out "$apk" "$RUNNER_TEMP/to-sign-aligned.apk"
             fi
@@ -322,11 +322,11 @@ jobs:
             done
             test "$found" -eq 3 || { echo "::error::$base: expected 3 APKs, got $found"; ls -l "$dir"; exit 1; }
           }
-          collect app_pojavlauncher/build/outputs/apk/full/release "Aerix-Launcher-$VERSION"
-          collect app_pojavlauncher/build/outputs/apk/noruntime/release "Aerix-Launcher-$VERSION-noruntime"
+          collect app_pojavlauncher/build/outputs/apk/full/release "Cleave-Launcher-$VERSION"
+          collect app_pojavlauncher/build/outputs/apk/noruntime/release "Cleave-Launcher-$VERSION-noruntime"
           cd out
           ls -l
-          sha256sum Aerix-Launcher-*.apk > SHA256SUMS
+          sha256sum Cleave-Launcher-*.apk > SHA256SUMS
           cat SHA256SUMS
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
@@ -337,7 +337,7 @@ jobs:
           # build-tools carry aapt2; the runner image already has one.
           AAPT2=$(ls "$SDK"/build-tools/*/aapt2 2>/dev/null | tail -1 || true)
           test -n "$AAPT2"
-          for apk in out/Aerix-Launcher-*.apk; do
+          for apk in out/Cleave-Launcher-*.apk; do
             echo "== $apk"
             "$AAPT2" dump badging "$apk" | grep -E "^package:|^application-label:"
           done
@@ -357,7 +357,7 @@ jobs:
           # which is the check that would have caught the 2.4.2 and 2.4.3 mistake at build time.
           RETIRED=$(grep -v "^#" tests/leaked_cert_fingerprint.txt | grep -Eo "^[0-9a-f]{64}$" | head -1)
           test -n "$RETIRED" || { echo "::error::no retired fingerprint on record to require"; exit 1; }
-          for apk in out/Aerix-Launcher-*.apk; do
+          for apk in out/Cleave-Launcher-*.apk; do
             echo "== $apk"
             info=$("$APKSIGNER" verify --print-certs --min-sdk-version 24 "$apk" 2>&1 | tr '[:upper:]' '[:lower:]')
             printf '%s\n' "$info" | grep -E "signer|sha-256" || true
@@ -380,7 +380,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release-full
-          path: out/Aerix-Launcher-*.apk
+          path: out/Cleave-Launcher-*.apk
           if-no-files-found: error
 
       - name: Upload checksums
@@ -433,16 +433,16 @@ jobs:
           fi
           # The website's download buttons point at the unversioned names under
           # releases/latest/download, so the universal builds also go up under those names.
-          cp "dist/Aerix-Launcher-$VERSION.apk" dist/Aerix-Launcher.apk
-          cp "dist/Aerix-Launcher-$VERSION-noruntime.apk" dist/Aerix-Launcher-noruntime.apk
-          ( cd dist && sha256sum Aerix-Launcher-*.apk Aerix-Launcher.apk > SHA256SUMS && cat SHA256SUMS )
+          cp "dist/Cleave-Launcher-$VERSION.apk" dist/Cleave-Launcher.apk
+          cp "dist/Cleave-Launcher-$VERSION-noruntime.apk" dist/Cleave-Launcher-noruntime.apk
+          ( cd dist && sha256sum Cleave-Launcher-*.apk Cleave-Launcher.apk > SHA256SUMS && cat SHA256SUMS )
           TITLE=$(head -1 "$NOTES" | sed 's/^# //')
           gh release create "v$VERSION" \
             --title "$TITLE" \
             --notes-file "$NOTES" \
             --target "$GITHUB_SHA" \
             --latest \
-            dist/Aerix-Launcher-*.apk dist/Aerix-Launcher.apk dist/SHA256SUMS
+            dist/Cleave-Launcher-*.apk dist/Cleave-Launcher.apk dist/SHA256SUMS
           gh release view "v$VERSION" --json tagName,name,url,assets \
             -q '.tagName, .name, .url, (.assets[] | "\(.name) \(.size) \(.digest // "-")")'
 

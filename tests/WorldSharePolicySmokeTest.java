@@ -1,4 +1,4 @@
-import net.kdt.pojavlaunch.aerix.worldshare.WorldSharePolicy;
+import net.kdt.pojavlaunch.cleave.worldshare.WorldSharePolicy;
 public class WorldSharePolicySmokeTest {
     static void check(boolean b) { if (!b) throw new AssertionError(); }
     public static void main(String[] args) {

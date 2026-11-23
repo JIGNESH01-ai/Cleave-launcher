@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the Aerix Launcher website as a set of standalone pages.
+"""Generates the Cleave Launcher website as a set of standalone pages.
 
 Every page is a complete HTML file that shares docs/styles.css, docs/app.js and docs/assets/, so
 GitHub Pages serves them as-is with no build step. Keeping the shell in one place is what stops the
@@ -8,13 +8,13 @@ pages from drifting apart: change the nav here and every page gets it.
 import pathlib
 
 DOCS = pathlib.Path(__file__).resolve().parents[2] / "docs"
-SITE = "https://entitybrian69-bit.github.io/Aerix-launcher/"
-REPO = "https://github.com/entitybrian69-bit/Aerix-launcher"
+SITE = "https://entitybrian69-bit.github.io/Cleave-launcher/"
+REPO = "https://github.com/JIGNESH01-ai/Cleave-launcher"
 # GitHub's own permalink to the newest release's asset of this name: it redirects straight to the
 # file, so the button downloads the APK without a visit to any GitHub page. The publish workflow
 # uploads a copy under exactly these names next to the versioned ones.
-LATEST_APK = f"{REPO}/releases/latest/download/Aerix-Launcher.apk"
-LATEST_APK_LIGHT = f"{REPO}/releases/latest/download/Aerix-Launcher-noruntime.apk"
+LATEST_APK = f"{REPO}/releases/latest/download/Cleave-Launcher.apk"
+LATEST_APK_LIGHT = f"{REPO}/releases/latest/download/Cleave-Launcher-noruntime.apk"
 # The release the two links above belong to: the notes, the checksum and the exact files.
 LATEST_RELEASE = f"{REPO}/releases/latest"
 ALL_RELEASES = f"{REPO}/releases"
@@ -93,7 +93,7 @@ RENDERERS = [
 
 FAQ = [
     ("Is it free?",
-     "Yes. Aerix is open source under GPL-3.0, with no ads, no telemetry and no paid tier. Downloads come from GitHub Releases."),
+     "Yes. Cleave is open source under GPL-3.0, with no ads, no telemetry and no paid tier. Downloads come from GitHub Releases."),
     ("Do I need a CurseForge API key?",
      "No. The content browser works out of the box: it falls back to a public mirror when no key is configured, and an own key can be set in Settings if you have one."),
     ("Which Minecraft versions work?",
@@ -105,7 +105,7 @@ FAQ = [
     ("How do updates work?",
      "Settings → About → Check for update asks the GitHub Releases API, compares your build and points you at the newest APK. No mystery JSON, no dead link."),
     ("Is this an official Minecraft app?",
-     "No. Minecraft is a trademark of Mojang Synergies AB. Aerix Launcher is an independent project and is not affiliated with, endorsed by or associated with Mojang or Microsoft."),
+     "No. Minecraft is a trademark of Mojang Synergies AB. Cleave Launcher is an independent project and is not affiliated with, endorsed by or associated with Mojang or Microsoft."),
     ("Something broke. Where do I say so?",
      "The Discord channel is the fastest place — the same link is in the footer of every page."),
 ]
@@ -121,8 +121,8 @@ def head(title, description, page, extra_meta=""):
 <meta name="description" content="{description}">
 <meta name="theme-color" content="#07131d">
 <meta name="color-scheme" content="dark">
-<link rel="icon" href="assets/aerix-logo.png">
-<link rel="apple-touch-icon" href="assets/aerix-logo.png">
+<link rel="icon" href="assets/cleave-logo.png">
+<link rel="apple-touch-icon" href="assets/cleave-logo.png">
 <link rel="canonical" href="{SITE}{'' if page == 'index.html' else page}">
 {extra_meta}<link rel="stylesheet" href="styles.css">
 </head>
@@ -141,8 +141,8 @@ def nav(page):
     return f'''
 <header class="nav">
   <a class="brand" href="index.html">
-    <img class="brand-logo" src="assets/aerix-logo.png" alt="Aerix Launcher logo" width="40" height="40">
-    <span class="brand-text">AERIX<span class="brand-sub">LAUNCHER</span></span>
+    <img class="brand-logo" src="assets/cleave-logo.png" alt="Cleave Launcher logo" width="40" height="40">
+    <span class="brand-text">CLEAVE<span class="brand-sub">LAUNCHER</span></span>
   </a>
 
   <nav class="nav-links" id="navLinks" aria-label="Pages">
@@ -173,7 +173,7 @@ FOOTER = f'''
   </div>
   <div class="footer-right">
     <a href="{DISCORD}" target="_blank" rel="noopener">discord.gg/RS7q9KaCm6</a>
-    <p class="footer-sub">GPL-3.0 · <a href="{REPO}" target="_blank" rel="noopener">github.com/entitybrian69-bit/Aerix-launcher</a></p>
+    <p class="footer-sub">GPL-3.0 · <a href="{REPO}" target="_blank" rel="noopener">github.com/JIGNESH01-ai/Cleave-launcher</a></p>
   </div>
 </footer>
 
@@ -219,16 +219,16 @@ def shot_tile(name, title, caption, eager=False):
 
 def build_index():
     head_html = head(
-        "Aerix Launcher — Minecraft: Java Edition on Android",
-        "Aerix Launcher brings Minecraft: Java Edition to Android: instances, renderers, accounts, "
+        "Cleave Launcher — Minecraft: Java Edition on Android",
+        "Cleave Launcher brings Minecraft: Java Edition to Android: instances, renderers, accounts, "
         "skins and a content browser in one launcher. Private by design, updated often, tested on real phones.",
         "index.html",
         extra_meta=f'''<meta property="og:type" content="website">
-<meta property="og:title" content="Aerix Launcher — Minecraft: Java Edition on Android">
+<meta property="og:title" content="Cleave Launcher — Minecraft: Java Edition on Android">
 <meta property="og:description" content="Instances, renderers, accounts, skins and a content browser in one launcher.">
 <meta property="og:url" content="{SITE}">
 <meta property="og:image" content="{SITE}assets/screenshots/shot-home.jpg">
-<meta property="og:image:alt" content="The Aerix Launcher home screen">
+<meta property="og:image:alt" content="The Cleave Launcher home screen">
 <meta name="twitter:card" content="summary_large_image">
 ''')
 
@@ -251,13 +251,13 @@ def build_index():
       </div>
       <p class="meta" id="downloadMeta">Android 8.0+ · release build, signed with the project key</p>
       <p class="meta small"><span id="downloadFacts">v1.1.1 · 112.5 MB · 16 Oct 2026</span> · <a id="releaseNotes" href="{LATEST_RELEASE}" target="_blank" rel="noopener">release notes</a></p>
-      <p class="meta small" id="downloadAlt">Smaller download: <a href="{LATEST_APK_LIGHT}" download>Aerix-Launcher-noruntime.apk</a> — the same launcher, with the Java runtime fetched on demand.</p>
+      <p class="meta small" id="downloadAlt">Smaller download: <a href="{LATEST_APK_LIGHT}" download>Cleave-Launcher-noruntime.apk</a> — the same launcher, with the Java runtime fetched on demand.</p>
       <p class="meta small checksum">SHA-256 <code id="downloadSha">on the release page</code></p>
     </div>
 
     <div class="hero-art">
       <figure class="shot shot-lg float-a">
-        <img src="assets/screenshots/shot-home.jpg" alt="Aerix Launcher home screen with a recent world and the Play button" width="1200" height="537" loading="eager" decoding="async">
+        <img src="assets/screenshots/shot-home.jpg" alt="Cleave Launcher home screen with a recent world and the Play button" width="1200" height="537" loading="eager" decoding="async">
       </figure>
       <div class="shot-pair">
         <figure class="shot float-b">
@@ -327,7 +327,7 @@ def build_index():
       <div class="split-copy reveal">
         <p class="eyebrow">Renderers</p>
         <h2>Picked per version, not per launcher</h2>
-        <p class="section-lede">Aerix bundles MobileGlues for Minecraft 1.17+, two VGPU options for 1.16.5 and older, and chooses the right renderer for each version by default — with every option still one tap away.</p>
+        <p class="section-lede">Cleave bundles MobileGlues for Minecraft 1.17+, two VGPU options for 1.16.5 and older, and chooses the right renderer for each version by default — with every option still one tap away.</p>
         <a class="card-link" href="renderers.html">See the whole lineup</a>
       </div>
     </div>
@@ -340,7 +340,7 @@ def build_index():
         <p class="eyebrow">Who made it</p>
         <h2>entitybrian</h2>
         <p class="creator-role">Owner, developer, tester</p>
-        <p>entitybrian designs, writes, tests and ships Aerix Launcher. No studio, no outsourced UI, no AI pass that “fills in the screens” — the person who adds offline capes is the person who checks them on another phone, and who cuts a release when it is actually ready.</p>
+        <p>entitybrian designs, writes, tests and ships Cleave Launcher. No studio, no outsourced UI, no AI pass that “fills in the screens” — the person who adds offline capes is the person who checks them on another phone, and who cuts a release when it is actually ready.</p>
         <div class="cta-row">
           <a class="btn btn-ghost" href="https://github.com/entitybrian69-bit" target="_blank" rel="noopener">GitHub profile</a>
           <a class="btn btn-discord" href="{DISCORD}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Join the Discord</a>
@@ -351,7 +351,7 @@ def build_index():
     <aside class="discord-card reveal">
       <p class="eyebrow">Community</p>
       <h2>Discord</h2>
-      <p>Join other Aerix users, report a problem, and suggest what should land next.</p>
+      <p>Join other Cleave users, report a problem, and suggest what should land next.</p>
       <p class="discord-link">discord.gg/RS7q9KaCm6</p>
       <a class="btn btn-discord btn-lg" href="{DISCORD}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Open the invite</a>
     </aside>
@@ -379,8 +379,8 @@ def build_screenshots():
           f'<a class="btn btn-primary" href="install.html">Install guide</a><a class="btn btn-discord" href="{DISCORD}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Discord</a>')}
 </main>
 '''
-    return head("Screenshots — Aerix Launcher",
-                "All six screens of the current Aerix Launcher build: home, instances, discover, wallpapers, renderers and accounts.",
+    return head("Screenshots — Cleave Launcher",
+                "All six screens of the current Cleave Launcher build: home, instances, discover, wallpapers, renderers and accounts.",
                 "screenshots.html") + nav("screenshots.html") + body + FOOTER
 
 
@@ -396,7 +396,7 @@ def build_features():
 
     body = f'''<main id="main">
 
-{page_hero("Features", "Tools for your setup", "Aerix keeps launcher controls, renderer options and instance management in one place.")}
+{page_hero("Features", "Tools for your setup", "Cleave keeps launcher controls, renderer options and instance management in one place.")}
 
   <section class="section">
     <div class="cards">
@@ -432,8 +432,8 @@ def build_features():
           '<a class="btn btn-ghost" href="renderers.html">Renderer lineup</a>')}
 </main>
 '''
-    return head("Features — Aerix Launcher",
-                "Renderers, RAM control, accounts, skins and capes, the content browser, the control editor and the privacy bar of Aerix Launcher.",
+    return head("Features — Cleave Launcher",
+                "Renderers, RAM control, accounts, skins and capes, the content browser, the control editor and the privacy bar of Cleave Launcher.",
                 "features.html") + nav("features.html") + body + FOOTER
 
 
@@ -449,7 +449,7 @@ def build_renderers():
 
     body = f'''<main id="main">
 
-{page_hero("Renderers", "Picked per version, not per launcher", "Minecraft on Android lives or dies by its renderer. Aerix chooses one for the version you are launching, and leaves every option one tap away.")}
+{page_hero("Renderers", "Picked per version, not per launcher", "Minecraft on Android lives or dies by its renderer. Cleave chooses one for the version you are launching, and leaves every option one tap away.")}
 
   <section class="section">
     <div class="split">
@@ -479,11 +479,11 @@ def build_renderers():
   </section>
 
 {cta_band("Not sure which one?", "Leave it on Auto (Smart Pick) — it reads the version you are about to launch and chooses for you.",
-          f'<a class="btn btn-primary" href="install.html">Install Aerix</a><a class="btn btn-discord" href="{DISCORD}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Ask on Discord</a>')}
+          f'<a class="btn btn-primary" href="install.html">Install Cleave</a><a class="btn btn-discord" href="{DISCORD}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Ask on Discord</a>')}
 </main>
 '''
-    return head("Renderers — Aerix Launcher",
-                "The renderer lineup in Aerix Launcher: Auto Smart Pick, LTW, LTW Legacy, MobileGlues, vGPU, Kopper Zink, GL4ES, VirGL and Mesa.",
+    return head("Renderers — Cleave Launcher",
+                "The renderer lineup in Cleave Launcher: Auto Smart Pick, LTW, LTW Legacy, MobileGlues, vGPU, Kopper Zink, GL4ES, VirGL and Mesa.",
                 "renderers.html") + nav("renderers.html") + body + FOOTER
 
 
@@ -501,7 +501,7 @@ def build_install():
         <h2>Get the launcher</h2>
         <p id="downloadMeta">Android 8.0+ · release build, signed with the project key</p>
         <p class="meta small"><span id="downloadFacts">v1.1.1 · 112.5 MB · 16 Oct 2026</span> · <a id="releaseNotes" href="{LATEST_RELEASE}" target="_blank" rel="noopener">release notes</a></p>
-        <p class="meta small" id="downloadAlt">Smaller download: <a href="{LATEST_APK_LIGHT}" download>Aerix-Launcher-noruntime.apk</a> — the same launcher, with the Java runtime fetched on demand.</p>
+        <p class="meta small" id="downloadAlt">Smaller download: <a href="{LATEST_APK_LIGHT}" download>Cleave-Launcher-noruntime.apk</a> — the same launcher, with the Java runtime fetched on demand.</p>
         <p class="meta small checksum">SHA-256 <code id="downloadSha">on the release page</code></p>
         <p class="meta small">The APK is published on <a href="{ALL_RELEASES}" target="_blank" rel="noopener">GitHub Releases</a>; the buttons above download the file itself, with no GitHub page in between.</p>
       </div>
@@ -523,7 +523,7 @@ def build_install():
       <li class="card reveal">
         <span class="step-n">2</span>
         <h3>Allow the install</h3>
-        <p>Android will ask to allow installing apps from unknown sources the first time. Aerix is signed with the project's own release key.</p>
+        <p>Android will ask to allow installing apps from unknown sources the first time. Cleave is signed with the project's own release key.</p>
       </li>
       <li class="card reveal">
         <span class="step-n">3</span>
@@ -534,12 +534,12 @@ def build_install():
 
     <div class="note reveal">
       <h3>A note on package names</h3>
-      <p>The release build installs as <code>net.al.aerixlauncher</code>, and its test build uses <code>net.al.aerixlauncher.debug</code>. Older Aerix builds used the separate <code>net.kdt.pojavlaunch</code> IDs, so they remain installed rather than updating in place. On Android 10 and newer, use the optional import prompt or the Settings import action to copy supported game data; private accounts, preferences, and runtimes stay with the old app. Keep the old install until the new one is verified.</p>
+      <p>The release build installs as <code>com.cleave.launcher</code>, and its test build uses <code>com.cleave.launcher.debug</code>. Older Cleave builds used the separate <code>net.kdt.pojavlaunch</code> IDs, so they remain installed rather than updating in place. On Android 10 and newer, use the optional import prompt or the Settings import action to copy supported game data; private accounts, preferences, and runtimes stay with the old app. Keep the old install until the new one is verified.</p>
     </div>
 
     <div class="note reveal">
       <h3>Keeping it current</h3>
-      <p>Aerix checks GitHub Releases for you: Settings → About → Check for update compares your build and points you at the newest APK. This page's download button asks the same API, so it never hands out an old file.</p>
+      <p>Cleave checks GitHub Releases for you: Settings → About → Check for update compares your build and points you at the newest APK. This page's download button asks the same API, so it never hands out an old file.</p>
     </div>
   </section>
 
@@ -547,8 +547,8 @@ def build_install():
           f'<a class="btn btn-discord" href="{DISCORD}" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span>Join the Discord</a><a class="btn btn-ghost" href="faq.html">Read the FAQ</a>')}
 </main>
 '''
-    return head("Install — Aerix Launcher",
-                "How to install Aerix Launcher on Android: download the newest APK, allow the install, and create your first instance.",
+    return head("Install — Cleave Launcher",
+                "How to install Cleave Launcher on Android: download the newest APK, allow the install, and create your first instance.",
                 "install.html") + nav("install.html") + body + FOOTER
 
 
@@ -574,8 +574,8 @@ def build_faq():
           f'<a class="btn btn-ghost" href="screenshots.html">Screenshots</a><a class="btn btn-ghost" href="renderers.html">Renderers</a><a class="btn btn-ghost" href="install.html">Install</a>')}
 </main>
 '''
-    return head("FAQ — Aerix Launcher",
-                "Aerix Launcher questions: is it free, do I need an API key, which Minecraft versions work, updates, controllers and licences.",
+    return head("FAQ — Cleave Launcher",
+                "Cleave Launcher questions: is it free, do I need an API key, which Minecraft versions work, updates, controllers and licences.",
                 "faq.html") + nav("faq.html") + body + FOOTER
 
 

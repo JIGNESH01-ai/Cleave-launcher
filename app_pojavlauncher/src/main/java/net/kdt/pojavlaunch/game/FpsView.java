@@ -57,7 +57,7 @@ public class FpsView extends View {
                 // the telemetry file, which is a real render-loop number and works on every renderer,
                 // including the ones that never call glfwSwapBuffers. Only if that is missing too is
                 // the honest answer "unavailable" - said with the reason, never a silent "-- FPS".
-                Integer modFps = net.kdt.pojavlaunch.aerix.client.ClientFpsProbe.read();
+                Integer modFps = net.kdt.pojavlaunch.cleave.client.ClientFpsProbe.read();
                 if (modFps != null) {
                     frameSource = "client mod";
                     float hz = net.kdt.pojavlaunch.utils.DisplayRefreshMode.activeRefreshHz(getContext());

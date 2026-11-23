@@ -12,7 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ResultReceiver;
 
-import net.kdt.pojavlaunch.aerix.bridge.PojavLaunchBridge;
+import net.kdt.pojavlaunch.cleave.bridge.PojavLaunchBridge;
 import net.kdt.pojavlaunch.game.GameActivity;
 import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
@@ -64,7 +64,7 @@ public class ContextAwareDoneListener implements MoJsonExtras.DoneListener, Cont
     @Override
     public void executeWithActivity(Activity activity) {
         try {
-            net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.prepareHandoffToGame(activity);
+            net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.prepareHandoffToGame(activity);
             Intent gameStartIntent = createGameStartIntent(activity);
             // Keep the launcher alive until the separate game process has a resumed window and
             // connected service. Killing it immediately can leave no activity to return to if the

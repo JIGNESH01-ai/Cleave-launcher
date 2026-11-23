@@ -1,4 +1,4 @@
--- Aerix social layer, step 1 of 3 - tables, columns and indexes.
+-- Cleave social layer, step 1 of 3 - tables, columns and indexes.
 --
 -- Paste ONE file at a time into Supabase -> SQL Editor -> New query -> Run, then move on to the
 -- next one. Each file on its own is small enough to copy on a phone without cutting a statement

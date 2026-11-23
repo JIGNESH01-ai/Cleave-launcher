@@ -1,5 +1,5 @@
 /*
- * Aerix Launcher - the in-game screen recorder panel.
+ * CLEAVE Launcher - the in-game screen recorder panel.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import net.kdt.pojavlaunch.aerix.client.LiquidCrystalPalette
+import net.kdt.pojavlaunch.cleave.client.LiquidCrystalPalette
 import net.kdt.pojavlaunch.prefs.LauncherPreferences
 
 /**

@@ -1,4 +1,4 @@
-import net.kdt.pojavlaunch.aerix.client.ClientVersions;
+import net.kdt.pojavlaunch.cleave.client.ClientVersions;
 public class ClientVersionsSmokeTest {
     private static void check(boolean ok) { if (!ok) throw new AssertionError(); }
     public static void main(String[] args) {

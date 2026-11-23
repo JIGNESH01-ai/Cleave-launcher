@@ -65,10 +65,10 @@
 
 		</net.kdt.pojavlaunch.customcontrols.ControlLayout>
 
-		<!-- Dedicated Aerix Client 1.16.5 Liquid Crystal HUD, Boot Plaque, HUD Studio & OLED AFK
+		<!-- Dedicated Cleave Client 1.16.5 Liquid Crystal HUD, Boot Plaque, HUD Studio & OLED AFK
 		     (visibility = gone on non-Client instances so zero overhead is added elsewhere). -->
-		<net.kdt.pojavlaunch.aerix.client.AerixClientOverlayView
-			android:id="@+id/aerix_client_overlay"
+		<net.kdt.pojavlaunch.cleave.client.CleaveClientOverlayView
+			android:id="@+id/cleave_client_overlay"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:visibility="gone" />
@@ -76,7 +76,7 @@
 		<!-- The in game menu: a full screen Compose overlay, hidden until the button opens it.
 		     It is composed once and stays out of the way (and out of the frame budget) while the
 		     game runs. -->
-		<net.kdt.pojavlaunch.aerix.ui.game.GameMenuOverlayView
+		<net.kdt.pojavlaunch.cleave.ui.game.GameMenuOverlayView
 			android:id="@+id/game_menu_overlay"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"

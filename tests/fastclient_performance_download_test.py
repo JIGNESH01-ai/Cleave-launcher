@@ -33,7 +33,7 @@ def fail(title, message):
 
 def fetch(url):
     """The response body, or None when the upstream host is having a bad day (reported as a warning)."""
-    request = Request(url, headers={'User-Agent': 'AerixLauncher/CI'})
+    request = Request(url, headers={'User-Agent': 'CleaveLauncher/CI'})
     for attempt in range(3):
         try:
             with urlopen(request, timeout=45) as response:

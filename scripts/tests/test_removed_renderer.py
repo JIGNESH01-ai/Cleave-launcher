@@ -23,7 +23,7 @@ class RemovedRendererTest(unittest.TestCase):
 
     def test_retired_assets_native_and_probe_are_rejected(self):
         for name in ('assets/renderer-bundles/rustgl/index.json', 'lib/arm64-v8a/librust_gl.so',
-                     'lib/arm64-v8a/libaerix_vulkan_probe.so'):
+                     'lib/arm64-v8a/libcleave_vulkan_probe.so'):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 removed.verify(self.container(name))
 

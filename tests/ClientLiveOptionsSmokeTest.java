@@ -1,4 +1,4 @@
-package aerix.client.mod;
+package cleave.client.mod;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -71,12 +71,12 @@ public final class ClientLiveOptionsSmokeTest {
     }
 
     public static void main(String[] args) throws Exception {
-        File dir = Files.createTempDirectory("aerix-live-options").toFile();
+        File dir = Files.createTempDirectory("cleave-live-options").toFile();
         File config = new File(dir, "config");
         check(config.mkdir());
-        File live = new File(config, "aerix_live.properties");
-        File boost = new File(config, "aerix_server_boost.properties");
-        File recovery = new File(config, "aerix_live_recovery.properties");
+        File live = new File(config, "cleave_live.properties");
+        File boost = new File(config, "cleave_server_boost.properties");
+        File recovery = new File(config, "cleave_live_recovery.properties");
 
         ClientLiveOptions bridge = new ClientLiveOptions();
         NamedClient client = new NamedClient();

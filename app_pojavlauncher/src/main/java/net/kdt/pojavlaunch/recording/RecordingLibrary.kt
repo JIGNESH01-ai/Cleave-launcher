@@ -18,7 +18,7 @@ import java.io.File
  *
  * The MP4 lives inside the instance folder, which on Android 10 and later is app-private storage:
  * other apps cannot read it, so "Open video" looked like a broken button. A playable copy is therefore
- * published into the system media library under `Movies/Aerix`, and the `content://` URI that the
+ * published into the system media library under `Movies/CLEAVE`, and the `content://` URI that the
  * media provider hands back is what players, the Files app and share sheets get to use.
  *
  * Every step is best effort: if the media provider refuses (a read-only external mount, a work
@@ -26,8 +26,8 @@ import java.io.File
  * document provider, exactly as before.
  */
 object RecordingLibrary {
-    private const val TAG = "AerixRecorder"
-    private const val ALBUM = "Aerix"
+    private const val TAG = "CleaveRecorder"
+    private const val ALBUM = "CLEAVE"
 
     /** @return the media URI of a published copy of [file], or null when publishing was impossible. */
     fun publish(context: Context, file: File): Uri? {

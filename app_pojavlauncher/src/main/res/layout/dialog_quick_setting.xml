@@ -150,7 +150,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/editMouseSpeed_textView" />
 
-    <!-- cursor size + zoom strength (Aerix: both apply the moment the bar moves) -->
+    <!-- cursor size + zoom strength (Cleave: both apply the moment the bar moves) -->
     <TextView
         android:id="@+id/editCursorSize_textView"
         android:layout_width="wrap_content"

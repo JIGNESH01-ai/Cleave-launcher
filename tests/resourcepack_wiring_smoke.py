@@ -1,5 +1,5 @@
 from pathlib import Path
-base = Path(__file__).resolve().parents[1] / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix'
+base = Path(__file__).resolve().parents[1] / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave'
 screen = (base / 'ui/screens/InstanceEditorScreen.kt').read_text()
 bridge = (base / 'bridge/PojavContentBridge.kt').read_text()
 optimizer = (base / 'resourcepack/ResourcePackOptimizer.java').read_text()

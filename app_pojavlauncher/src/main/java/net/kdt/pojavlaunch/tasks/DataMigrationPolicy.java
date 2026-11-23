@@ -13,14 +13,14 @@ final class DataMigrationPolicy {
 
     static {
         Set<String> authorities = new HashSet<>();
-        // Previous Aerix/Pojav package IDs, including the debug and public/nightly variants.
+        // Previous CLEAVE/Pojav package IDs, including the debug and public/nightly variants.
         authorities.add("net.kdt.pojavlaunch.scoped.gamefolder");
         authorities.add("net.kdt.pojavlaunch.scoped.gamefolder.debug");
         authorities.add("net.kdt.pojavlaunch.pub.scoped.gamefolder");
-        // Current Aerix package IDs. These also permit imports between installed Aerix variants.
-        authorities.add("net.al.aerixlauncher.scoped.gamefolder");
-        authorities.add("net.al.aerixlauncher.scoped.gamefolder.debug");
-        authorities.add("net.al.aerixlauncher.pub.scoped.gamefolder");
+        // Current CLEAVE package IDs. These also permit imports between installed CLEAVE variants.
+        authorities.add("com.cleave.launcher.scoped.gamefolder");
+        authorities.add("com.cleave.launcher.scoped.gamefolder.debug");
+        authorities.add("com.cleave.launcher.pub.scoped.gamefolder");
         TRUSTED_AUTHORITIES = Collections.unmodifiableSet(authorities);
     }
 

@@ -114,9 +114,9 @@ public class LauncherPreferences {
         Tools.initStorageConstants(ctx);
         boolean isDevicePowerful = isDevicePowerful(ctx);
 
-        net.kdt.pojavlaunch.aerix.bridge.RetiredRendererCleanup.clean(ctx);
+        net.kdt.pojavlaunch.cleave.bridge.RetiredRendererCleanup.clean(ctx);
         PREF_RENDERER = DEFAULT_PREF.getString("renderer", defaultRendererId(ctx));
-        if (net.kdt.pojavlaunch.aerix.bridge.RetiredRendererCleanup.isRetiredTag(PREF_RENDERER)) {
+        if (net.kdt.pojavlaunch.cleave.bridge.RetiredRendererCleanup.isRetiredTag(PREF_RENDERER)) {
             PREF_RENDERER = defaultRendererId(ctx);
             DEFAULT_PREF.edit().putString("renderer", PREF_RENDERER).apply();
         }

@@ -94,14 +94,14 @@ public final class Tools {
     public static final String MAVEN_CENTRAL = "https://maven-central-eu.storage-download.googleapis.com/maven2/";
     public  static final float BYTE_TO_MB = 1024 * 1024;
     public static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-    public static String APP_NAME = "Aerix Launcher";
+    public static String APP_NAME = "CLEAVE Launcher";
 
     public static final Gson GLOBAL_GSON = new GsonBuilder()
             .registerTypeAdapter(MavenName.class, new MavenNameAdapter())
             .setPrettyPrinting()
             .create();
 
-    public static final String URL_HOME = "https://pojav.ru";
+    public static final String URL_HOME = "https://github.com/JIGNESH01-ai/Cleave-launcher";
     public static String NATIVE_LIB_DIR;
     public static String DIR_DATA; //Initialized later to get context
     public static File DIR_CACHE;
@@ -590,7 +590,7 @@ public final class Tools {
 
     public static void fullyExit() {
         try {
-            net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onProcessExiting(null);
+            net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onProcessExiting(null);
         } catch (Throwable ignored) {}
         android.os.Process.killProcess(android.os.Process.myPid());
     }
@@ -1000,13 +1000,13 @@ public final class Tools {
     }
 
     /** Extra asking the launcher to start the game again as soon as it is up. */
-    public static final String EXTRA_RELAUNCH_GAME = "aerix.relaunchGame";
+    public static final String EXTRA_RELAUNCH_GAME = "cleave.relaunchGame";
     /** Extra naming the account the game should come back as; its accounts file name. */
-    public static final String EXTRA_SWITCH_ACCOUNT = "aerix.switchAccount";
+    public static final String EXTRA_SWITCH_ACCOUNT = "cleave.switchAccount";
     /** Extra naming the instance directory ID to switch to before relaunching. */
-    public static final String EXTRA_SWITCH_INSTANCE = "aerix.switchInstance";
+    public static final String EXTRA_SWITCH_INSTANCE = "cleave.switchInstance";
     /** Extra naming the multiplayer server address to auto-join on relaunch. */
-    public static final String EXTRA_LAUNCH_SERVER = "aerix.launchServer";
+    public static final String EXTRA_LAUNCH_SERVER = "cleave.launchServer";
 
     public static void restartLauncherActivityToSocialTarget(Context context, String instanceId, String serverAddress) {
         Intent intent = new Intent(context, LauncherActivity.class);

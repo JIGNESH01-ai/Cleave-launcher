@@ -6,9 +6,9 @@ public final class DataMigrationPolicySmokeTest {
                 "net.kdt.pojavlaunch.scoped.gamefolder",
                 "net.kdt.pojavlaunch.scoped.gamefolder.debug",
                 "net.kdt.pojavlaunch.pub.scoped.gamefolder",
-                "net.al.aerixlauncher.scoped.gamefolder",
-                "net.al.aerixlauncher.scoped.gamefolder.debug",
-                "net.al.aerixlauncher.pub.scoped.gamefolder"
+                "com.cleave.launcher.scoped.gamefolder",
+                "com.cleave.launcher.scoped.gamefolder.debug",
+                "com.cleave.launcher.pub.scoped.gamefolder"
         }) {
             assertTrue(DataMigrationPolicy.isTrustedSourceAuthority(authority), "trusted authority: " + authority);
         }

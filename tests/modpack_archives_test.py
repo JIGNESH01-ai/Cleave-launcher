@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check every catalogued Team Aerix pack archive the way the launcher will read it.
+"""Check every catalogued Team Cleave pack archive the way the launcher will read it.
 
 The failures this exists to catch are the ones that only show up on the device, in the game, with
 no useful message: a mod folder with two jars of the same mod (Fabric Loader refuses to start), a

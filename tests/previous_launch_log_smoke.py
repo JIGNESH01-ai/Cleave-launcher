@@ -55,7 +55,7 @@ check("O_WRONLY | O_TRUNC" in native,
       "jni/stdio_is.c no longer opens the log with O_TRUNC. If the truncation is really gone the "
       "archive in GameActivity is dead weight - delete PreviousLaunchLog and this test with it.")
 
-archiver = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/log/PreviousLaunchLog.java")
+archiver = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/log/PreviousLaunchLog.java")
 check("O_TRUNC" in archiver,
       "PreviousLaunchLog must say why it exists: the O_TRUNC in jni/stdio_is.c. Without that the next "
       "reader deletes it as redundant.")
@@ -99,12 +99,12 @@ check("Long.compare(b.lastModified(), a.lastModified())" in archiver,
       "and keeps the five oldest instead.")
 
 # ---- 6. reachable from the log viewer ----
-viewer = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/LogScreen.kt")
+viewer = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/LogScreen.kt")
 check("PreviousLaunchLog.list(" in viewer,
       "LogScreen must list the archived launches. A log the player cannot open from inside the launcher "
       "might as well not exist - that is the complaint this fixes.")
 check("previousLaunchLabel(" in viewer,
-      "LogScreen must label each archive with when it was taken; a tab called 'aerix-log-...' tells the "
+      "LogScreen must label each archive with when it was taken; a tab called 'cleave-log-...' tells the "
       "player nothing about which crash they are looking at.")
 
 list_at = locate(viewer, "PreviousLaunchLog.list(", "LogScreen")

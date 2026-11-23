@@ -24,8 +24,8 @@ version_file = (ROOT / "version.properties").read_text()
 version = [l.split("=", 1)[1].strip() for l in version_file.splitlines()
            if l.startswith("versionName=")][0]
 gradle = (ROOT / "app_pojavlauncher/build.gradle").read_text()
-policy = (JAVA / "aerix/bridge/LauncherUpdatePolicy.kt").read_text()
-updater = (JAVA / "aerix/bridge/LauncherUpdater.kt").read_text()
+policy = (JAVA / "cleave/bridge/LauncherUpdatePolicy.kt").read_text()
+updater = (JAVA / "cleave/bridge/LauncherUpdater.kt").read_text()
 release_wf = (ROOT / ".github/workflows/release.yml").read_text()
 
 problems = []
@@ -38,7 +38,7 @@ def check(condition, message):
 
 # ── 1. The version, and a versionCode that actually goes up ───────────────────────────────────
 check(version == "2.4.4", f"this release is 2.4.4, version.properties says {version}")
-check("def AERIX_VERSION_CODE = versionParts[0] * 10000 + versionParts[1] * 100 + versionParts[2]"
+check("def CLEAVE_VERSION_CODE = versionParts[0] * 10000 + versionParts[1] * 100 + versionParts[2]"
       in gradle,
       "the versionCode must keep deriving from versionName, or the two can drift apart")
 parts = [int(p) for p in version.split(".")]
@@ -119,11 +119,11 @@ check("2.4.1" in notes,
       "the notes must explain the 2.4.1 multi-signer wall that 2.4.4 solves")
 
 # ── 4. A testing build must not pretend it can update itself ────────────────────────────────
-#    Nightly and debug are net.al.aerixlauncher.debug; every release is net.al.aerixlauncher.
+#    Nightly and debug are com.cleave.launcher.debug; every release is com.cleave.launcher.
 #    Android treats those as two different apps, so no signature makes the release install over a
 #    testing build. Reporting that as "no update available" is the misleading half of the bug.
-updater_src = (JAVA / "aerix/bridge/LauncherUpdater.kt").read_text()
-dialog_src = (JAVA / "aerix/ui/screens/LauncherUpdateDialog.kt").read_text()
+updater_src = (JAVA / "cleave/bridge/LauncherUpdater.kt").read_text()
+dialog_src = (JAVA / "cleave/ui/screens/LauncherUpdateDialog.kt").read_text()
 check("applicationIdSuffix '.debug'" in gradle,
       "the testing channel must still be a different package, which is why it cannot be updated")
 check('fun isTestChannel(): Boolean = BuildConfig.APPLICATION_ID.endsWith(".debug")' in updater_src,
@@ -144,7 +144,7 @@ check('gh release create "v$VERSION"' in release_wf and "--latest" in release_wf
 #    AOSP SigningDetails.checkCapability: a multi-signed install needs an exact set back. 2.4.1 is
 #    multi-signed, so it cannot move to a single-signed release - and the notes must say so instead
 #    of promising an update that Android will refuse.
-policy_src = (JAVA / "aerix/bridge/LauncherUpdatePolicy.kt").read_text()
+policy_src = (JAVA / "cleave/bridge/LauncherUpdatePolicy.kt").read_text()
 check("fun canInstallOver(" in policy_src,
       "the updater must ask the question Android asks, including the multi-signer case")
 check("installed.toSet() == incoming.toSet()" in policy_src,
@@ -162,8 +162,8 @@ check("Uninstalling deletes all of it" not in notes or "sdcard" in notes,
       "if the notes mention uninstalling, they must keep the API-29 path and the data-loss warning")
 # The advice has to describe a button that exists. Export is PojavInstanceBridge.exportModpack, reached
 # from an instance in the Library; if that goes away the notes are telling the user to press nothing.
-bridge_src = (JAVA / "aerix/bridge/PojavInstanceBridge.kt").read_text()
-library_src = (JAVA / "aerix/ui/screens/LibraryScreen.kt").read_text()
+bridge_src = (JAVA / "cleave/bridge/PojavInstanceBridge.kt").read_text()
+library_src = (JAVA / "cleave/ui/screens/LibraryScreen.kt").read_text()
 check("fun exportModpack(" in bridge_src and "PojavInstanceBridge.exportModpack(" in library_src,
       "the notes tell the user to Export their instance, so that button must still exist")
 check("\"saves\"" in library_src,

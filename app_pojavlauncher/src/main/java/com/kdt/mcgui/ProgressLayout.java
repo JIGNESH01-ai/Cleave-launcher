@@ -20,7 +20,7 @@ import net.kdt.pojavlaunch.progresskeeper.ProgressListener;
 import net.kdt.pojavlaunch.progresskeeper.TaskCountListener;
 import java.util.ArrayList;
 
-/** Release launcher's shared task observer, presented as the full-width Aerix download dock. */
+/** Release launcher's shared task observer, presented as the full-width CLEAVE download dock. */
 public class ProgressLayout extends ConstraintLayout implements View.OnClickListener, TaskCountListener {
     public static final String UNPACK_RUNTIME = "unpack_runtime";
     public static final String DOWNLOAD_GAME = "download_minecraft";
@@ -186,7 +186,7 @@ public class ProgressLayout extends ConstraintLayout implements View.OnClickList
             row = new LinearLayout(getContext()); row.setOrientation(LinearLayout.VERTICAL); row.setPadding(dp(8), dp(8), dp(8), dp(12));
             label = new TextView(getContext()); label.setTextSize(13); label.setTextColor(Color.parseColor("#D6E4ED"));
             bar = new ProgressBar(getContext(), null, android.R.attr.progressBarStyleHorizontal);
-            bar.setProgressDrawable(getContext().getDrawable(R.drawable.aerix_download_progress));
+            bar.setProgressDrawable(getContext().getDrawable(R.drawable.cleave_download_progress));
             row.addView(label, new LinearLayout.LayoutParams(-1, -2));
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(-1, dp(6)); p.topMargin = dp(8); row.addView(bar, p);
         }
