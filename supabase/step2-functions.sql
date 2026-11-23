@@ -1,4 +1,4 @@
--- Aerix social layer, step 2 of 3 - functions.
+-- Cleave social layer, step 2 of 3 - functions.
 --
 -- Paste ONE file at a time into Supabase -> SQL Editor -> New query -> Run, then move on to the
 -- next one. Each file on its own is small enough to copy on a phone without cutting a statement

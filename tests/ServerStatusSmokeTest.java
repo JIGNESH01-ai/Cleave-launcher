@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.aerix.servers;
+package net.kdt.pojavlaunch.cleave.servers;
 
 import java.io.*;
 import java.net.*;

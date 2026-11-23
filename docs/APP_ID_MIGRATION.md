@@ -1,12 +1,12 @@
-# Moving from the previous Aerix package ID
+# Moving from the previous Cleave package ID
 
-Aerix now installs as `net.al.aerixlauncher` (`.debug` for testing and `.pub` for nightly builds). Earlier builds used `net.kdt.pojavlaunch` and its variants. Android treats those as different apps, so the new APK installs separately; it does not update or remove the old app.
+Cleave now installs as `com.cleave.launcher` (`.debug` for testing and `.pub` for nightly builds). Earlier builds used `net.kdt.pojavlaunch` and its variants. Android treats those as different apps, so the new APK installs separately; it does not update or remove the old app.
 
 ## Import on Android 10 and newer
 
-1. Install and open the new Aerix app **without uninstalling the old one**.
+1. Install and open the new Cleave app **without uninstalling the old one**.
 2. When the old install is detected, choose **Choose old install**. If you dismiss the prompt, use **Settings → Import data** later.
-3. In Android's folder picker, select the old Aerix/PojavLauncher document-provider root. Do not select the new installation. Confirm the import.
+3. In Android's folder picker, select the old Cleave/PojavLauncher document-provider root. Do not select the new installation. Confirm the import.
 4. Wait for the summary. Existing files in the new installation are kept; conflicting items are skipped rather than overwritten. The source installation is never modified. The importer checks that the copied data and a 2 GB free-space reserve fit before copying.
 5. Check your instances and control maps, sign in again, and download runtimes as needed. Keep the old app until the new installation has launched successfully.
 

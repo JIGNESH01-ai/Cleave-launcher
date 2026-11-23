@@ -69,7 +69,7 @@ always retried at once, because there is nothing else on screen.
 
 ```
 <game home>/latestlog.txt                                     the launch in progress
-<game home>/aerix-crash-logs/aerix-log-<yyyyMMdd-HHmmss>.txt  the one before it
+<game home>/cleave-crash-logs/cleave-log-<yyyyMMdd-HHmmss>.txt  the one before it
 ```
 
 `GameActivity.onCreate` calls `PreviousLaunchLog.archive` immediately before
@@ -97,7 +97,7 @@ Decisions worth knowing before changing this:
 | `tests/game_exit_relaunch_smoke.py` | the `:game` process declaration; one helper owns the gap; both ordinary exit paths use it; no caller restarts and then kills outright; the paths that already waited still wait on the same number |
 | `tests/previous_launch_log_smoke.py` | archive before `Logger.begin`; empty-file no-op; the bound; the swallow-`Throwable`; the viewer lists the archives |
 
-Both run in `aerix-debug.yml` and `release.yml`.
+Both run in `cleave-debug.yml` and `release.yml`.
 
 `previous_launch_log_smoke` asserts the `O_TRUNC` in `stdio_is.c` is still there.
 That archive is a workaround for it, not a replacement: if the truncation ever

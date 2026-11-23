@@ -42,7 +42,7 @@ gh release upload modpacks modpacks/modpacks.json --clobber
 Create the release once, if it does not exist yet (it does, as of the first pack):
 
 ```bash
-gh release create modpacks --title "Modpacks" --notes "The Team Aerix modpack catalogue."
+gh release create modpacks --title "Modpacks" --notes "The Team Cleave modpack catalogue."
 ```
 
 ## How the tab is laid out
@@ -101,21 +101,21 @@ wrong game version.
 A pack installed from the tab must never appear in the library wearing the **Fabric** logo. Two
 things guarantee that, in this order:
 
-1. **The mark bundled in the APK.** `res/drawable/aerix_modpack_<id>.xml` (dashes become
+1. **The mark bundled in the APK.** `res/drawable/cleave_modpack_<id>.xml` (dashes become
    underscores) is drawn onto the instance the moment it is created — offline, and before any
-   download could finish. `AerixModpackIcons.drawableFor()` maps a catalogue id to it.
+   download could finish. `CleaveModpackIcons.drawableFor()` maps a catalogue id to it.
 2. **The artwork the catalogue publishes.** `"icon": "icons/x.png"` is only fetched when this build
    ships no bundled mark for that pack.
 
 Instances created *before* the launcher recorded their pack are repaired automatically: an instance
-whose `modpackSource` is `aerix` is matched to a catalogue entry by name, remembered under
-`aerixPackId`, and given its bundled mark on the next library scan.
+whose `modpackSource` is `cleave` is matched to a catalogue entry by name, remembered under
+`cleavePackId`, and given its bundled mark on the next library scan.
 
 Adding a pack therefore means adding **two** things that share an id: its entry in `modpacks.json`,
-and `res/drawable/aerix_modpack_<id>.xml`. `tests/modpacks_smoke.py` asserts the pairing, so a pack
+and `res/drawable/cleave_modpack_<id>.xml`. `tests/modpacks_smoke.py` asserts the pairing, so a pack
 cannot ship without its mark.
 
-The mark may also be a small bitmap under `res/drawable-nodpi/` — `aerix_modpack_<id>.webp` — for a
+The mark may also be a small bitmap under `res/drawable-nodpi/` — `cleave_modpack_<id>.webp` — for a
 logo that is *lettering* rather than a shape; tracing text into vector paths produces a worse result
 than a 384px WebP, which costs about 4 kB. The smoke test caps a bitmap mark at 40 kB.
 
@@ -132,7 +132,7 @@ instead of reaching the mods folder.
 
 Two layouts install in one press:
 
-* **A Team Aerix instance export** — how these packs are built. A folder containing
+* **A Team Cleave instance export** — how these packs are built. A folder containing
   `mojo_instance.json`, `mods/`, `config/`, `shaderpacks/` and `icon.webp`. The installer reads the
   game version and Fabric loader version out of `mojo_instance.json`
   (`"versionId": "fabric-loader-0.14.25-1.20.1"`), copies the whole folder into a new instance, and
@@ -149,7 +149,7 @@ duplicated download usually arrives as `name.jar (2)`.
 
 Anything else is rejected with a readable message instead of failing silently. Note that
 `CommonApi.checkModpack()` only recognises Modrinth and CurseForge; the instance-export layout is
-detected by `AerixModpackInstaller` before that check runs, which is why these packs install at all.
+detected by `CleaveModpackInstaller` before that check runs, which is why these packs install at all.
 
 ## What an install does
 

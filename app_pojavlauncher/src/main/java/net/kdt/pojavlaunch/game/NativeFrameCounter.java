@@ -8,7 +8,7 @@ public final class NativeFrameCounter {
     private static final boolean AVAILABLE;
     static {
         boolean loaded;
-        try { System.loadLibrary("aerix_frame_counter"); loaded = true; }
+        try { System.loadLibrary("cleave_frame_counter"); loaded = true; }
         catch (UnsatisfiedLinkError | SecurityException e) { loaded = false; }
         AVAILABLE = loaded;
     }

@@ -3,7 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">ely.by</domain>
     </domain-config>
-    <!-- The equipped skin is served to the game from the launcher itself (AerixSkinServer), and
+    <!-- The equipped skin is served to the game from the launcher itself (CleaveSkinServer), and
          the game downloads that texture over http from the loopback interface. Without this the
          platform refuses the connection and the player keeps the default skin. -->
     <domain-config cleartextTrafficPermitted="true">

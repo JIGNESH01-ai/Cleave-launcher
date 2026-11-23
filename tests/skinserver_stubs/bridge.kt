@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.aerix.bridge
+package net.kdt.pojavlaunch.cleave.bridge
 import android.content.Context
 import net.kdt.pojavlaunch.authenticator.accounts.Account
 import java.io.File

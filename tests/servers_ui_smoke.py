@@ -1,8 +1,8 @@
 from pathlib import Path
 root = Path(__file__).resolve().parents[1]
-base = root / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix'
-rail = (base / 'ui/AerixNavigationRail.kt').read_text()
-router = (base / 'ui/AerixLauncherScreen.kt').read_text()
+base = root / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave'
+rail = (base / 'ui/CleaveNavigationRail.kt').read_text()
+router = (base / 'ui/CleaveLauncherScreen.kt').read_text()
 screen = (base / 'ui/screens/ServersScreen.kt').read_text()
 store = (base / 'servers/SavedServers.kt').read_text()
 assert 'LauncherSection.SERVERS' in rail and 'ServersScreen(activity)' in router

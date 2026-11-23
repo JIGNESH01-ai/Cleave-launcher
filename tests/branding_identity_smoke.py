@@ -8,9 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "app_pojavlauncher"
 RES = APP / "src/main/res"
 ACTIVE_PACKAGES = {
-    "net.al.aerixlauncher",
-    "net.al.aerixlauncher.debug",
-    "net.al.aerixlauncher.pub",
+    "com.cleave.launcher",
+    "com.cleave.launcher.debug",
+    "com.cleave.launcher.pub",
 }
 LEGACY_PACKAGES = {
     "net.kdt.pojavlaunch",
@@ -22,38 +22,38 @@ LEGACY_PACKAGES = {
 class BrandingIdentitySmoke(unittest.TestCase):
     def test_application_ids_and_provider_authorities(self):
         gradle = (APP / "build.gradle").read_text()
-        self.assertIn('applicationId "net.al.aerixlauncher"', gradle)
+        self.assertIn('applicationId "com.cleave.launcher"', gradle)
         self.assertNotIn('applicationId "net.kdt.pojavlaunch"', gradle)
         for package in ACTIVE_PACKAGES:
             self.assertIn("'application_package', '" + package + "'", gradle)
         for authority in (
-            "net.al.aerixlauncher.scoped.gamefolder",
-            "net.al.aerixlauncher.scoped.gamefolder.debug",
-            "net.al.aerixlauncher.pub.scoped.gamefolder",
+            "com.cleave.launcher.scoped.gamefolder",
+            "com.cleave.launcher.scoped.gamefolder.debug",
+            "com.cleave.launcher.pub.scoped.gamefolder",
         ):
             self.assertIn("'storageProviderAuthorities', '" + authority + "'", gradle)
         # The source namespace remains stable; applicationId controls the installed APK identity.
         self.assertIn("namespace 'net.kdt.pojavlaunch'", gradle)
 
-        debug_workflow = (ROOT / ".github/workflows/aerix-debug.yml").read_text()
-        self.assertIn("applicationId net.al.aerixlauncher.debug confirmed", debug_workflow)
-        self.assertIn("package: net.al.aerixlauncher.debug", debug_workflow)
+        debug_workflow = (ROOT / ".github/workflows/cleave-debug.yml").read_text()
+        self.assertIn("applicationId com.cleave.launcher.debug confirmed", debug_workflow)
+        self.assertIn("package: com.cleave.launcher.debug", debug_workflow)
         play_workflow = (ROOT / ".github/workflows/android.yml").read_text()
-        self.assertIn("packageName: net.al.aerixlauncher", play_workflow)
+        self.assertIn("packageName: com.cleave.launcher", play_workflow)
 
     def test_existing_signing_and_debug_version_configuration(self):
         gradle = (APP / "build.gradle").read_text()
         self.assertIn('storeFile file("debug.keystore")', gradle)
-        # The release key must NOT be named as a file in the tree. `storeFile file("aerix_release.p12")`
+        # The release key must NOT be named as a file in the tree. `storeFile file("cleave_release.p12")`
         # used to sit here, and this test asserted it - the suite was enforcing the leak, which is how
         # a shipped key stays public long after anyone remembers it was committed. A pinned assertion
         # is only as good as the judgement behind it.
-        self.assertNotIn('storeFile file("aerix_release.p12")', gradle)
-        self.assertIn('System.getenv("AERIX_KEYSTORE_FILE")', gradle)
+        self.assertNotIn('storeFile file("cleave_release.p12")', gradle)
+        self.assertIn('System.getenv("CLEAVE_KEYSTORE_FILE")', gradle)
         self.assertIn("signingConfig signingConfigs.customDebug", gradle)
-        self.assertIn("signingConfig signingConfigs.aerixRelease", gradle)
+        self.assertIn("signingConfig signingConfigs.cleaveRelease", gradle)
         self.assertIn('onVariants(selector().withBuildType("debug"))', gradle)
-        self.assertIn("output.versionCode.set(AERIX_DEBUG_VERSION_CODE)", gradle)
+        self.assertIn("output.versionCode.set(CLEAVE_DEBUG_VERSION_CODE)", gradle)
 
     def test_current_and_previous_apps_can_still_be_discovered(self):
         manifest = ET.parse(APP / "src/main/AndroidManifest.xml").getroot()
@@ -91,7 +91,7 @@ class BrandingIdentitySmoke(unittest.TestCase):
         self.assertGreaterEqual(count, 50)
         strings = ET.parse(RES / "values/strings.xml").getroot()
         self.assertEqual(strings.find("string[@name='lazy_service_default_title']").text,
-                         "Aerix Foreground Service")
+                         "Cleave Foreground Service")
 
     def test_notification_icon_is_used_and_valid_png(self):
         for service in ("GameService", "ProgressService"):

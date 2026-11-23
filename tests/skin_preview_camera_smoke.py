@@ -5,7 +5,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "app_pojavlauncher/src/main/assets/skinview"
-APP = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix"
+APP = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave"
 
 
 class SkinPreviewCameraSmoke(unittest.TestCase):
@@ -38,7 +38,7 @@ class SkinPreviewCameraSmoke(unittest.TestCase):
         self.assertIn("autoRotateResumeTimeout", js)
 
     def test_pointer_camera_updates_are_conflated_and_frame_synchronized(self):
-        component = (APP / "components/AerixPlayerSkin.kt").read_text()
+        component = (APP / "components/CleavePlayerSkin.kt").read_text()
         self.assertIn("Channel<Triple<Int, Int, Int>>(Channel.CONFLATED)", component)
         self.assertIn("withFrameNanos { }", component)
         self.assertNotIn("delay(16)", component)

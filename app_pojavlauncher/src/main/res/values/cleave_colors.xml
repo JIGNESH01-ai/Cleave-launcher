@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CLEAVE glass palette, ported from mirai-launcher- ui/theme/CleaveSurface.kt -->
+<resources>
+    <color name="cleave_canvas">#FF07131D</color>
+    <color name="cleave_splash_bg">#FF000000</color>
+    <color name="cleave_panel">#9D172B3A</color>
+    <color name="cleave_panel_raised">#B0223B4E</color>
+    <color name="cleave_panel_solid">#FF0F2130</color>
+    <color name="cleave_panel_raised_solid">#FF1B3243</color>
+    <color name="cleave_border">#78E6FAFF</color>
+    <color name="cleave_border_soft">#48E6FAFF</color>
+    <color name="cleave_accent">#FF8DEFE0</color>
+    <color name="cleave_action">#FF2A9D92</color>
+    <color name="cleave_on_accent">#FF06201D</color>
+    <color name="cleave_glass_blue">#FF91E9FF</color>
+    <color name="cleave_glass_violet">#FFB7A9FF</color>
+    <color name="cleave_text_primary">#FFF1F6FA</color>
+    <color name="cleave_text_secondary">#FFA8B9C5</color>
+    <color name="cleave_text_muted">#FF7D909D</color>
+    <color name="cleave_success">#FF73E5B0</color>
+    <color name="cleave_warning">#FFFFC777</color>
+    <color name="cleave_danger">#FFFF7189</color>
+</resources>

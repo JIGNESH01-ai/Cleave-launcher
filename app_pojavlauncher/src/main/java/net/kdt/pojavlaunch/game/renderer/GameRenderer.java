@@ -280,7 +280,7 @@ public class GameRenderer {
      * @return whether the renderer setup was successful
      */
     public boolean maybeSetupRenderer() {
-        if (pluginInitializationFailed && currentRenderer instanceof net.kdt.pojavlaunch.aerix.bridge.AerixRendererPlugin) {
+        if (pluginInitializationFailed && currentRenderer instanceof net.kdt.pojavlaunch.cleave.bridge.CleaveRendererPlugin) {
             // The plugin already failed once in this process; do not load it a second time.
             if (requireSelectedRenderer) return false;
             Log.e(TAG, "A plugin failed native initialization in this process; using " + FALLBACK_RENDERER);
@@ -288,7 +288,7 @@ public class GameRenderer {
         }
         setRendererLibraryPath(Tools.NATIVE_LIB_DIR, currentRenderer.librarySearchPath());
         if (!currentRenderer.setupRenderer()) {
-            if (currentRenderer instanceof net.kdt.pojavlaunch.aerix.bridge.AerixRendererPlugin) {
+            if (currentRenderer instanceof net.kdt.pojavlaunch.cleave.bridge.CleaveRendererPlugin) {
                 // A plugin whose provider will not load must not take the whole launch with it:
                 // remember it (so it is not retried in this process) and start the game on the
                 // built-in renderer, exactly like any other renderer that fails to set up.

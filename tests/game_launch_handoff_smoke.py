@@ -3,7 +3,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1] / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch'
 launch = (root / 'lifecycle/ContextAwareDoneListener.java').read_text()
 game = (root / 'game/GameActivity.java').read_text()
-logs = (root / 'aerix/ui/screens/LogScreen.kt').read_text()
+logs = (root / 'cleave/ui/screens/LogScreen.kt').read_text()
 gpu = (root / 'utils/GpuUtils.java').read_text()
 diag = (root / 'lifecycle/LaunchDiagnostics.java').read_text()
 activity = launch.split('public void executeWithActivity(Activity activity)', 1)[1].split('@Override\n    public void executeWithApplication', 1)[0]

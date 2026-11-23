@@ -40,12 +40,12 @@ public class Instance extends DisplayInstance {
     /** "modrinth" or "curseforge" for an instance built from a modpack, null otherwise. */
     public String modpackSource;
     /**
-     * The Team Aerix catalogue pack this instance was installed from, if any.
+     * The Team CLEAVE catalogue pack this instance was installed from, if any.
      *
      * Kept so the mark bundled in res/ can be restored without a network round trip, and so the
      * modpack artwork sweep knows this instance already wears the artwork it is meant to.
      */
-    public String aerixPackId;
+    public String cleavePackId;
 
     protected Instance() {
     }
@@ -54,7 +54,7 @@ public class Instance extends DisplayInstance {
     protected void sanitize() {
         super.sanitize();
         sanitizeArgs();
-        if (net.kdt.pojavlaunch.aerix.bridge.RetiredRendererCleanup.isRetiredTag(renderer)) {
+        if (net.kdt.pojavlaunch.cleave.bridge.RetiredRendererCleanup.isRetiredTag(renderer)) {
             renderer = null; // Inherit the remaining global renderer; preserve all other instance data.
         }
     }
@@ -109,7 +109,7 @@ public class Instance extends DisplayInstance {
 
     public String getLaunchRenderer() {
         if(Tools.isValidString(renderer) &&
-                !net.kdt.pojavlaunch.aerix.bridge.RetiredRendererCleanup.isRetiredTag(renderer)) return renderer;
+                !net.kdt.pojavlaunch.cleave.bridge.RetiredRendererCleanup.isRetiredTag(renderer)) return renderer;
         return LauncherPreferences.PREF_RENDERER;
     }
 

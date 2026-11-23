@@ -3,7 +3,7 @@ import net.kdt.pojavlaunch.utils.RefreshModeChoice.Plan
 import net.kdt.pojavlaunch.utils.RefreshModeChoice.ScreenMode
 
 /**
- * Offline checks for the refresh-rate chooser, compiled and run by `.github/workflows/aerix-debug.yml`
+ * Offline checks for the refresh-rate chooser, compiled and run by `.github/workflows/cleave-debug.yml`
  * with kotlinc and no Android on the classpath - which is the point of keeping the decision in
  * [RefreshModeChoice]. These are the behaviours a max-refresh switch is judged on, and every one of
  * them has been a real bug in a launcher somewhere:

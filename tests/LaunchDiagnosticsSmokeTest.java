@@ -14,7 +14,7 @@ import net.kdt.pojavlaunch.lifecycle.LaunchDiagnostics;
  */
 public class LaunchDiagnosticsSmokeTest {
     public static void main(String[] args) throws Exception {
-        Path dir = Files.createTempDirectory("aerix-launch-test");
+        Path dir = Files.createTempDirectory("cleave-launch-test");
         Context context = new Context(dir.toFile());
         Path file = dir.resolve(LaunchDiagnostics.FILE_NAME);
 

@@ -9,9 +9,9 @@ def source(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
 
-manager = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/vulkan/VulkanDriverManager.java")
-settings = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/SettingsScreen.kt")
-instance_settings = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/InstanceEditorScreen.kt")
+manager = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/vulkan/VulkanDriverManager.java")
+settings = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/SettingsScreen.kt")
+instance_settings = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/InstanceEditorScreen.kt")
 game_activity = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/game/GameActivity.java")
 game_renderer = source("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/game/renderer/GameRenderer.java")
 

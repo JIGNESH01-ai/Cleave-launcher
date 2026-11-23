@@ -3,11 +3,11 @@
 
 This started as a user complaint: "anyone who installs our app gets the virus popup". While checking
 what a scanner might be reacting to, the manifest turned out to be only half the story - the other half
-was `app_pojavlauncher/aerix_release.p12`, tracked in git, with its password in the file next to it:
+was `app_pojavlauncher/cleave_release.p12`, tracked in git, with its password in the file next to it:
 
-    storePassword System.getenv("AERIX_KEYSTORE_PASSWORD") ?: "aerix-release"
+    storePassword System.getenv("CLEAVE_KEYSTORE_PASSWORD") ?: "cleave-release"
 
-and a CI job that never set `AERIX_KEYSTORE_PASSWORD`. So every published release fell through to the
+and a CI job that never set `CLEAVE_KEYSTORE_PASSWORD`. So every published release fell through to the
 default, signed with a key any visitor could download. A signing key is not a build convenience, it is
 the only thing telling a phone that an APK came from us: whoever has it can publish an update that
 every installed copy accepts, with any code inside.
@@ -31,7 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GRADLE = ROOT / "app_pojavlauncher/build.gradle"
 RELEASE_WF = ROOT / ".github/workflows/release.yml"
 BAN_LIST = ROOT / "tests/leaked_cert_fingerprint.txt"
-LEGACY_KEY = ROOT / "tests/aerix_legacy.p12.b64"
+LEGACY_KEY = ROOT / "tests/cleave_legacy.p12.b64"
 failures = []
 
 
@@ -54,16 +54,16 @@ else:
 # allowed. A *.p12 is the shape OUR leaked key had, and nothing legitimate needs one in the tree.
 leaked = [f for f in tracked_files if f.endswith((".p12", ".pkcs12"))]
 check(not leaked, f"release keystores must not be tracked in git: {leaked}")
-check("app_pojavlauncher/aerix_release.p12" not in tracked_files,
+check("app_pojavlauncher/cleave_release.p12" not in tracked_files,
       "the retired key that signed v2.3.0-v2.3.2 must stay out of the tree permanently")
 in_tree = [f for f in tracked_files if f.endswith(".jks")]
 for jks in in_tree:
     body = (ROOT / jks).name
-    check(body != "aerix_release.p12", f"{jks}: unexpected")
+    check(body != "cleave_release.p12", f"{jks}: unexpected")
 gradle_for_pw = GRADLE.read_text()
 for m in re.finditer(r'(\w+) \{\n(?:[^\n]*\n)*?\s+storeFile file\("([^"]+)"\)', gradle_for_pw):
     name, fname = m.group(1), m.group(2)
-    check(name == "customDebug" or fname != "aerix_release.p12",
+    check(name == "customDebug" or fname != "cleave_release.p12",
           f"{name} points at an in-tree keystore that used to be signed with a published password")
 DEBUG_KEY = "app_pojavlauncher/debug.keystore"
 check(DEBUG_KEY in tracked_files,
@@ -73,7 +73,7 @@ other_keystores = [f for f in tracked_files if f.endswith(".keystore") and f != 
 check(not other_keystores, f"other .keystore files are tracked: {other_keystores}")
 
 # ---- 2. no fallback passwords ----
-check('?: "aerix-release"' not in gradle,
+check('?: "cleave-release"' not in gradle,
       "a signing config with a default password will sign a public release with a public key the "
       "moment CI forgets a secret")
 # Walk the signingConfigs blocks by name: only the debug key may have its password in the file,
@@ -88,8 +88,8 @@ for match in re.finditer(r"\n        (\w+) \{\n", blocks):
         check(not literal or name == "customDebug",
               f"signing config {name} hard-codes a password ({pw.strip()}); a release key's password "
               f"must come from the environment so it can never be published by accident")
-check('System.getenv("AERIX_KEYSTORE_FILE")' in gradle,
-      "aerixRelease must read the key location from the environment, so a key cannot be in the tree "
+check('System.getenv("CLEAVE_KEYSTORE_FILE")' in gradle,
+      "cleaveRelease must read the key location from the environment, so a key cannot be in the tree "
       "by accident")
 check("UNSIGNED" in gradle,
       "a release build with no key should warn loudly that the APK is unsigned, because that is what "
@@ -115,14 +115,14 @@ check("REQUIRED" in BAN_LIST.read_text(),
 
 # ---- 4. the release job matches the gradle side ----
 wf = RELEASE_WF.read_text()
-check("secrets.AERIX_KEYSTORE_P12" in wf, "the release job must fetch the key from secrets")
+check("secrets.CLEAVE_KEYSTORE_P12" in wf, "the release job must fetch the key from secrets")
 check("base64 -d" in wf and "RUNNER_TEMP" in wf,
       "the key must be written to the runner temp dir, never into the checkout")
 unpack = wf[wf.index("Unpack the release signing key"):]
 unpack = unpack[:unpack.index("Unpack the retired signing key")]
-check("AERIX_KEYSTORE_P12 is not set" in unpack,
+check("CLEAVE_KEYSTORE_P12 is not set" in unpack,
       "a release with no key configured must stop with an error, not continue unsigned")
-check("::error::AERIX_KEYSTORE_PASSWORD is not set" in unpack,
+check("::error::CLEAVE_KEYSTORE_PASSWORD is not set" in unpack,
       "a key without its password is the same hole wearing a hat")
 check("leaked_cert_fingerprint.txt" in wf, "the workflow must read the fingerprint record")
 check("verify --print-certs" in wf, "the gate must read the real signers out of the built APK")
@@ -130,18 +130,18 @@ check("does not carry the retired certificate" in wf,
       "the gate must fail when the retired certificate is ABSENT, which is the 2.4.3 mistake")
 sign_at = wf.index("Align and sign every APK with both keys")
 collect_at = wf.index("Name the assets after the version")
-sums_at = wf.index("sha256sum Aerix-Launcher-*.apk")
+sums_at = wf.index("sha256sum Cleave-Launcher-*.apk")
 check(sign_at < collect_at < sums_at,
       "re-signing must happen on Gradle's outputs, BEFORE 'Name the assets' copies them into out/ and "
       "hashes them: a checksum taken before a re-sign describes a file nobody downloads, and the "
       "in-app updater verifies those checksums")
 sign_block = wf[sign_at:collect_at]
 check("build/outputs/apk/full/release" in sign_block and "build/outputs/apk/noruntime/release" in sign_block,
-      "the sign step must glob Gradle's output directories - out/Aerix-Launcher-*.apk does not exist "
+      "the sign step must glob Gradle's output directories - out/Cleave-Launcher-*.apk does not exist "
       "yet at that point, and an empty glob would sign nothing without failing")
 check("test \"$signed\" -ge 6" in sign_block,
       "a zero-APK re-sign must be an error, not a successful no-op")
-check("--next-signer" in sign_block and "aerix_legacy.p12" in sign_block,
+check("--next-signer" in sign_block and "cleave_legacy.p12" in sign_block,
       "every release now needs two signers via --next-signer: the multi-signed 2.4.1 cannot otherwise be replaced")
 check("--v3-signing-enabled false" in sign_block and "--min-sdk-version 24" in sign_block,
       "v2 double-signing requires v3 disabled and --min-sdk-version 24")
@@ -166,20 +166,20 @@ check("signingConfig signingConfigs.customDebug" in gradle,
       "lets a testing build install over another one")
 release_block = gradle[gradle.index("        release {"):]
 release_block = release_block[:release_block.index("\n        }")]
-check("signingConfig signingConfigs.aerixRelease" in release_block,
+check("signingConfig signingConfigs.cleaveRelease" in release_block,
       "the release build type must use the rotated key, not the debug one")
 check("customDebug" not in release_block,
       "a release signed with the AOSP debug key is unsigned with extra steps")
 
 # ---- 5b. The signing key step must not die on an undeclared variable ----
-# AERIX_KEYSTORE_ALIAS used to be echoed straight into $GITHUB_ENV without ever being declared into
+# CLEAVE_KEYSTORE_ALIAS used to be echoed straight into $GITHUB_ENV without ever being declared into
 # the step, so `set -eu` aborted the build on any runner that did not define it. That is a release
 # that fails after the key was fine, with an error that names nothing.
-key_env = wf[wf.index("AERIX_KEYSTORE_P12_B64: ${{ secrets.AERIX_KEYSTORE_P12 }}"):]
+key_env = wf[wf.index("CLEAVE_KEYSTORE_P12_B64: ${{ secrets.CLEAVE_KEYSTORE_P12 }}"):]
 key_env = key_env[:key_env.index("run: |")]
-check("AERIX_KEYSTORE_ALIAS_IN: ${{ secrets.AERIX_KEYSTORE_ALIAS }}" in key_env,
+check("CLEAVE_KEYSTORE_ALIAS_IN: ${{ secrets.CLEAVE_KEYSTORE_ALIAS }}" in key_env,
       "the alias secret must be declared into the step that reads it, or `set -u` kills the build")
-check('echo "AERIX_KEYSTORE_ALIAS=${AERIX_KEYSTORE_ALIAS_IN:-aerix}" >> "$GITHUB_ENV"' in wf,
+check('echo "CLEAVE_KEYSTORE_ALIAS=${CLEAVE_KEYSTORE_ALIAS_IN:-cleave}" >> "$GITHUB_ENV"' in wf,
       "the alias must default rather than expand an undeclared variable")
 
 # ---- 6. A release can be cut without an Actions-write token ----

@@ -96,17 +96,17 @@ claim of verified in-game behavior on every Minecraft/mod/keyboard combination.
 
 Runtime code `05e4d9b1665a99bde39e4008a27ca94a4dc72e68`; final regression/build
 source `48c76b627aad77b60af64c574ac7b49a26ae060b`.
-CI https://github.com/entitybrian69-bit/Aerix-launcher/actions/runs/39378154685
+CI https://github.com/JIGNESH01-ai/Cleave-launcher/actions/runs/39378154685
 completed success: launcher regressions (including the real Android
 InputConnection/fake game-backend cases), packaging-policy tests, both APK builds,
 native FPS regression and retired-renderer absence checks all passed.
 
 - Existing-runtime update ZIP (~87 MB):
-  https://github.com/entitybrian69-bit/Aerix-launcher/actions/runs/39378154685/artifacts/12244189142
+  https://github.com/JIGNESH01-ai/Cleave-launcher/actions/runs/39378154685/artifacts/12244189142
 - Full runtime ZIP (~116 MB):
-  https://github.com/entitybrian69-bit/Aerix-launcher/actions/runs/39378154685/artifacts/12244731586
+  https://github.com/JIGNESH01-ai/Cleave-launcher/actions/runs/39378154685/artifacts/12244731586
 - SHA-256:
-  https://github.com/entitybrian69-bit/Aerix-launcher/actions/runs/39378154685/artifacts/12244254019
+  https://github.com/JIGNESH01-ai/Cleave-launcher/actions/runs/39378154685/artifacts/12244254019
 
 Install as an update without uninstalling or clearing game data. The smaller
 variant reuses already installed Java runtimes. No renderer functionality was

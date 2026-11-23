@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 JAVA = ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch'
-MOD = ROOT / 'aerix_client_mod/src/main/java/aerix/client/mod'
+MOD = ROOT / 'cleave_client_mod/src/main/java/cleave/client/mod'
 RES = ROOT / 'app_pojavlauncher/src/main/res'
 
 
@@ -52,8 +52,8 @@ assert 'PREF_GAME_MOUSE_SENSITIVITY' in prefs, 'the split needs a preference of 
 assert 'getInt("gameMouseSensitivity"' in prefs, 'seeded from the stored cursor speed on first run'
 
 # 3. Cursor size has to follow the slider, and be reachable in game.
-assert 'applyAerixPointerPreferences();' in game
-applier = game.split('public void applyAerixPointerPreferences()')[1].split('    }')[0]
+assert 'applyCleavePointerPreferences();' in game
+applier = game.split('public void applyCleavePointerPreferences()')[1].split('    }')[0]
 assert 'setCursorScale(LauncherPreferences.PREF_MOUSESCALE)' in applier
 assert 'public void onCursorScaleChanged()' in game, 'quick settings must push the size at the cursor view'
 dialog = read(JAVA / 'prefs/QuickSettingSideDialog.java')
@@ -73,66 +73,66 @@ values = read(RES / 'values/values.xml')
 assert 'zoom_strength_seekbar_min' in values and 'zoom_strength_seekbar_max' in values
 
 # 4. The FPS counter now has an off switch outside the legacy screens.
-settings_bridge = read(JAVA / 'aerix/bridge/PojavSettingsBridge.kt')
+settings_bridge = read(JAVA / 'cleave/bridge/PojavSettingsBridge.kt')
 assert 'PojavSetting.Toggle("show_fps"' in settings_bridge, 'the FPS display must be togglable'
 
 # 5. The client's in-game half must reach the instance, or nothing below it can work.
-installer = read(JAVA / 'aerix/client/AerixClientInstaller.kt')
-bridge = read(JAVA / 'aerix/client/AerixClientModBridge.kt')
-assert 'AerixClientModBridge.installIfNeeded(context, gameDir)' in installer, \
+installer = read(JAVA / 'cleave/client/CleaveClientInstaller.kt')
+bridge = read(JAVA / 'cleave/client/CleaveClientModBridge.kt')
+assert 'CleaveClientModBridge.installIfNeeded(context, gameDir)' in installer, \
     'the bridge mod has to be copied into the instance before the game starts'
 assert 'assets.open("$ASSET_DIR/$ASSET_JAR")' in bridge
-assert 'INSTALLED_NAME = "aerix_client.jar"' in bridge
-assert 'aerix_status.properties' in bridge, 'the game side has to be able to report back'
+assert 'INSTALLED_NAME = "cleave_client.jar"' in bridge
+assert 'cleave_status.properties' in bridge, 'the game side has to be able to report back'
 gradle = read(ROOT / 'app_pojavlauncher/build.gradle')
-assert 'registrar.projectJarDependency project(":aerix_client_mod"), "components/aerix_client_mod"' in gradle, \
+assert 'registrar.projectJarDependency project(":cleave_client_mod"), "components/cleave_client_mod"' in gradle, \
     'the mod jar must be packaged as an asset, exactly like the forge_installer component'
 
 # 6. Live options: the launcher writes requests, the game applies them and restores the player's own.
-live = read(JAVA / 'aerix/client/ClientLiveOptionsBridge.kt')
-for key in ('aerix_live.properties', 'aerix_server_boost.properties', 'aerix_live_recovery.properties'):
+live = read(JAVA / 'cleave/client/ClientLiveOptionsBridge.kt')
+for key in ('cleave_live.properties', 'cleave_server_boost.properties', 'cleave_live_recovery.properties'):
     assert key in live, 'missing bridge file: ' + key
 assert 'fun zoomTargetFov()' in live and 'PREF_ZOOM_FOV_SCALE' in live
 assert 'fun restoreAtLaunch(gameDir: File)' in live and 'ClientOptionLines.merge' in live
 assert 'fun setZoomHeld' in live
 assert 'activeGameDir' in live
 options = read(MOD / 'ClientLiveOptions.java')
-assert 'static final String LIVE_FILE = "config/aerix_live.properties"' in options
-assert 'static final String BOOST_FILE = "config/aerix_server_boost.properties"' in options
-assert 'static final String RECOVERY_FILE = "config/aerix_live_recovery.properties"' in options
+assert 'static final String LIVE_FILE = "config/cleave_live.properties"' in options
+assert 'static final String BOOST_FILE = "config/cleave_server_boost.properties"' in options
+assert 'static final String RECOVERY_FILE = "config/cleave_live_recovery.properties"' in options
 assert 'private static final String[] BOOST_KEYS' in options
 assert 'multiplayerState' in options, 'the boost must know a server from a local world'
 assert 'if (value < minimum || value > maximum) return false;' in options, \
     'an out-of-range number must be refused rather than written to a stranger option'
 assert 'private Member fovHandle(Object options)' in options, 'a discovered FOV member must be reused to restore'
 
-generator = read(JAVA / 'aerix/client/AerixClientPackGenerator.kt')
+generator = read(JAVA / 'cleave/client/CleaveClientPackGenerator.kt')
 assert 'ClientLiveOptionsBridge.syncAll(instanceGameDir)' in generator, \
     'one owner for the live-props file, so the launch path and the live path agree'
-assert 'gamma=${if (AerixClientStore.fullbrightEnabled) "100.0" else "1.0"}' not in generator, \
+assert 'gamma=${if (CleaveClientStore.fullbrightEnabled) "100.0" else "1.0"}' not in generator, \
     'the gamma value the in-game option actually takes is 0..1'
-input_bridge = read(JAVA / 'aerix/client/AerixClientInputBridge.kt')
+input_bridge = read(JAVA / 'cleave/client/CleaveClientInputBridge.kt')
 zoom = input_bridge.split('fun setZoomActive(holding: Boolean)')[1].split('\n    }')[0]
 assert 'ClientLiveOptionsBridge.setZoomHeld(gameDir, holding)' in zoom, \
     'the ZOOM pill has to reach the game even when no zoom mod is installed'
 assert 'KEYCODE_C' in zoom, 'instances without the bridge mod keep the key press'
-overlay = read(JAVA / 'aerix/client/AerixClientOverlayView.kt')
+overlay = read(JAVA / 'cleave/client/CleaveClientOverlayView.kt')
 assert 'ClientLiveOptionsBridge.activeGameDir = instance.gameDirectory' in overlay
-fullbright = overlay.split('AerixClientStore.fullbrightEnabled = !AerixClientStore.fullbrightEnabled')[1][:160]
+fullbright = overlay.split('CleaveClientStore.fullbrightEnabled = !CleaveClientStore.fullbrightEnabled')[1][:160]
 assert 'ClientLiveOptionsBridge.syncAll()' in fullbright, 'Fullbright must apply without a restart'
 assert 'Server Boost' in overlay
 assert 'ClientLiveOptionsBridge.BoostPreset.values()' in overlay, 'the boost needs a strength choice, not just a switch'
 assert 'describeGameStatus()' in overlay, 'the menu must show what the game side reports'
 assert 'Game side:' in overlay, 'the Capes page must say why a cape is or is not showing'
 assert 'Re-send cape frames to the game' in overlay
-store = read(JAVA / 'aerix/client/AerixClientStore.kt')
+store = read(JAVA / 'cleave/client/CleaveClientStore.kt')
 assert 'var serverBoostEnabled by mutableStateOf(false)' in store
 assert 'var serverBoostPreset by mutableStateOf("MEDIUM")' in store
 assert 'putBoolean("serverBoostEnabled", serverBoostEnabled)' in store
 assert 'putString("serverBoostPreset", serverBoostPreset)' in store
 
 # 7. Cape failures must surface instead of being swallowed by runCatching.
-cosmetics = read(JAVA / 'aerix/client/AerixClientCosmetics.kt')
+cosmetics = read(JAVA / 'cleave/client/CleaveClientCosmetics.kt')
 assert 'var lastCapeSyncStatus' in cosmetics
 sync = cosmetics.split('fun syncCapeAssetsToInstance')[1].split('fun syncCapeAssetsToAllClientInstances')[0]
 assert 'onFailure' in sync and 'lastCapeSyncStatus = "Could not write cape frames' in sync
@@ -158,7 +158,7 @@ assert 'Tools.openPath(context, file, share)' in library, 'the document provider
 controller = read(JAVA / 'recording/RecorderController.kt')
 assert 'RecordingLibrary.view(activity, file, action == 1)' in controller
 service = read(JAVA / 'recording/ScreenRecordingService.kt')
-assert 'Saved to Movies/Aerix' in service
+assert 'Saved to Movies/Cleave' in service
 
 # 9. The bridge must not be blocked on the launch path, and a modpack's mods are not ours to edit.
 launch = installer.split('fun syncLocalAssetsAtGameStart')[1].split('suspend fun scheduleThirdPartyModRepair'
@@ -171,26 +171,26 @@ repair = installer.split('private fun scheduleThirdPartyModRepair')[1].split('\n
 assert 'worker.isDaemon = true' in repair and 'worker.start()' in repair
 
 # 10. The game side of the mod must run on every runtime, not only the older one.
-mod = read(MOD / 'AerixClientMod.java')
+mod = read(MOD / 'CleaveClientMod.java')
 tick = mod.split('private void onRenderThreadTick')[1].split('\n    }')[0]
 assert tick.index('liveOptions.tick(mc, runDir, world)') < tick.index('if (assetSkin)'), \
     'live options used to be skipped entirely by the newer runtime early return'
 assert 'writeStatus(runDir, world, modernCapeBridge.status())' in tick
 assert 'writeStatus(runDir, world, legacyCapeStatus())' in tick
 assert 'syncLiveOptionsIfNeeded' not in mod, 'the old gamma-only path is replaced by the bridge'
-assert 'components/aerix_client_mod' in gradle
+assert 'components/cleave_client_mod' in gradle
 
 # 11. A modpack belongs to the client it was built for, in the search and in the install sheet.
-discover = read(ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/DiscoverScreen.kt')
+discover = read(ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/DiscoverScreen.kt')
 assert 'val result = PojavAssetBridge.searchFollowing(' in discover, \
     'the strict filter used to return an empty page with no explanation at all'
 assert 'PojavAssetBridge.instanceTarget()' in discover, 'the search must start from the instance in use'
 assert 'followsInstance = false' in discover, 'a touched pill has to stop the follow, not fight it'
 assert 'Nothing is tagged' in discover, 'a relaxed page must say that it is relaxed'
-install_match = read(ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/AssetInstallMatch.kt')
+install_match = read(ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/AssetInstallMatch.kt')
 assert 'internal fun loaderMatters(type: AssetType): Boolean = type.supportsLoaderFilter' in install_match, \
     'a Fabric pack in a Forge instance is exactly what the loader check exists to catch'
-asset_bridge = read(ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/bridge/PojavAssetBridge.kt')
+asset_bridge = read(ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/bridge/PojavAssetBridge.kt')
 assert 'class AssetSearch(' in asset_bridge and 'relaxedVersion: Boolean = false' in asset_bridge
 relief = asset_bridge.split('suspend fun searchFollowing')[1].split('private suspend fun')[0]
 assert ': return@withContext AssetSearch(null)' in relief, \
@@ -203,19 +203,19 @@ update = installer.split('suspend fun updateOwnMods')[1].split('private fun jarN
 assert 'instance.modpackSource != null' in update and 'curated.filter { it.slug == "fabric-api" }' in update, \
     'a pack instance may only gain Fabric API, and never lose what it already has'
 assert 'force = !fromPack' in update, 'a pack must not have its version-matched jars replaced'
-assert 'AerixClientModBridge.installIfNeeded(context, gameDir)' in update
+assert 'CleaveClientModBridge.installIfNeeded(context, gameDir)' in update
 assert 'unavailable for $mcVer' in update, 'a Modrinth that did not answer must not read as success'
 assert 'force: Boolean = false' in installer and 'if (!force && fabricId != null' in installer, \
     'only the explicit update may replace a jar already in the folder'
-assert 'AerixClientInstaller.updateOwnMods(activity, installed)' in read(
-    ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/AerixClientScreen.kt'), \
+assert 'CleaveClientInstaller.updateOwnMods(activity, installed)' in read(
+    ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/CleaveClientScreen.kt'), \
     'the button is the only caller; nothing pushes mods on its own'
 
 # 13. What the launcher is doing is visible to friends, and switchable off.
-activity = read(JAVA / 'aerix/social/SocialActivity.kt')
+activity = read(JAVA / 'cleave/social/SocialActivity.kt')
 assert 'SocialBackend.reportLauncherActivity(' in activity
 assert 'Reading $title \u00b7 $kind' in activity and 'Building $clean' in activity
-backend = read(JAVA / 'aerix/social/SocialBackend.kt')
+backend = read(JAVA / 'cleave/social/SocialBackend.kt')
 assert 'fun reportLauncherActivity(line: String?)' in backend
 assert 'launcherActivityLine' in backend and 'shareLauncherActivity = p.getBoolean("share_activity", true)' in backend
 chain = backend.split('private suspend fun syncRichPresenceToServer')[1].split('val wireStatus')[0]
@@ -224,12 +224,12 @@ assert chain.index('activeGameStatusLine') < chain.index('launcherActivityLine')
 assert backend.index('if (!shareLauncherActivity) return') < backend.index('fun toggleBackgroundNotifications'), \
     'Activity Off has to stop the line before it is remembered, not after'
 assert 'toggleShareLauncherActivity(!SocialBackend.shareLauncherActivity)' in read(
-    ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/SocialUi.kt')
+    ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/SocialUi.kt')
 assert 'SocialActivity.reading(project)' in discover and 'SocialActivity.building(' in read(
-    ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/ui/screens/CreateInstanceScreen.kt')
+    ROOT / 'app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/ui/screens/CreateInstanceScreen.kt')
 
 # 14. The chat glitch: no double bubble, no yank to the bottom, no menu on the wrong row.
-chat = read(JAVA / 'aerix/ui/screens/SocialChatViews.kt')
+chat = read(JAVA / 'cleave/ui/screens/SocialChatViews.kt')
 assert 'internal fun socialMessageKey(m: SocialMessage): String' in chat, \
     'the dedup and the list key must agree on what one message is'
 assert chat.count('socialMessageKey(') >= 3, 'the row state needs the same key, or it follows the slot'

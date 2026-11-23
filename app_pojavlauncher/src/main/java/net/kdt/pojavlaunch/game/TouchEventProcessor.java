@@ -23,7 +23,7 @@ public abstract class TouchEventProcessor {
     }
 
     protected void applyMoveVector(float x, float y) {
-        float clientAimMultiplier = net.kdt.pojavlaunch.aerix.client.AerixClientInputBridge.touchAimMultiplier();
+        float clientAimMultiplier = net.kdt.pojavlaunch.cleave.client.CleaveClientInputBridge.touchAimMultiplier();
         // Two settings, two effects: PREF_MOUSESPEED moves the launcher cursor (the GUI pointer,
         // and every screen outside the game), PREF_GAME_MOUSE_SENSITIVITY turns the camera while
         // the game holds the pointer. They used to be the same number.

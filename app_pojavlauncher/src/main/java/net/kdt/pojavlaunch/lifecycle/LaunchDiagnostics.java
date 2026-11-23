@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  * overwritten line lost that; the last few stages plus the reason and the exception survive.
  */
 public final class LaunchDiagnostics {
-    public static final String FILE_NAME = "aerix-launch-status.txt";
+    public static final String FILE_NAME = "cleave-launch-status.txt";
 
     /** Enough to see the run-up to a failure without turning this into a log file. */
     private static final int MAX_ENTRIES = 24;
@@ -47,7 +47,7 @@ public final class LaunchDiagnostics {
         try {
             File file = new File(context.getFilesDir(), FILE_NAME);
             String previous = read(file);
-            StringBuilder text = new StringBuilder("Aerix launch status\n");
+            StringBuilder text = new StringBuilder("CLEAVE launch status\n");
             text.append("Time (UTC milliseconds): ").append(System.currentTimeMillis()).append("\n");
             text.append("Last stage: ").append(stage).append("\n");
             if (error != null) {
@@ -70,7 +70,7 @@ public final class LaunchDiagnostics {
                 output.write(text.toString().getBytes(StandardCharsets.UTF_8));
             }
         } catch (Exception e) {
-            Log.w("AerixLaunch", "Could not save launch status", e);
+            Log.w("CleaveLaunch", "Could not save launch status", e);
         }
     }
 

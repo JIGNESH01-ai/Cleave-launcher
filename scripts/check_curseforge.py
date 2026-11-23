@@ -13,7 +13,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 def probe(base, key, query):
     headers = {"Accept": "application/json", "User-Agent":
-               "AerixLauncher/1.3.4 (+https://github.com/entitybrian69-bit/Aerix-launcher)"}
+               "CleaveLauncher/1.3.4 (+https://github.com/JIGNESH01-ai/Cleave-launcher)"}
     if key:
         headers["x-api-key"] = key
     request = urllib.request.Request(base + "/mods/search?" + urllib.parse.urlencode(query), headers=headers)

@@ -80,8 +80,8 @@ public class ApiHandler {
         conn.setReadTimeout(15000);
         conn.setInstanceFollowRedirects(headers == null || !headers.containsKey("x-api-key"));
         conn.setRequestProperty("Accept", "application/json");
-        conn.setRequestProperty("User-Agent", "AerixLauncher/" + BuildConfig.VERSION_NAME +
-                " (+https://github.com/entitybrian69-bit/Aerix-launcher)");
+        conn.setRequestProperty("User-Agent", "CleaveLauncher/" + BuildConfig.VERSION_NAME +
+                " (+https://github.com/JIGNESH01-ai/Cleave-launcher)");
         addHeaders(conn, headers);
     }
 

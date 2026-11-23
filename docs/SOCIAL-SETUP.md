@@ -1,10 +1,10 @@
-# Aerix Socials — setup guide (phone only)
+# Cleave Socials — setup guide (phone only)
 
 Everything here can be done from the phone browser. Nothing needs a computer.
 Total time: **about 25 minutes**. Do the steps in order; the later ones depend on the earlier ones.
 
 What you end up with: Google sign-in that works for every user of the launcher, a free database that
-holds profiles, friend lists and messages, and an Aerix Nightly APK on your phone that you can test in.
+holds profiles, friend lists and messages, and an Cleave Nightly APK on your phone that you can test in.
 
 ---
 
@@ -13,7 +13,7 @@ holds profiles, friend lists and messages, and an Aerix Nightly APK on your phon
 1. Open **https://supabase.com** in the phone browser.
 2. Tap **Start your project** → **Continue with GitHub** → authorise it.
 3. Tap **New project**.
-   - **Name:** `aerix`
+   - **Name:** `cleave`
    - **Database password:** tap *Generate a password*, then **copy it somewhere safe**. (You will not
      need it for the launcher, but Supabase will not show it again.)
    - **Region:** the closest to you — for Nepal pick **Mumbai (ap-south-1)** or **Singapore**.
@@ -38,9 +38,9 @@ Run them in this order, each time in **SQL Editor → New query → paste → Ru
 Raw links, tap any of them and use GitHub's copy icon:
 
 ```
-https://github.com/entitybrian69-bit/Aerix-launcher/raw/arena/e95bf452-aerix-launcher/supabase/step1-tables.sql
-https://github.com/entitybrian69-bit/Aerix-launcher/raw/arena/e95bf452-aerix-launcher/supabase/step2-functions.sql
-https://github.com/entitybrian69-bit/Aerix-launcher/raw/arena/e95bf452-aerix-launcher/supabase/step3-policies.sql
+https://github.com/JIGNESH01-ai/Cleave-launcher/raw/arena/e95bf452-cleave-launcher/supabase/step1-tables.sql
+https://github.com/JIGNESH01-ai/Cleave-launcher/raw/arena/e95bf452-cleave-launcher/supabase/step2-functions.sql
+https://github.com/JIGNESH01-ai/Cleave-launcher/raw/arena/e95bf452-cleave-launcher/supabase/step3-policies.sql
 ```
 
 Each one finishes with **Success. No rows returned.** Warnings about something already existing are
@@ -75,12 +75,12 @@ that one bypasses the security rules.
 
 The launcher has no Google code in it and never asks me for a client ID. When you tap **Continue with
 Google**, the phone opens the browser on your own Supabase project, Supabase does the talking to
-Google, and the phone comes back into the launcher on `aerix-social://auth`. So everything below is
+Google, and the phone comes back into the launcher on `cleave-social://auth`. So everything below is
 configured **in your Google account and your Supabase dashboard only**.
 
 1. Open **https://console.cloud.google.com** and sign in with the Google account you want to own the
    project.
-2. Top bar → project selector → **New project** → name `Aerix Launcher` → **Create** → make sure it is
+2. Top bar → project selector → **New project** → name `Cleave Launcher` → **Create** → make sure it is
    selected afterwards.
 
 ### 2a. Consent screen
@@ -88,7 +88,7 @@ configured **in your Google account and your Supabase dashboard only**.
 3. Search bar → **OAuth consent screen** (under *APIs & Services*).
 4. Choose **External** → **Create**.
 5. Fill in:
-   - **App name:** `Aerix Launcher`
+   - **App name:** `Cleave Launcher`
    - **User support email:** your email
    - **Developer contact email:** your email
 6. **Save and continue** through *Scopes* (add nothing) and *Test users*.
@@ -100,7 +100,7 @@ configured **in your Google account and your Supabase dashboard only**.
 
 8. **APIs & Services → Credentials → Create credentials → OAuth client ID**.
 9. **Application type: Web application**.
-10. **Name:** `Aerix Supabase`
+10. **Name:** `Cleave Supabase`
 11. Under **Authorised redirect URIs** tap **Add URI** and enter exactly this, with no slash on the
     end:
 
@@ -118,7 +118,7 @@ configured **in your Google account and your Supabase dashboard only**.
 15. Paste the **Client ID** and **Client secret** from step 12 → **Save**.
 16. Still in Authentication → **URL Configuration**:
     - **Site URL:** `https://lktupxfszfefsoyksfkg.supabase.co`
-    - **Redirect URLs → Add URL:** `aerix-social://auth`
+    - **Redirect URLs → Add URL:** `cleave-social://auth`
     - **Save**.
 
 That last line is what brings the phone back into the launcher. Without it Google finishes the
@@ -143,7 +143,7 @@ before upload, skins and capes are not touched.
   not reset it.
 - **People cannot browse you.** A profile is readable only by you and by people already connected
   to you. A stranger can reach you in exactly two ways: typing your exact username, or your invite
-  code (`aerix-social://friend/XXXXXXXX`), copied from your profile with **Copy link**.
+  code (`cleave-social://friend/XXXXXXXX`), copied from your profile with **Copy link**.
 - Weights: **Follow** is one-way and open, **Add friend** still needs an Accept.
 
 ## Part 3 — What I already have
@@ -162,17 +162,17 @@ works with any email. Part 2 only adds the Google button on top.
 
 ## Part 4 — Testing each stage · ~5 minutes each
 
-> **Warning:** the testing build is **Aerix Nightly**, and it installs alongside the current release
-> as `net.al.aerixlauncher.debug`. Older Aerix debug builds used `net.kdt.pojavlaunch.debug`;
+> **Warning:** the testing build is **Cleave Nightly**, and it installs alongside the current release
+> as `com.cleave.launcher.debug`. Older Cleave debug builds used `net.kdt.pojavlaunch.debug`;
 > that is a separate app ID and is not updated by this APK.
 
 1. Tap the APK link I send →
-   `https://github.com/entitybrian69-bit/Aerix-launcher/releases/download/debug-latest/Aerix-Nightly.apk`
+   `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/Cleave-Nightly.apk`
 2. When Android says this same-package app is already installed, choose **Update / Install anyway**. Do **not**
-   uninstall your normal **Aerix Launcher**. An older debug app under `net.kdt.pojavlaunch.debug` is a
+   uninstall your normal **Cleave Launcher**. An older debug app under `net.kdt.pojavlaunch.debug` is a
    different package; keep it until you have imported any data you need.
-3. **Debug builds install next to your normal Aerix** (package `net.al.aerixlauncher.debug`, versus
-   `net.al.aerixlauncher` for release), so you can keep playing on the normal one while testing.
+3. **Debug builds install next to your normal Cleave** (package `com.cleave.launcher.debug`, versus
+   `com.cleave.launcher` for release), so you can keep playing on the normal one while testing.
 4. Open the debug app → **Socials**, the first tile on the Home dashboard. It takes the whole
    window and brings its own sidebar (Friends, Messages, Activity, Settings); the arrow at the top
    of that sidebar comes back to the launcher.
@@ -209,7 +209,7 @@ have.
 | *Continue with Google* shows "provider is not enabled" | the Google provider is not saved in Supabase | Part 2c steps 14–15 |
 | *redirect_uri_mismatch* on Google's page | the callback address has a typo | Part 2b step 11 — `https://lktupxfszfefsoyksfkg.supabase.co/auth/v1/callback`, no trailing slash |
 | Google says *Access blocked: this app has not completed verification* | your Gmail is not in **Test users** | add it in Part 2a step 7 |
-| Google page finishes but the app stays signed out | `aerix-social://auth` is missing from the redirect list | Part 2c step 16 |
+| Google page finishes but the app stays signed out | `cleave-social://auth` is missing from the redirect list | Part 2c step 16 |
 | Buttons cut off at the bottom of the card | old build | install the current APK — the card is a single row now and nothing scrolls |
 | SQL editor says *relation already exists* | you ran the schema twice | harmless, the file is idempotent — it is done |
 

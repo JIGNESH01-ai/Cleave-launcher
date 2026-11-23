@@ -36,16 +36,16 @@ public class InstanceIconProvider {
     static {
         // A plain Minecraft instance is a grass block, not the launcher's own logo: the icon is
         // there to say what the instance *is*, and every instance used to say "PojavLauncher".
-        sStaticIcons.put(FALLBACK_ICON_NAME, R.drawable.aerix_loader_vanilla);
-        sStaticIcons.put("vanilla", R.drawable.aerix_loader_vanilla);
+        sStaticIcons.put(FALLBACK_ICON_NAME, R.drawable.cleave_loader_vanilla);
+        sStaticIcons.put("vanilla", R.drawable.cleave_loader_vanilla);
         sStaticIcons.put("fabric", R.drawable.ic_fabric);
         sStaticIcons.put("fastclient", R.drawable.fastclient_instance);
         sStaticIcons.put("quilt", R.drawable.ic_quilt);
         sStaticIcons.put("forge", R.drawable.ic_forge);
         sStaticIcons.put("neoforge", R.drawable.ic_neoforge);
-        sStaticIcons.put("optifine", R.drawable.aerix_loader_optifine);
-        sStaticIcons.put("legacy_fabric", R.drawable.aerix_loader_legacy_fabric);
-        sStaticIcons.put("bta", R.drawable.aerix_loader_bta);
+        sStaticIcons.put("optifine", R.drawable.cleave_loader_optifine);
+        sStaticIcons.put("legacy_fabric", R.drawable.cleave_loader_legacy_fabric);
+        sStaticIcons.put("bta", R.drawable.cleave_loader_bta);
     }
 
     /**

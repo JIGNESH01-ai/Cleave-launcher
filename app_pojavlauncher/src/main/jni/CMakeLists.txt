@@ -19,15 +19,15 @@ add_subdirectory(glfw)
 
 # Shared by GLFW's game JVM and the Android FPS overlay. No renderer interposition,
 # swap-interval changes, Java callback per frame, or edits to the GLFW submodule.
-add_library(aerix_frame_counter SHARED fps/frame_counter.c fps/frame_counter_jni.c)
-set_target_properties(aerix_frame_counter PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON)
-get_target_property(AERIX_GLFW_SOURCE_DIR glfw SOURCE_DIR)
-set_property(SOURCE "${AERIX_GLFW_SOURCE_DIR}/context.c"
-    DIRECTORY "${AERIX_GLFW_SOURCE_DIR}" APPEND PROPERTY
-    COMPILE_DEFINITIONS "glfwSwapBuffers=aerixOriginalSwapBuffers")
+add_library(cleave_frame_counter SHARED fps/frame_counter.c fps/frame_counter_jni.c)
+set_target_properties(cleave_frame_counter PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON)
+get_target_property(CLEAVE_GLFW_SOURCE_DIR glfw SOURCE_DIR)
+set_property(SOURCE "${CLEAVE_GLFW_SOURCE_DIR}/context.c"
+    DIRECTORY "${CLEAVE_GLFW_SOURCE_DIR}" APPEND PROPERTY
+    COMPILE_DEFINITIONS "glfwSwapBuffers=cleaveOriginalSwapBuffers")
 target_sources(glfw PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/fps/glfw_frame_hook.c")
-target_include_directories(glfw PRIVATE "${AERIX_GLFW_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fps")
-target_link_libraries(glfw PRIVATE aerix_frame_counter)
+target_include_directories(glfw PRIVATE "${CLEAVE_GLFW_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/fps")
+target_link_libraries(glfw PRIVATE cleave_frame_counter)
 
 
 target_compile_options(glfw PRIVATE -Wno-nullability-completeness)

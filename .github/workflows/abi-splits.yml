@@ -10,7 +10,7 @@ name: Release split check
 on:
   workflow_dispatch:
   push:
-    branches: [ "arena/2f1249a3-aerix-launcher" ]
+    branches: [ "arena/2f1249a3-cleave-launcher" ]
     paths: [ ".github/workflows/abi-splits.yml" ]
 
 permissions:
@@ -86,8 +86,8 @@ jobs:
             done
             test "$found" -eq 3 || { echo "::error::$base: expected 3 APKs, got $found"; ls -l "$dir"; exit 1; }
           }
-          collect app_pojavlauncher/build/outputs/apk/full/release "Aerix-Launcher-$VERSION"
-          collect app_pojavlauncher/build/outputs/apk/noruntime/release "Aerix-Launcher-$VERSION-noruntime"
+          collect app_pojavlauncher/build/outputs/apk/full/release "Cleave-Launcher-$VERSION"
+          collect app_pojavlauncher/build/outputs/apk/noruntime/release "Cleave-Launcher-$VERSION-noruntime"
           cd out
           ls -l
           # The sizes are the point of this workflow, so put them in the summary as well.

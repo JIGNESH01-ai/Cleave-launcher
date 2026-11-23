@@ -35,7 +35,7 @@ STUBS = {
         package net.kdt.pojavlaunch;
         import java.io.File;
         public class Tools {
-            public static String NATIVE_LIB_DIR = System.getProperty("aerix.nativeLibDir");
+            public static String NATIVE_LIB_DIR = System.getProperty("cleave.nativeLibDir");
             public static boolean isValidString(String s) { return s != null && !s.isEmpty(); }
             public static JVersionList.Version getVersionInfo(String id) { return null; }
             public static JVersionList.Version getVersionInfo(String id, boolean skip) { return null; }
@@ -223,11 +223,11 @@ with tempfile.TemporaryDirectory() as tmp:
 
 runner = (src / 'net/kdt/pojavlaunch/utils/jre/GameRunner.java').read_text()
 prefs = (src / 'net/kdt/pojavlaunch/prefs/LauncherPreferences.java').read_text()
-create = (src / 'net/kdt/pojavlaunch/aerix/bridge/PojavCreateInstanceBridge.kt').read_text()
-settings = (src / 'net/kdt/pojavlaunch/aerix/ui/screens/SettingsScreen.kt').read_text()
-editor = (src / 'net/kdt/pojavlaunch/aerix/ui/screens/InstanceEditorScreen.kt').read_text()
+create = (src / 'net/kdt/pojavlaunch/cleave/bridge/PojavCreateInstanceBridge.kt').read_text()
+settings = (src / 'net/kdt/pojavlaunch/cleave/ui/screens/SettingsScreen.kt').read_text()
+editor = (src / 'net/kdt/pojavlaunch/cleave/ui/screens/InstanceEditorScreen.kt').read_text()
 classic = (src / 'net/kdt/pojavlaunch/prefs/screens/LauncherPreferenceVideoFragment.java').read_text()
-dialog = (src / 'net/kdt/pojavlaunch/aerix/ui/screens/MobileGluesWarningDialog.kt').read_text()
+dialog = (src / 'net/kdt/pojavlaunch/cleave/ui/screens/MobileGluesWarningDialog.kt').read_text()
 
 # The launch path asks the rule, and only for a renderer the player did not pin.
 assert 'RendererDefaults.launchTagForVersion(versionInfo, versionId)' in runner, \
@@ -244,7 +244,7 @@ assert 'RendererDefaults.launchTagForVersion(null, versionId)' in create, \
     'a newly created instance must carry the renderer its version calls for'
 assert 'applyVersionRenderer(instance)' in create
 # A FastClient profile is named after Fabric, not the game, so it pins the renderer from the build.
-fast = (src / 'net/kdt/pojavlaunch/aerix/fastclient/FastClientInstaller.kt').read_text()
+fast = (src / 'net/kdt/pojavlaunch/cleave/fastclient/FastClientInstaller.kt').read_text()
 assert 'launchTagForVersion(null, build.minecraft)' in fast, \
     'a FastClient instance must carry the renderer its Minecraft build calls for'
 

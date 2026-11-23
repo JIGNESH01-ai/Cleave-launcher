@@ -1,4 +1,4 @@
-package aerix.client.mod;
+package cleave.client.mod;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,9 +22,9 @@ public final class ClientVisualOverridesSmokeTest {
     public static final class Client { public World field_1687 = new World(); }
     private static void check(boolean value) { if (!value) throw new AssertionError(); }
     public static void main(String[] args) throws Exception {
-        File root = Files.createTempDirectory("aerix-visual-test").toFile();
+        File root = Files.createTempDirectory("cleave-visual-test").toFile();
         File config = new File(root, "config"); check(config.mkdir());
-        File settings = new File(config, "aerix_visual.properties");
+        File settings = new File(config, "cleave_visual.properties");
         Files.write(settings.toPath(), "time=DAY\nweather=RAIN\n".getBytes(StandardCharsets.UTF_8));
         Client client = new Client();
         ClientVisualOverrides overrides = new ClientVisualOverrides();

@@ -29,9 +29,9 @@ import androidx.fragment.app.FragmentManager;
 
 import com.kdt.mcgui.ProgressLayout;
 
-import net.kdt.pojavlaunch.aerix.bridge.AerixPreferences;
-import net.kdt.pojavlaunch.aerix.bridge.AerixWindowInsets;
-import net.kdt.pojavlaunch.aerix.ui.AerixMainFragment;
+import net.kdt.pojavlaunch.cleave.bridge.CleavePreferences;
+import net.kdt.pojavlaunch.cleave.bridge.CleaveWindowInsets;
+import net.kdt.pojavlaunch.cleave.ui.CleaveMainFragment;
 import net.kdt.pojavlaunch.authenticator.accounts.Account;
 import net.kdt.pojavlaunch.authenticator.accounts.Accounts;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
@@ -40,8 +40,8 @@ import net.kdt.pojavlaunch.extra.ExtraListener;
 import net.kdt.pojavlaunch.fragments.MainMenuFragment;
 import net.kdt.pojavlaunch.fragments.MicrosoftLoginFragment;
 import net.kdt.pojavlaunch.fragments.SelectAuthFragment;
-import net.kdt.pojavlaunch.aerix.ui.AerixNav;
-import net.kdt.pojavlaunch.aerix.ui.LauncherSection;
+import net.kdt.pojavlaunch.cleave.ui.CleaveNav;
+import net.kdt.pojavlaunch.cleave.ui.LauncherSection;
 import net.kdt.pojavlaunch.instances.Instance;
 import net.kdt.pojavlaunch.instances.InstanceInstaller;
 import net.kdt.pojavlaunch.instances.Instances;
@@ -76,7 +76,7 @@ public class LauncherActivity extends BaseActivity {
     private static ActivityResultLauncher<String> mRequestPermissionLauncher;
     private ActivityResultLauncher<Uri> mMigrationTreeLauncher;
 
-    /* Aerix: the floating home button is shown only while a Pojav screen sits above the Aerix shell */
+    /* CLEAVE: the floating home button is shown only while a Pojav screen sits above the CLEAVE shell */
     private final FragmentManager.OnBackStackChangedListener mBackStackListener = this::updateHomeButton;
 
     /* Listener for the back button in settings */
@@ -91,10 +91,10 @@ public class LauncherActivity extends BaseActivity {
         FragmentManager manager = getSupportFragmentManager();
         if(!value || manager.isStateSaved()) return false;
         Fragment fragment = manager.findFragmentById(mFragmentView.getId());
-        // Allow starting the add account only from the Aerix shell or the classic main menu
-        if(fragment instanceof AerixMainFragment) {
-            // The Aerix shell shows its own Add Account page (Microsoft / Ely.by / Offline)
-            AerixNav.INSTANCE.navigate(LauncherSection.ADD_ACCOUNT);
+        // Allow starting the add account only from the CLEAVE shell or the classic main menu
+        if(fragment instanceof CleaveMainFragment) {
+            // The CLEAVE shell shows its own Add Account page (Microsoft / Ely.by / Offline)
+            CleaveNav.INSTANCE.navigate(LauncherSection.ADD_ACCOUNT);
             return false;
         }
         if(!(fragment instanceof MainMenuFragment)) return false;
@@ -103,7 +103,7 @@ public class LauncherActivity extends BaseActivity {
         return false;
     };
 
-    /* Listener for the floating home button: settings now live in the Aerix shell */
+    /* Listener for the floating home button: settings now live in the CLEAVE shell */
     private final View.OnClickListener mHomeButtonListener = v -> {
         FragmentManager manager = getSupportFragmentManager();
         if(manager.isStateSaved()) return;
@@ -162,8 +162,8 @@ public class LauncherActivity extends BaseActivity {
     };
     @Override
     protected boolean shouldIgnoreNotch() {
-        // The Aerix shell draws its wallpaper under the whole display and keeps the rail and the
-        // pages inside the safe area itself (AerixWindowInsets), so the window may use the cutout.
+        // The CLEAVE shell draws its wallpaper under the whole display and keeps the rail and the
+        // pages inside the safe area itself (CleaveWindowInsets), so the window may use the cutout.
         // Following the "Ignore notch" video preference here reserved a strip of the display for
         // the camera and painted it black next to the UI.
         return true;
@@ -171,8 +171,8 @@ public class LauncherActivity extends BaseActivity {
 
     @Override
     public boolean setFullscreen() {
-        // Aerix "launcherFullScreen"; BaseActivity passes it to Tools.setInsetsMode
-        return AerixPreferences.INSTANCE.getFullScreen();
+        // CLEAVE "launcherFullScreen"; BaseActivity passes it to Tools.setInsetsMode
+        return CleavePreferences.INSTANCE.getFullScreen();
     }
 
     /**
@@ -184,36 +184,36 @@ public class LauncherActivity extends BaseActivity {
     private void handleSocialSignIn(Intent intent) {
         if (intent == null || intent.getData() == null) return;
         String data = intent.getData().toString();
-        // aerix-social://chat/dm/<peerId> or aerix-social://chat/party/<partyId> from notification tap
-        if (data.startsWith("aerix-social://chat/dm/")) {
-            String peerId = android.net.Uri.decode(data.substring("aerix-social://chat/dm/".length()));
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.attach(getApplicationContext());
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.requestOpenConversation(peerId, null);
-            net.kdt.pojavlaunch.aerix.ui.AerixNav.INSTANCE
-                    .navigate(net.kdt.pojavlaunch.aerix.ui.LauncherSection.SOCIALS);
+        // cleave-social://chat/dm/<peerId> or cleave-social://chat/party/<partyId> from notification tap
+        if (data.startsWith("cleave-social://chat/dm/")) {
+            String peerId = android.net.Uri.decode(data.substring("cleave-social://chat/dm/".length()));
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.attach(getApplicationContext());
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.requestOpenConversation(peerId, null);
+            net.kdt.pojavlaunch.cleave.ui.CleaveNav.INSTANCE
+                    .navigate(net.kdt.pojavlaunch.cleave.ui.LauncherSection.SOCIALS);
             return;
         }
-        if (data.startsWith("aerix-social://chat/party/")) {
-            String partyId = android.net.Uri.decode(data.substring("aerix-social://chat/party/".length()));
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.attach(getApplicationContext());
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.requestOpenConversation(null, partyId);
-            net.kdt.pojavlaunch.aerix.ui.AerixNav.INSTANCE
-                    .navigate(net.kdt.pojavlaunch.aerix.ui.LauncherSection.SOCIALS);
+        if (data.startsWith("cleave-social://chat/party/")) {
+            String partyId = android.net.Uri.decode(data.substring("cleave-social://chat/party/".length()));
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.attach(getApplicationContext());
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.requestOpenConversation(null, partyId);
+            net.kdt.pojavlaunch.cleave.ui.CleaveNav.INSTANCE
+                    .navigate(net.kdt.pojavlaunch.cleave.ui.LauncherSection.SOCIALS);
             return;
         }
-        // aerix-social://friend/CODE opens that player's card inside the social space.
-        if (data.startsWith("aerix-social://friend/")) {
-            String code = data.substring("aerix-social://friend/".length());
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.attach(getApplicationContext());
-            net.kdt.pojavlaunch.aerix.social.SocialBackend.acceptInvite(code);
-            net.kdt.pojavlaunch.aerix.ui.AerixNav.INSTANCE
-                    .navigate(net.kdt.pojavlaunch.aerix.ui.LauncherSection.SOCIALS);
+        // cleave-social://friend/CODE opens that player's card inside the social space.
+        if (data.startsWith("cleave-social://friend/")) {
+            String code = data.substring("cleave-social://friend/".length());
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.attach(getApplicationContext());
+            net.kdt.pojavlaunch.cleave.social.SocialBackend.acceptInvite(code);
+            net.kdt.pojavlaunch.cleave.ui.CleaveNav.INSTANCE
+                    .navigate(net.kdt.pojavlaunch.cleave.ui.LauncherSection.SOCIALS);
             return;
         }
-        if (!data.startsWith(net.kdt.pojavlaunch.aerix.social.SocialBackend.OAUTH_REDIRECT)) return;
-        net.kdt.pojavlaunch.aerix.social.SocialBackend.attach(getApplicationContext());
-        boolean pending = net.kdt.pojavlaunch.aerix.social.SocialBackend.completeBrowserSession(data, success ->
-                Toast.makeText(getApplicationContext(), success ? "Signed in to Aerix" : "Google sign-in did not complete",
+        if (!data.startsWith(net.kdt.pojavlaunch.cleave.social.SocialBackend.OAUTH_REDIRECT)) return;
+        net.kdt.pojavlaunch.cleave.social.SocialBackend.attach(getApplicationContext());
+        boolean pending = net.kdt.pojavlaunch.cleave.social.SocialBackend.completeBrowserSession(data, success ->
+                Toast.makeText(getApplicationContext(), success ? "Signed in to CLEAVE" : "Google sign-in did not complete",
                         Toast.LENGTH_LONG).show());
         if (!pending) Toast.makeText(this, "Sign-in did not complete; please try again", Toast.LENGTH_LONG).show();
     }
@@ -228,10 +228,10 @@ public class LauncherActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Must run before BaseActivity.onCreate, which reads setFullscreen()
-        AerixPreferences.INSTANCE.init(getApplicationContext());
+        CleavePreferences.INSTANCE.init(getApplicationContext());
         super.onCreate(savedInstanceState);
-        net.kdt.pojavlaunch.aerix.social.SocialBackend.attach(getApplicationContext());
-        net.kdt.pojavlaunch.aerix.social.SocialMessagingService.markLauncherSessionOpened(getApplicationContext());
+        net.kdt.pojavlaunch.cleave.social.SocialBackend.attach(getApplicationContext());
+        net.kdt.pojavlaunch.cleave.social.SocialMessagingService.markLauncherSessionOpened(getApplicationContext());
         handleSocialSignIn(getIntent());
         // The decor receives the insets before the content view consumes them for its padding.
         // Publishing them lets the Compose shell keep the rail and the pages on the safe area
@@ -246,13 +246,13 @@ public class LauncherActivity extends BaseActivity {
             // bezel area, so content that reaches the physical edge is covered by the frame anyway;
             // the rail carries its own padding, which keeps its tap targets clear of the hole.
             Insets cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
-            Insets bars = AerixPreferences.INSTANCE.getFullScreen()
+            Insets bars = CleavePreferences.INSTANCE.getFullScreen()
                     ? Insets.NONE
                     : insets.getInsets(WindowInsetsCompat.Type.systemBars());
             // androidx.core's Insets publishes plain fields, not getters.
             int top = Math.max(cutout.top, bars.top);
             int bottom = Math.max(cutout.bottom, bars.bottom);
-            AerixWindowInsets.INSTANCE.update(bars.left, top, bars.right, bottom);
+            CleaveWindowInsets.INSTANCE.update(bars.left, top, bars.right, bottom);
             return insets;
         });
         setContentView(R.layout.activity_pojav_launcher);
@@ -277,7 +277,7 @@ public class LauncherActivity extends BaseActivity {
                     if(!isAllowed) Tools.runOnUiThread(() -> Toast.makeText(this, R.string.notification_permission_toast, Toast.LENGTH_LONG).show());
                 }
         );
-        // First-time notification ON/OFF choice is handled by Aerix FirstRunNotificationPopupHost.
+        // First-time notification ON/OFF choice is handled by CLEAVE FirstRunNotificationPopupHost.
         if(LauncherPreferences.PREF_MIGRATION_NOTICE)
             PojavApplication.sExecutorService.submit(this::checkPreviousInstalls);
 
@@ -336,7 +336,7 @@ public class LauncherActivity extends BaseActivity {
         intent.removeExtra(Tools.EXTRA_SWITCH_INSTANCE);
         intent.removeExtra(Tools.EXTRA_LAUNCH_SERVER);
         if (launchServer != null && !launchServer.isEmpty()) {
-            net.kdt.pojavlaunch.aerix.bridge.PojavLaunchBridge.setPendingServerAddress(launchServer);
+            net.kdt.pojavlaunch.cleave.bridge.PojavLaunchBridge.setPendingServerAddress(launchServer);
         }
         // After the first layout: the launch pipeline reads preferences the shell sets up, and the
         // progress overlay has to exist before it is asked to show itself.
@@ -383,12 +383,12 @@ public class LauncherActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onLauncherStarted(this);
+        net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onLauncherStarted(this);
     }
 
     @Override
     protected void onStop() {
-        net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.onLauncherStopped(this);
+        net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.onLauncherStopped(this);
         super.onStop();
     }
 
@@ -397,7 +397,7 @@ public class LauncherActivity extends BaseActivity {
         super.onResume();
         ContextExecutor.setActivity(this);
         // The game activity is a separate process and may have changed Client settings.
-        net.kdt.pojavlaunch.aerix.client.AerixClientStore.INSTANCE.reload(getApplicationContext());
+        net.kdt.pojavlaunch.cleave.client.CleaveClientStore.INSTANCE.reload(getApplicationContext());
         InstanceInstaller.postInstallCheck(this);
     }
 
@@ -583,7 +583,7 @@ public class LauncherActivity extends BaseActivity {
     /** Stuff all the view boilerplate here */
     private void bindViews(){
         mFragmentView = findViewById(R.id.container_fragment);
-        mHomeButton = findViewById(R.id.aerix_home_button);
+        mHomeButton = findViewById(R.id.cleave_home_button);
         mProgressLayout = findViewById(R.id.progress_layout);
     }
 }

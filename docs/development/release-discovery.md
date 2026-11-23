@@ -9,7 +9,7 @@ in the game activity. Errors, drafts, prereleases, missing edition APKs, equal
 versions and older versions do not automatically open a dialog.
 
 Cancel, outside/back dismissal and accepting Download acknowledge that release's
-numeric version in `aerix_update_notices` shared preferences. Acknowledgement is
+numeric version in `cleave_update_notices` shared preferences. Acknowledgement is
 monotonic: a release rollback cannot make an old version prompt again. Displaying
 an offer alone does not acknowledge it. Accepting a download keeps the current
 window open for progress/installation, but suppresses future automatic offers of
@@ -30,7 +30,7 @@ benchmarks, download counts or a current "latest file".
 Initial source, checked 2026-10-19:
 https://www.curseforge.com/minecraft/mc-mods/aetherium-fabric
 
-Aetherium (Fabric), Team_Aerix: client-side Fabric, no Fabric API requirement;
+Aetherium (Fabric), Team_Cleave: client-side Fabric, no Fabric API requirement;
 separate exact-version files; incompatible with Sodium, Embeddium, Rubidium and
 OptiFine. Feature/performance descriptions are attributed project claims, not
 launcher benchmarks. The project is LGPL-3.0-only; the icon remains the project's

@@ -1,4 +1,4 @@
-package aerix.client.mod;
+package cleave.client.mod;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,9 +24,9 @@ public final class ClientAdaptiveDistanceSmokeTest {
     public static final class NamedClient { public NamedOptions options = new NamedOptions(); }
     static void check(boolean v) { if (!v) throw new AssertionError(); }
     public static void main(String[] args) throws Exception {
-        File dir = Files.createTempDirectory("aerix-distance-test").toFile();
+        File dir = Files.createTempDirectory("cleave-distance-test").toFile();
         File config = new File(dir, "config"); check(config.mkdir());
-        File settings = new File(config, "aerix_adaptive_distance.properties");
+        File settings = new File(config, "cleave_adaptive_distance.properties");
         Files.write(settings.toPath(), "distance=6\n".getBytes(StandardCharsets.UTF_8));
         Client c = new Client(); OldOptions old = new OldOptions(); c.field_1690 = old;
         ClientAdaptiveDistance bridge = new ClientAdaptiveDistance();

@@ -120,7 +120,7 @@ for path in SRC.rglob("*.java"):
 
 # ---- 6. the paths that already got it right still wait ----
 game_activity = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/game/GameActivity.java")
-bridge = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix/bridge/PojavLaunchBridge.kt")
+bridge = read("app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave/bridge/PojavLaunchBridge.kt")
 check("postDelayed(Tools::fullyExit, 700L)" in game_activity,
       "GameActivity.switchAccount must still wait 700 ms - it is the precedent this fix copies, and "
       "its comment is the only written explanation of the race.")

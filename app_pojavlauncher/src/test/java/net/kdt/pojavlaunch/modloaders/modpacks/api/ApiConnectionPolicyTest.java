@@ -18,7 +18,7 @@ public class ApiConnectionPolicyTest {
         assertEquals(8000, connection.getConnectTimeout());
         assertEquals(15000, connection.getReadTimeout());
         assertEquals("application/json", connection.getRequestProperty("Accept"));
-        assertTrue(connection.getRequestProperty("User-Agent").startsWith("AerixLauncher/"));
+        assertTrue(connection.getRequestProperty("User-Agent").startsWith("CleaveLauncher/"));
         assertTrue(connection.getInstanceFollowRedirects());
     }
     @Test public void authenticatedGetCannotRedirectItsKeyToAnotherHost() throws Exception {

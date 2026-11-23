@@ -1,4 +1,4 @@
--- Aerix Launcher social layer — schema for the free Supabase tier.
+-- Cleave Launcher social layer — schema for the free Supabase tier.
 --
 -- Paste this whole file into Supabase -> SQL Editor -> New query -> Run, once.
 -- It is idempotent: running it again does not break anything.

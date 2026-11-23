@@ -9,8 +9,8 @@ import xml.etree.ElementTree as ET
 root = Path(__file__).resolve().parents[1]
 app = root / 'app_pojavlauncher/src/main'
 java = app / 'java/net/kdt/pojavlaunch'
-manager = (java / 'aerix/theme/AerixFonts.kt').read_text()
-choices = re.findall(r'AerixFontChoice\("([^"]+)",\s*"([^"]+)"(?:,\s*R\.font\.([a-z0-9_]+))?\)', manager)
+manager = (java / 'cleave/theme/CleaveFonts.kt').read_text()
+choices = re.findall(r'CleaveFontChoice\("([^"]+)",\s*"([^"]+)"(?:,\s*R\.font\.([a-z0-9_]+))?\)', manager)
 assert len(choices) == 35 and len({item[0] for item in choices}) == 35
 assert {'default','minecraft','pressstart2p','silkscreen','vt323'} <= {item[0] for item in choices}
 assert 'SharedPreferences' in manager and 'getString(KEY' in manager and 'putString(KEY, choice.id)' in manager
@@ -27,15 +27,15 @@ for font in manifest['fonts']:
     data = (app / 'res/font' / (font['resource'] + '.ttf')).read_bytes()
     assert hashlib.sha256(data).hexdigest() == font['sha256']
     assert b'O' in (base / font['license']).read_bytes() and (base / font['license']).stat().st_size > 1000
-ui = (java / 'aerix/ui/screens/SettingsScreen.kt').read_text()
-theme = (java / 'aerix/theme/AerixTheme.kt').read_text()
-assert 'AerixNav.TAB_STYLES' in ui and 'FontStylesTab(activity)' in ui
-assert 'fontFamily = previewFamily' in ui and 'AerixFonts.select(activity, choice)' in ui
-assert 'aerixTypography(AerixFonts.selected().family())' in theme
+ui = (java / 'cleave/ui/screens/SettingsScreen.kt').read_text()
+theme = (java / 'cleave/theme/CleaveTheme.kt').read_text()
+assert 'CleaveNav.TAB_STYLES' in ui and 'FontStylesTab(activity)' in ui
+assert 'fontFamily = previewFamily' in ui and 'CleaveFonts.select(activity, choice)' in ui
+assert 'cleaveTypography(CleaveFonts.selected().family())' in theme
 assert 'fontFamily = family' in theme
-styles = ET.parse(app / 'res/values/aerix_font_styles.xml').getroot()
-assert {s.get('name') for s in styles.findall('style')} == {'AerixFont_' + key for key, _, _ in choices}
-assert 'AerixFonts.applyNativeTheme(this)' in (java / 'BaseActivity.java').read_text()
+styles = ET.parse(app / 'res/values/cleave_font_styles.xml').getroot()
+assert {s.get('name') for s in styles.findall('style')} == {'CleaveFont_' + key for key, _, _ in choices}
+assert 'CleaveFonts.applyNativeTheme(this)' in (java / 'BaseActivity.java').read_text()
 assert 'activity.theme.applyStyle(style, true)' in manager
 ns = '{http://schemas.android.com/apk/res/android}'
 editor = ET.parse(app / 'res/layout/activity_custom_controls.xml').getroot()

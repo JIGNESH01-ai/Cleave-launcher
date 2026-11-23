@@ -26,7 +26,7 @@ JAVA = ROOT / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch"
 panel = (JAVA / "recording/RecorderPanel.kt").read_text()
 controller = (JAVA / "recording/RecorderController.kt").read_text()
 ui_state = (JAVA / "recording/RecorderUiState.kt").read_text()
-overlay = (JAVA / "aerix/client/AerixClientOverlayView.kt").read_text()
+overlay = (JAVA / "cleave/client/CleaveClientOverlayView.kt").read_text()
 activity = (JAVA / "game/GameActivity.java").read_text()
 options = (JAVA / "recording/RecordingOptions.kt").read_text()
 
@@ -66,8 +66,8 @@ check("RecordingOptions.supported(" in controller,
       "the controller is what enumerates encoders; the panel must not do it itself")
 
 # 3. The panel is a window of its own, owned by the controller.
-#    It used to be hosted inside AerixClientOverlayView, which is visibility=GONE on any instance
-#    that is not an Aerix Client - so on a vanilla instance the recorder set "open", drew nothing,
+#    It used to be hosted inside CleaveClientOverlayView, which is visibility=GONE on any instance
+#    that is not an Cleave Client - so on a vanilla instance the recorder set "open", drew nothing,
 #    and looked broken. A dialog belongs to the activity, so it opens from wherever it is reached.
 check("RecorderPanel(" not in overlay,
       "the panel must not be hosted by the overlay: that view is GONE on non-Client instances")
@@ -117,7 +117,7 @@ used = {
     "findViewTreeSavedStateRegistryOwner", "setViewTreeSavedStateRegistryOwner",
     "OnBackPressedDispatcherOwner", "LifecycleOwner", "ViewModelStoreOwner",
     "SavedStateRegistryOwner", "ViewCompositionStrategy", "ComposeView",
-    "AerixLauncherTheme", "Dialog", "Context", "KeyEvent",
+    "CleaveLauncherTheme", "Dialog", "Context", "KeyEvent",
 }
 imported_names = {line[len("import "):].strip().split(".")[-1] for line in import_lines}
 missing = sorted(sym for sym in used if sym not in imported_names and sym in controller)
@@ -146,9 +146,9 @@ check(len(dialogs) <= 1,
       "the options are the panel now; a stock dialog must not also offer settings")
 
 # 7. The activity exposes the controller the panel reads from.
-check("public net.kdt.pojavlaunch.recording.RecorderController getAerixRecorder()" in activity,
+check("public net.kdt.pojavlaunch.recording.RecorderController getCleaveRecorder()" in activity,
       "GameActivity must expose its recorder for the panel")
-check("getAerixRecorder()" in activity.split("public net.kdt.pojavlaunch.recording.RecorderController")[1],
+check("getCleaveRecorder()" in activity.split("public net.kdt.pojavlaunch.recording.RecorderController")[1],
       "the activity must return the controller the panel reads from")
 check("val savedQuality" in controller and "val savedFps" in controller,
       "the panel opens on the last used settings, so they must be readable")
@@ -163,7 +163,7 @@ for source in ("GAME", "MICROPHONE", "BOTH", "NONE"):
 check("fillMaxWidth(0.92f)" in panel, "the panel must be inset from the screen edges")
 
 # 10. Stay wired into CI.
-for workflow in ("aerix-debug.yml", "release.yml"):
+for workflow in ("cleave-debug.yml", "release.yml"):
     text = (ROOT / ".github/workflows" / workflow).read_text()
     check("recorder_panel_smoke.py" in text, f"{workflow} must run this check")
 

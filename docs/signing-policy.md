@@ -1,4 +1,4 @@
-# Aerix signing policy
+# Cleave signing policy
 
 **Status: from 2.4.4 every published APK is signed with two certificates, permanently.**
 
@@ -51,7 +51,7 @@ must not be reverted by a contributor or an assistant on their own initiative.
 
 ## What we accept, in plain words
 
-- The retired private key is **public**. It is committed at `tests/aerix_legacy.p12.b64` with the
+- The retired private key is **public**. It is committed at `tests/cleave_legacy.p12.b64` with the
   default password in the release workflow, and it was in this repository's history before that.
 - Anyone with repository access can therefore build an APK that installs over a player's launcher.
 - The fingerprint gate is **inverted**: it now fails the build if the retired certificate is *missing*,
@@ -59,11 +59,11 @@ must not be reverted by a contributor or an assistant on their own initiative.
 
 ## Rules that still hold
 
-- The **current** key stays a secret: `AERIX_KEYSTORE_P12` / `AERIX_KEYSTORE_PASSWORD`, alias `aerix`,
+- The **current** key stays a secret: `CLEAVE_KEYSTORE_P12` / `CLEAVE_KEYSTORE_PASSWORD`, alias `cleave`,
   never in the tree, never in a commit, never in chat.
 - Every APK must carry **exactly two** signers: the current key and the retired one. A third signer is
   an unknown party and fails the build.
 - `versionCode` must always increase (`major*10000 + minor*100 + patch`), or the platform refuses the
   update before the signature is ever considered.
-- Debug and nightly builds remain `net.al.aerixlauncher.debug` and are never updatable from a release,
+- Debug and nightly builds remain `com.cleave.launcher.debug` and are never updatable from a release,
   which is correct and permanent: they are a different package.

@@ -3,7 +3,7 @@ package net.kdt.pojavlaunch.customcontrols.handleview;
 import android.content.Context;
 
 /**
- * Whether the floating Aerix logo is drawn while the player is playing.
+ * Whether the floating CLEAVE logo is drawn while the player is playing.
  *
  * <p>The logo is one of the few things a player can neither move out of the way for good nor remove:
  * it sits over the game, over the controls and over whatever the game is drawing at that spot. This

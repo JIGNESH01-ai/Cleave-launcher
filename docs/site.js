@@ -1,5 +1,5 @@
 /* ============================================================================
-   Aerix Launcher — site script
+   Cleave Launcher — site script
 
    Five small jobs, no dependencies, no build step:
      1. keep the download links and their sizes true to the newest release,
@@ -16,7 +16,7 @@
 (function () {
   'use strict';
 
-  var REPO = 'entitybrian69-bit/Aerix-launcher';
+  var REPO = 'JIGNESH01-ai/Cleave-launcher';
   var LATEST_API = 'https://api.github.com/repos/' + REPO + '/releases/latest';
   var API = 'https://api.github.com/repos/' + REPO + '/releases?per_page=15';
 

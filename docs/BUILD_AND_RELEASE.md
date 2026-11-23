@@ -1,40 +1,40 @@
-# Aerix Nightly and public releases
+# Cleave Nightly and public releases
 
-All non-release updates and testing happen on the **Aerix Nightly** APK. The public
+All non-release updates and testing happen on the **Cleave Nightly** APK. The public
 APK is only built when the owner asks for a release and confirms it.
 
-## The Aerix Nightly APK
+## The Cleave Nightly APK
 
 | | |
 |---|---|
 | Release tag | `debug-latest` (prerelease on GitHub Releases) |
-| Direct APK | `https://github.com/entitybrian69-bit/Aerix-launcher/releases/download/debug-latest/Aerix-Nightly.apk` |
-| Commit-stamped APK | `Aerix-Nightly-<commit>.apk` on the same release |
-| Checksum | `https://github.com/entitybrian69-bit/Aerix-launcher/releases/download/debug-latest/Aerix-Nightly.apk.sha256` |
-| Build info | `https://github.com/entitybrian69-bit/Aerix-launcher/releases/download/debug-latest/NIGHTLY_BUILD.txt` (commit, versionCode, sha256) |
-| CI workflow | **Aerix Nightly (testing)** (`aerix-debug.yml`) |
-| CI artifact | `aerix-nightly-apk` |
+| Direct APK | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/Cleave-Nightly.apk` |
+| Commit-stamped APK | `Cleave-Nightly-<commit>.apk` on the same release |
+| Checksum | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/Cleave-Nightly.apk.sha256` |
+| Build info | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/NIGHTLY_BUILD.txt` (commit, versionCode, sha256) |
+| CI workflow | **Cleave Nightly (testing)** (`cleave-debug.yml`) |
+| CI artifact | `cleave-nightly-apk` |
 | Source | this branch (`version.properties` = `2.4.1`) |
 | Variant | `noruntimeNightly` |
-| applicationId | `net.al.aerixlauncher.debug` |
-| Label | Aerix Nightly |
+| applicationId | `com.cleave.launcher.debug` |
+| Label | Cleave Nightly |
 | Signing | `app_pojavlauncher/debug.keystore` (alias `androiddebugkey`) |
 
-Aerix Nightly is the debug build with a different launcher label. It keeps the
+Cleave Nightly is the debug build with a different launcher label. It keeps the
 same applicationId, the same signing certificate and the same monotonically
 increasing versionCode as the old debug APK, so it installs straight over an
-existing **Aerix Launcher (Debug)** install, keeps that app's data, and behaves
+existing **Cleave Launcher (Debug)** install, keeps that app's data, and behaves
 identically. It installs next to the public launcher and can never overwrite a
 release APK.
 
 The `debug-latest` tag is only the hosting anchor for the prerelease: it keeps the
 release sorted below every public `v*` release and keeps `releases/latest` on the
-stable build. Every APK asset on it is Aerix Nightly. On each publish the old
-`Aerix-Launcher-debug*.apk` files and `DEBUG_BUILD.txt` are removed, together with
+stable build. Every APK asset on it is Cleave Nightly. On each publish the old
+`Cleave-Launcher-debug*.apk` files and `DEBUG_BUILD.txt` are removed, together with
 stamped nightlies from older commits, so there is only ever one testing build to
 download. Old debug download links are not updated anymore.
 
-Aerix's IDs have changed from `net.kdt.pojavlaunch` to `net.al.aerixlauncher`.
+Cleave's IDs have changed from `net.kdt.pojavlaunch` to `com.cleave.launcher`.
 An older install remains a separate app and cannot be updated in place. On
 Android 10 and newer, the optional first-run prompt or Settings import action
 copies supported game data; accounts, preferences, and runtimes stay with the
@@ -48,10 +48,10 @@ committed to Git (`apk/` is ignored).
 
 ### When it is rebuilt
 
-`.github/workflows/aerix-debug.yml` runs on every push to the working branch that
+`.github/workflows/cleave-debug.yml` runs on every push to the working branch that
 touches the app sources, Gradle files, submodules or the workflow itself. It also
 has a manual trigger. The job builds the APK, checks that the package name really
-is `net.al.aerixlauncher.debug`, that the APK carries the Aerix Nightly label and that it is
+is `com.cleave.launcher.debug`, that the APK carries the Cleave Nightly label and that it is
 signed with the debug key, uploads it as an Actions artifact, and attaches
 it to the `debug-latest` GitHub Release (marked as a prerelease so `releases/latest`
 remains the public stable release).
@@ -67,7 +67,7 @@ A local build needs JDK 21, the Android SDK with NDK `29.0.14206865`, and
 initialised submodules (`git submodule update --init --recursive`).
 
 The separate `.github/workflows/nightly.yml` is legacy: it builds a different app
-(`net.al.aerixlauncher.pub`) and its publish steps only run for the upstream
+(`com.cleave.launcher.pub`) and its publish steps only run for the upstream
 repository owner. It is not the testing channel.
 
 ## Signing keys
@@ -75,7 +75,7 @@ repository owner. It is not the testing channel.
 The public release is signed with a key that is **not in this repository and never will be**. A
 release key that "travels with the project" is a key anyone who clones it can use: same package name,
 same signature, any code inside, and every installed phone accepts it as an ordinary update. Until
-November 2026 `app_pojavlauncher/aerix_release.p12` was tracked in git with its password in
+November 2026 `app_pojavlauncher/cleave_release.p12` was tracked in git with its password in
 `build.gradle` as a default, and CI never set the secret that would have overridden it - so the key
 that signed v2.3.0, v2.3.1 and v2.3.2 was public.
 
@@ -91,27 +91,27 @@ directory at build time:
 
 | Secret | What it is |
 |---|---|
-| `AERIX_KEYSTORE_P12` | `base64 -w0 aerix_release.p12` - the PKCS12 file, never committed |
-| `AERIX_KEYSTORE_PASSWORD` | its store and key password (one password, alias `aerix`) |
-| `AERIX_LEGACY_P12` / `AERIX_LEGACY_PASSWORD` | the **retired** key, only until the transition release ships |
+| `CLEAVE_KEYSTORE_P12` | `base64 -w0 cleave_release.p12` - the PKCS12 file, never committed |
+| `CLEAVE_KEYSTORE_PASSWORD` | its store and key password (one password, alias `cleave`) |
+| `CLEAVE_LEGACY_P12` / `CLEAVE_LEGACY_PASSWORD` | the **retired** key, only until the transition release ships |
 
 To make one:
 
 ```bash
-keytool -genkeypair -v -alias aerix -keyalg RSA -keysize 4096 -validity 10950 \
-  -storetype PKCS12 -keystore aerix_release.p12
-base64 -w0 aerix_release.p12 | gh secret set AERIX_KEYSTORE_P12
-gh secret set AERIX_KEYSTORE_PASSWORD      # paste the password, it is not recoverable
+keytool -genkeypair -v -alias cleave -keyalg RSA -keysize 4096 -validity 10950 \
+  -storetype PKCS12 -keystore cleave_release.p12
+base64 -w0 cleave_release.p12 | gh secret set CLEAVE_KEYSTORE_P12
+gh secret set CLEAVE_KEYSTORE_PASSWORD      # paste the password, it is not recoverable
 ```
 
-Then `gh secret delete AERIX_LEGACY_P12` and `AERIX_LEGACY_PASSWORD` once no install is left on the
+Then `gh secret delete CLEAVE_LEGACY_P12` and `CLEAVE_LEGACY_PASSWORD` once no install is left on the
 old signature, and delete the "Unpack the retired signing key" step in `release.yml`.
 
-`AERIX_KEYSTORE_ALIAS` is optional and defaults to `aerix`; it is read through
-`AERIX_KEYSTORE_ALIAS_IN` so the step still starts on a runner where it is unset.
+`CLEAVE_KEYSTORE_ALIAS` is optional and defaults to `cleave`; it is read through
+`CLEAVE_KEYSTORE_ALIAS_IN` so the step still starts on a runner where it is unset.
 
-**A missing `AERIX_KEYSTORE_P12` stops the release instead of producing something.**
-`Unpack the release signing key` fails with *"AERIX_KEYSTORE_P12 is not set"* and every later step is
+**A missing `CLEAVE_KEYSTORE_P12` stops the release instead of producing something.**
+`Unpack the release signing key` fails with *"CLEAVE_KEYSTORE_P12 is not set"* and every later step is
 skipped, so no APK, no release and no website change happens. That is the intended behaviour - the
 alternative is publishing a build signed by a key that lives in this repository, which is how the
 public key ended up in a release in the first place. The two secrets are the only things a release
@@ -137,7 +137,7 @@ current key alone: the signing step pins `LEGACY=false` rather than trusting whe
 key's secret is still present, so a leftover secret cannot quietly re-add a key that was published.
 Anyone still on v2.3.2 or older needs v2.3.3 once, and then every later release installs over it.
 
-Aerix Nightly keeps `app_pojavlauncher/debug.keystore`, the public AOSP debug key. That is the
+Cleave Nightly keeps `app_pojavlauncher/debug.keystore`, the public AOSP debug key. That is the
 convention for debug builds, it is what lets a nightly install over another debug build, and it is
 why the nightly channel can never become someone's update vector for the stable app: different
 applicationId, different signature, and it can never overwrite a release install.
@@ -160,9 +160,9 @@ publish step when a cut is not yet on `v3_openjdk`. Regenerate with `python3 too
 before the merge if the version rows drifted.
 
 The release carries three builds per edition, named after `version.properties`:
-`Aerix-Launcher-<version>-arm64-v8a.apk`, `-armeabi-v7a.apk` and the universal
-`Aerix-Launcher-<version>.apk`, plus the three `-noruntime` equivalents.
-`Aerix-Launcher.apk` and `Aerix-Launcher-noruntime.apk` are copies of the
+`Cleave-Launcher-<version>-arm64-v8a.apk`, `-armeabi-v7a.apk` and the universal
+`Cleave-Launcher-<version>.apk`, plus the three `-noruntime` equivalents.
+`Cleave-Launcher.apk` and `Cleave-Launcher-noruntime.apk` are copies of the
 universal builds. `SHA256SUMS` on the release carries the size and hash of every
 file — take them from there, never retype them here.
 
@@ -188,4 +188,4 @@ To release a new version: raise `versionName` in `version.properties`, add
 `docs/releases/v<version>.md`, and run the release workflow.
 
 A release happens when the owner says so, and not before. Until then, changes are
-verified on Aerix Nightly.
+verified on Cleave Nightly.

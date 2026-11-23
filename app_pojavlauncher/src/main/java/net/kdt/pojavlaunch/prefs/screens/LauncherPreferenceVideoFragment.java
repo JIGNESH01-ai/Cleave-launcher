@@ -58,12 +58,12 @@ public class LauncherPreferenceVideoFragment extends LauncherPreferenceFragment 
         float maxRefreshCeiling = DisplayRefreshMode.ceilingRefreshHz(requireContext());
         float maxRefreshActive = DisplayRefreshMode.activeRefreshHz(requireContext());
         if (maxRefreshCeiling <= 0f) {
-            maxRefreshSwitch.setSummary(getString(R.string.aerix_max_refresh_desc));
+            maxRefreshSwitch.setSummary(getString(R.string.cleave_max_refresh_desc));
         } else if (maxRefreshCeiling <= maxRefreshActive + 0.1f) {
-            maxRefreshSwitch.setSummary(getString(R.string.aerix_max_refresh_unavailable,
+            maxRefreshSwitch.setSummary(getString(R.string.cleave_max_refresh_unavailable,
                     Math.round(maxRefreshActive)));
         } else {
-            maxRefreshSwitch.setSummary(getString(R.string.aerix_max_refresh_summary,
+            maxRefreshSwitch.setSummary(getString(R.string.cleave_max_refresh_summary,
                     Math.round(maxRefreshCeiling), Math.round(maxRefreshActive)));
         }
 

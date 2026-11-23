@@ -8,7 +8,7 @@ public final class MenuButtonSize {
     public static final int MAX_DP = 96;
     public static final int DEFAULT_DP = 46;
     private static final String KEY = "menuButtonSizeDp";
-    static final String PREFERENCES = "aerix_menu_button";
+    static final String PREFERENCES = "cleave_menu_button";
 
     private MenuButtonSize() {}
 

@@ -101,7 +101,7 @@ check("DEVICE_ARCHITECTURE = arch;" in body,
 
 raw_reads = []
 for rel in ("NewJREUtil.java", "multirt/MultiRTUtils.java", "multirt/RTRecyclerViewAdapter.java",
-            "tasks/AsyncAssetManager.java", "aerix/ui/screens/SettingsScreen.kt"):
+            "tasks/AsyncAssetManager.java", "cleave/ui/screens/SettingsScreen.kt"):
     text = read(rel)
     for line in text.splitlines():
         if "Tools.DEVICE_ARCHITECTURE" in line:

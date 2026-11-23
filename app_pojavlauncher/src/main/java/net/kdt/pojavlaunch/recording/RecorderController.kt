@@ -36,13 +36,13 @@ import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.PojavApplication
-import net.kdt.pojavlaunch.aerix.theme.AerixLauncherTheme
+import net.kdt.pojavlaunch.cleave.theme.CleaveLauncherTheme
 import net.kdt.pojavlaunch.game.GameActivity
 import java.io.File
 
 /** Keeps the game menu, floating REC pill, permissions, and `:recorder` service lifecycle together. */
 class RecorderController @JvmOverloads constructor(private val activity: Activity, private val instanceDir: File? = null) {
-    private val prefs = activity.getSharedPreferences("aerix_recorder", 0)
+    private val prefs = activity.getSharedPreferences("cleave_recorder", 0)
     private var pending: RecordingOptions.Config? = null
     private var dialog: AlertDialog? = null
 
@@ -263,7 +263,7 @@ class RecorderController @JvmOverloads constructor(private val activity: Activit
     /**
      * Shows the Compose panel in its own window.
      *
-     * It cannot live inside the in-game overlay: that view is GONE on anything that is not an Aerix
+     * It cannot live inside the in-game overlay: that view is GONE on anything that is not an CLEAVE
      * Client instance, so a player who opened the recorder from the in-game menu on a vanilla
      * instance got silence - the state said "open" and nothing was drawn. A dialog belongs to the
      * activity, not to one of its children, so it opens from wherever the recorder can be reached.
@@ -276,7 +276,7 @@ class RecorderController @JvmOverloads constructor(private val activity: Activit
         val context = activity as? Context ?: return
         val view = ComposeView(context).apply {
             setContent {
-                AerixLauncherTheme {
+                CleaveLauncherTheme {
                     RecorderPanel(
                         configs = configs,
                         initialQuality = savedQuality,
@@ -300,7 +300,7 @@ class RecorderController @JvmOverloads constructor(private val activity: Activit
         // A dialog owns a window of its own, and that window has none of the lifecycle, saved-state or
         // back-dispatcher owners a composition needs. Without them the ComposeView inflates, finds no
         // owner, and silently never composes - the same blank result as the bug this is fixing, from a
-        // different direction. AerixLoadingWallpaper does this for its layer; this does it for the
+        // different direction. CleaveLoadingWallpaper does this for its layer; this does it for the
         // dialog's decor view and the panel view inside it.
         dialog.window?.let { window ->
             ensureViewTreeOwners(window.decorView)

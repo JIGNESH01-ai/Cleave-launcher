@@ -1,6 +1,6 @@
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.kdt.pojavlaunch.aerix.client.ClientVersionOptions;
+import net.kdt.pojavlaunch.cleave.client.ClientVersionOptions;
 public class ClientVersionOptionsSmokeTest {
     public static void main(String[] args) {
         Map<String, String> input = new LinkedHashMap<>();

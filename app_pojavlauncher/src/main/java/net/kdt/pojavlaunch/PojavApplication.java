@@ -14,8 +14,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import net.kdt.pojavlaunch.aerix.bridge.PojavPluginBridge;
-import net.kdt.pojavlaunch.aerix.social.SocialBackend;
+import net.kdt.pojavlaunch.cleave.bridge.PojavPluginBridge;
+import net.kdt.pojavlaunch.cleave.social.SocialBackend;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
 import net.kdt.pojavlaunch.mobileglues.MGApplication;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
@@ -157,7 +157,7 @@ public class PojavApplication extends MGApplication {
 		}
 		initRendererPlugins();
 		try {
-			net.kdt.pojavlaunch.aerix.discord.AerixDiscordPresence.captureApplicationContext(this);
+			net.kdt.pojavlaunch.cleave.discord.CleaveDiscordPresence.captureApplicationContext(this);
 			// Passive load ONLY: never auto-open WebSockets or background services until an Activity opens.
 			SocialBackend.initPassive(this);
 		} catch (Throwable t) {

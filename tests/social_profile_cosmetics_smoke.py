@@ -2,7 +2,7 @@
 from pathlib import Path
 import unittest
 
-ROOT = Path(__file__).resolve().parents[1] / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/aerix"
+ROOT = Path(__file__).resolve().parents[1] / "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/cleave"
 
 
 class SocialCosmeticsSmoke(unittest.TestCase):
@@ -23,7 +23,7 @@ class SocialCosmeticsSmoke(unittest.TestCase):
         self.assertIn("widthIn(max = 148.dp)", card)
         self.assertIn("height(130.dp)", card)
         character = screen.split("private fun ProfileCharacter(", 1)[1].split("fun ProfileCosmeticsPage(", 1)[0]
-        for feature in ("clipToBounds()", "detectDragGestures", "onClick = onClick", "AerixSkinPreview3D", "useClientCape = clientCape"):
+        for feature in ("clipToBounds()", "detectDragGestures", "onClick = onClick", "CleaveSkinPreview3D", "useClientCape = clientCape"):
             self.assertIn(feature, character)
 
     def test_skin_and_cape_actions_use_existing_account_paths(self):
@@ -31,7 +31,7 @@ class SocialCosmeticsSmoke(unittest.TestCase):
         page = screen.split("fun ProfileCosmeticsPage(", 1)[1].split("private fun CountCell(", 1)[0]
         for method in ("equipSkinFromUri", "equipCapeFromUri", "canEquipCape", "syncCapeAssetsToAllClientInstances"):
             self.assertIn(method, page)
-        self.assertIn("AerixClientStore.persist()", page)
+        self.assertIn("CleaveClientStore.persist()", page)
         self.assertIn("BackHandler(enabled = view != ProfileView.CARD)", screen)
 
     def test_rendered_skin_and_cape_share_equipped_sources(self):
@@ -39,10 +39,10 @@ class SocialCosmeticsSmoke(unittest.TestCase):
         face = bridge.split("fun loadAccountFacePreview(", 1)[1].split("fun loadAccountBodyPreview(", 1)[0]
         self.assertIn("resolveAccountSkinBytes(account)", face)
         self.assertIn("renderSkinFace(skin)", face)
-        view = (ROOT / "components/AerixPlayerSkin.kt").read_text()
+        view = (ROOT / "components/CleavePlayerSkin.kt").read_text()
         self.assertIn("PojavAccountBridge.resolveAccountSkinBytes(account)", view)
         self.assertIn("PojavAccountBridge.resolveCapeBytes(account, includeOfficial = showOfficialCape)", view)
-        self.assertIn("AerixClientCosmetics.resolveInGameCapeBytes(context)", view)
+        self.assertIn("CleaveClientCosmetics.resolveInGameCapeBytes(context)", view)
 
 
 if __name__ == "__main__":

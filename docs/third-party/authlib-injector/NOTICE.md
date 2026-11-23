@@ -1,6 +1,6 @@
 # authlib-injector 1.2.8
 
-Aerix bundles the unmodified upstream authlib-injector 1.2.8 binary.
+Cleave bundles the unmodified upstream authlib-injector 1.2.8 binary.
 
 - Source and releases: https://github.com/yushijinhun/authlib-injector/tree/v1.2.8
 - Upstream release: https://github.com/yushijinhun/authlib-injector/releases/tag/v1.2.8

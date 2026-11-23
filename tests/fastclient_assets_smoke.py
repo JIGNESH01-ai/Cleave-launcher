@@ -17,7 +17,7 @@ BUILDS = {
     '1.21.4': ('42b6b99f78f7ecabf4c7db722941d6d5a64ae5316e9994d1331bd91f4af374ca', '>=0.18.4', '~1.21.4', '>=21', 21),
     '1.21.1': ('2c7620b0d1dc8e912119df40de8f3fa29a9f2034132e1a29a72920bc43106d1d', '>=0.18.4', '~1.21.1', '>=21', 21),
 }
-installer = (JAVA / 'aerix/fastclient/FastClientInstaller.kt').read_text()
+installer = (JAVA / 'cleave/fastclient/FastClientInstaller.kt').read_text()
 
 # The jars are downloaded, never built into the APK: six builds would add ~28 MB to every install.
 assets = ROOT / 'app_pojavlauncher/src/main/assets/components/fastclient'
@@ -61,7 +61,7 @@ assert 'downloadPerformanceMods(context, build.minecraft, staging)' in installer
 assert 'downloadModrinthMod(' in installer
 assert 'performanceMods.forEach' in installer
 assert 'instance.sharedData = false' in installer
-assert 'instance.isAerixClient = false' in installer
+assert 'instance.isCleaveClient = false' in installer
 assert 'overwrite = false' in installer
 assert 'SHA-512' in installer and 'cdn.modrinth.com' in installer
 
@@ -71,17 +71,17 @@ assert '"fastclient-hud"' in installer, 'the 3.0 mod id must be accepted'
 assert 'assets/fastclient-hud/icon.png' in installer, "the jar's own logo must become the instance icon"
 provider = (JAVA / 'instances/InstanceIconProvider.java').read_text()
 assert 'R.drawable.fastclient_instance' in provider and 'fastClientVersion' in provider
-assert 'LauncherSection.FAST_CLIENT' not in (JAVA / 'aerix/ui/AerixNavigationRail.kt').read_text()
+assert 'LauncherSection.FAST_CLIENT' not in (JAVA / 'cleave/ui/CleaveNavigationRail.kt').read_text()
 
-assert 'ClientHubScreen(activity, clientOwnerPage)' in (JAVA / 'aerix/ui/AerixLauncherScreen.kt').read_text()
-hub = (JAVA / 'aerix/ui/screens/ClientHubScreen.kt').read_text()
+assert 'ClientHubScreen(activity, clientOwnerPage)' in (JAVA / 'cleave/ui/CleaveLauncherScreen.kt').read_text()
+hub = (JAVA / 'cleave/ui/screens/ClientHubScreen.kt').read_text()
 assert 'ClientOwnerPage.MX_INSPIRE -> FastClientScreen(activity, onBack = back)' in hub
-assert 'ClientOwnerPage.SAHIL -> AerixClientScreen(activity, onBack = back)' in hub
+assert 'ClientOwnerPage.SAHIL -> CleaveClientScreen(activity, onBack = back)' in hub
 assert 'onClick = { onPageChange(ClientOwnerPage.SAHIL) }' in hub
 assert 'onClick = { onPageChange(ClientOwnerPage.MX_INSPIRE) }' in hub
 assert 'BackHandler(enabled = page != ClientOwnerPage.OWNERS' in hub
 assert 'Modifier.size(76.dp).clip(CircleShape)' in hub
-assert 'label = "Aerix client"' in hub and 'label = "Fast client 3.0"' in hub
+assert 'label = "Cleave client"' in hub and 'label = "Fast client 3.0"' in hub
 
 # The bundled static mark is the creator's current artwork, and it is the fallback only: it is one
 # image shared by six builds, so a per-instance icon is what actually shows.
@@ -92,9 +92,9 @@ with zipfile.ZipFile(BASE / 'fastclient-hud-26.3.jar') as jar:
 for name in ('client_owner_sahil.jpg', 'client_owner_mx_inspire.jpg'):
     data = (ROOT / 'app_pojavlauncher/src/main/res/drawable-nodpi' / name).read_bytes()
     assert data[:2] == b'\xff\xd8' and len(data) > 1000, name
-for name in ('AerixClientScreen.kt', 'FastClientScreen.kt'):
-    assert 'ClientOwnerBackButton(onBack)' in (JAVA / 'aerix/ui/screens' / name).read_text()
-screen = (JAVA / 'aerix/ui/screens/FastClientScreen.kt').read_text()
+for name in ('CleaveClientScreen.kt', 'FastClientScreen.kt'):
+    assert 'ClientOwnerBackButton(onBack)' in (JAVA / 'cleave/ui/screens' / name).read_text()
+screen = (JAVA / 'cleave/ui/screens/FastClientScreen.kt').read_text()
 assert 'FastClientInstaller.install(activity, build)' in screen
 assert 'PojavLaunchBridge.play(activity)' in screen
 assert 'Thanks Mx inspire for supporting and giving us permission to use their client' in screen

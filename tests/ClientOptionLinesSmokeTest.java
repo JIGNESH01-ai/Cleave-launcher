@@ -1,5 +1,5 @@
 import java.util.*;
-import net.kdt.pojavlaunch.aerix.client.ClientOptionLines;
+import net.kdt.pojavlaunch.cleave.client.ClientOptionLines;
 
 public final class ClientOptionLinesSmokeTest {
     static void eq(Object a, Object b) { if (!a.equals(b)) throw new AssertionError("expected=" + a + " actual=" + b); }
