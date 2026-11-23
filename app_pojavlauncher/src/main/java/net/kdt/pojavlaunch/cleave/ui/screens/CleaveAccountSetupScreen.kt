@@ -53,7 +53,7 @@ fun CleaveAccountSetupScreen(activity: FragmentActivity, onBack: () -> Unit) {
                 OutlinedButton(onClick = { CleaveNav.navigate(LauncherSection.SOCIALS) }, modifier = Modifier.fillMaxWidth()) {
                     Text("Use email instead")
                 }
-                Text("Your CLEAVE account works on servers configured for CLEAVE authentication. Microsoft-only servers require a Microsoft account; skins depend on the server and game version.", color = CleaveSurface.textSecondary, fontSize = 11.sp)
+                Text("Your Cleave account works on servers configured for Cleave authentication. Microsoft-only servers require a Microsoft account; skins depend on the server and game version.", color = CleaveSurface.textSecondary, fontSize = 11.sp)
                 OutlinedButton(onClick = onBack) { Text("Back") }
             }
         }

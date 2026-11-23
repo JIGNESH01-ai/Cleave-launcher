@@ -73,7 +73,7 @@ object CleaveDiscordPresence {
     const val CLEAVE_WEBSITE_URL = "https://github.com/JIGNESH01-ai/Cleave-launcher"
     const val CLEAVE_DISCORD_URL = "https://discord.gg/nyn75Un9MR"
     const val CLEAVE_LOGO_URL =
-        "https://raw.githubusercontent.com/JIGNESH01-ai/Cleave-launcher/4a3b1c37a8d4838eaa5cb8933610db7fb6efdec5/assets/cleave-logo.png"
+        "https://raw.githubusercontent.com/JIGNESH01-ai/Cleave-launcher/22e3001635ab345ed21fe48823093f8cada56f8c/assets/cleave-logo.png"
 
     /** Verified Discord catalog IDs for Minecraft's native Game Profile sheet. */
     const val MINECRAFT_PRIMARY_APP_ID = 1402418491272986635L

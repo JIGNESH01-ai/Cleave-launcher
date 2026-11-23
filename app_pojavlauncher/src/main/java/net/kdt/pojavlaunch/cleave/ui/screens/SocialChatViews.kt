@@ -722,7 +722,7 @@ fun SocialConversationPanel(
                                             onClick = {
                                                 menuOpen = false
                                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                                clipboard.setPrimaryClip(ClipData.newPlainText("CLEAVE message", msg.body))
+                                                clipboard.setPrimaryClip(ClipData.newPlainText("Cleave message", msg.body))
                                                 Toast.makeText(context, "Copied. Paste an address into Minecraft Direct Connection.", Toast.LENGTH_SHORT).show()
                                             }
                                         )

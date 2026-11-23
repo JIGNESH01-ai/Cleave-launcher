@@ -61,7 +61,7 @@ fun ClientHubScreen(activity: FragmentActivity, page: ClientOwnerPage, onPageCha
                     ) {
                         OwnerCard(
                             photo = R.drawable.client_owner_sahil,
-                            label = "CLEAVE client",
+                            label = "Cleave client",
                             onClick = { onPageChange(ClientOwnerPage.SAHIL) },
                             modifier = Modifier.weight(1f)
                         )

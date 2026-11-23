@@ -320,7 +320,7 @@ fun AccountsScreen(activity: FragmentActivity) {
                         if (net.kdt.pojavlaunch.cleave.social.SocialBackend.signedIn) {
                             AuthType.CLEAVE.createAuth().createAccount(PojavAccountBridge, "")
                         } else {
-                            Toast.makeText(activity, "Sign in to CLEAVE Social and choose a game name first", Toast.LENGTH_LONG).show()
+                            Toast.makeText(activity, "Sign in to Cleave Social and choose a game name first", Toast.LENGTH_LONG).show()
                             CleaveNav.navigate(LauncherSection.SOCIALS)
                         }
                     }

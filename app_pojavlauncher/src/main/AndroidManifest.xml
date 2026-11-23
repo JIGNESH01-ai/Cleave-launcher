@@ -68,7 +68,7 @@
             android:label="@string/cleave_app_label"
             android:launchMode="singleTop"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/Cleave.SplashScreen">
+            android:theme="@style/CLEAVE.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -78,7 +78,7 @@
         <activity
             android:name="net.kdt.pojavlaunch.LauncherActivity"
             android:label="@string/cleave_app_label"
-            android:theme="@style/Cleave.Launcher"
+            android:theme="@style/CLEAVE.Launcher"
             android:launchMode="singleTask"
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"

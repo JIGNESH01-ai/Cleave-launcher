@@ -919,7 +919,7 @@ public class GameActivity extends BaseActivity implements ControlButtonMenuListe
                 net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.currentBitmap(this),
                 net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.getOpacityPercent(),
                 net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.getAnchoredCenter());
-        Logger.appendToLog("CLEAVE cursor: " + net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.report(this) + "\n");
+        Logger.appendToLog("Cleave cursor: " + net.kdt.pojavlaunch.cleave.client.CleaveCursorSkin.INSTANCE.report(this) + "\n");
     }
 
     /**

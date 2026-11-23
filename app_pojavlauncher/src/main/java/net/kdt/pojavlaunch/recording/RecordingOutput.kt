@@ -103,7 +103,7 @@ internal class RecordingOutput(private val context: Context, private val instanc
         if (!source.renameTo(destination)) { destination.delete(); return Saved(source.absolutePath, false) }
         if (valid) MediaScannerConnection.scanFile(context, arrayOf(destination.absolutePath), arrayOf("video/mp4"), null)
         // The instance folder is app-private on Android 10 and up, so publishing a copy into
-        // Movies/CLEAVE is what makes the video openable, shareable and visible in a gallery.
+        // Movies/Cleave is what makes the video openable, shareable and visible in a gallery.
         val media = if (valid) runCatching { RecordingLibrary.publish(context, destination) }
             .onFailure { Log.w("CleaveRecorder", "Recording could not be published", it) }
             .getOrNull() else null

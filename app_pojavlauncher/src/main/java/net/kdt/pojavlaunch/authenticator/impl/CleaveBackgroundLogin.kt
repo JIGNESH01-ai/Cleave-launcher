@@ -20,7 +20,7 @@ class CleaveBackgroundLogin : BackgroundLogin {
     override fun createAccount(listener: LoginListener, code: String) {
         PojavApplication.sExecutorService.execute {
             try {
-                val owner = SocialBackend.myUserId() ?: throw IOException("Sign in to CLEAVE first")
+                val owner = SocialBackend.myUserId() ?: throw IOException("Sign in to Cleave first")
                 val session = runBlocking { SocialBackend.issueGameSession(owner) }
                     ?: throw IOException(SocialBackend.lastError ?: "Could not start an CLEAVE game session")
                 if (SocialBackend.myUserId() != owner) throw IOException("CLEAVE account changed")

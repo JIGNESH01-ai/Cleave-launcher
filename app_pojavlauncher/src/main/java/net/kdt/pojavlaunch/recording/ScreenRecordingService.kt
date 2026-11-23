@@ -663,7 +663,7 @@ class ScreenRecordingService : Service() {
         }
         val result = when {
             saved?.playable == true -> if (saved.mediaUri != null)
-                    "Saved to Movies/CLEAVE - open it from any gallery, or from Recordings below"
+                    "Saved to Movies/Cleave - open it from any gallery, or from Recordings below"
                 else
                     "Saved to ${saved.path}"
             saved != null -> "Recording incomplete; kept for recovery at ${saved.path}"

@@ -822,7 +822,7 @@ private fun CleaveAccountHomeCard(accent: Color, onClick: () -> Unit) {
             Icon(painterResource(R.drawable.cleave_ic_person_outlined), contentDescription = null,
                 tint = accent, modifier = Modifier.size(22.dp))
             Column(Modifier.weight(1f)) {
-                Text(if (signedIn) "CLEAVE account" else "Sign in to CLEAVE account",
+                Text(if (signedIn) "Cleave account" else "Sign in to Cleave account",
                     color = CleaveSurface.textPrimary, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 Text("Minecraft name, skin & cape", color = CleaveSurface.textSecondary, fontSize = 10.sp)
             }

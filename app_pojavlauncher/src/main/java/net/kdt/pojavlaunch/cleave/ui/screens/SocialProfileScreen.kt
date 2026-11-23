@@ -807,7 +807,7 @@ internal fun ProfileCosmeticsPage(activity: FragmentActivity, setupFlow: Boolean
             title = { Text(if (uploading) "Publish $label to CLEAVE?" else "Apply CLEAVE profile $label?") },
             text = {
                 Text(if (uploading)
-                    "Your selected $label will be uploaded to public CLEAVE storage and used on your social profile. If game appearance sharing is enabled, compatible players can also see it."
+                    "Your selected $label will be uploaded to public Cleave storage and used on your social profile. If game appearance sharing is enabled, compatible players can also see it."
                 else "This backs up and replaces the selected Minecraft account's local $label. The account and worlds are not changed.")
             },
             confirmButton = {
@@ -896,7 +896,7 @@ internal fun ProfileCosmeticsPage(activity: FragmentActivity, setupFlow: Boolean
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("CLEAVE game account", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = CleaveSurface.textPrimary)
                 if (!SocialBackend.signedIn) {
-                    Text("Sign in to CLEAVE to create an authenticated game account.", fontSize = 11.sp, color = CleaveSurface.textSecondary)
+                    Text("Sign in to Cleave to create an authenticated game account.", fontSize = 11.sp, color = CleaveSurface.textSecondary)
                 } else if (!gameLoaded) {
                     Text("Loading game account…", fontSize = 11.sp, color = CleaveSurface.textSecondary)
                 } else if (gameError != null) {
@@ -930,7 +930,7 @@ internal fun ProfileCosmeticsPage(activity: FragmentActivity, setupFlow: Boolean
                             }
                         }
                     }
-                    Text("Works on servers configured for CLEAVE authentication. Microsoft-authenticated servers still require a Microsoft account.",
+                    Text("Works on servers configured for Cleave authentication. Microsoft-authenticated servers still require a Microsoft account.",
                         fontSize = 11.sp, color = CleaveSurface.textSecondary)
                 }
             }
