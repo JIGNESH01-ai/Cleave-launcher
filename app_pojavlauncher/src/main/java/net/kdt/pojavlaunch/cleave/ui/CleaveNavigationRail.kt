@@ -29,6 +29,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +50,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,8 +66,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import kotlinx.coroutines.delay
 import net.kdt.pojavlaunch.R
 import net.kdt.pojavlaunch.cleave.bridge.CleaveAccount
 import net.kdt.pojavlaunch.cleave.bridge.PojavAccountBridge
@@ -121,6 +129,7 @@ fun CleaveNavigationRail(
     selectedSection: LauncherSection,
     onNavigate: (LauncherSection) -> Unit,
     onCreateInstance: () -> Unit,
+    onOpenProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val account = PojavAccountBridge.current
@@ -192,157 +201,53 @@ fun CleaveNavigationRail(
 
                 RailIconItem(R.drawable.cleave_ic_home_filled, stringResource(R.string.cleave_nav_home),
                     selectedSection == LauncherSection.HOME, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.HOME) }
-                RailIconItem(R.drawable.cleave_ic_client_crystal, "CLEAVE Client",
-                    selectedSection == LauncherSection.CLEAVE_CLIENT, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.CLEAVE_CLIENT) }
                 RailIconItem(R.drawable.cleave_ic_add, stringResource(R.string.create_instance),
                     selectedSection == LauncherSection.CREATE_INSTANCE, activeAccent, expandedRail, compactRail,
                     onClick = onCreateInstance, guideKey = CleaveGuideState.CREATE)
                 RailIconItem(R.drawable.cleave_ic_dashboard_filled, stringResource(R.string.cleave_nav_library),
                     librarySelected(selectedSection), activeAccent, expandedRail, compactRail,
                     onClick = { onNavigate(LauncherSection.LIBRARY) }, guideKey = CleaveGuideState.LIBRARY)
+                RailIconItem(R.drawable.cleave_ic_client_crystal, "CLEAVE Client",
+                    selectedSection == LauncherSection.CLEAVE_CLIENT, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.CLEAVE_CLIENT) }
+                RailIconItem(R.drawable.cleave_ic_archive_filled, "Our modpacks",
+                    selectedSection == LauncherSection.MODPACKS, activeAccent, expandedRail, compactRail,
+                    guideKey = CleaveGuideState.MODPACKS) { onNavigate(LauncherSection.MODPACKS) }
                 RailIconItem(R.drawable.cleave_ic_sports_esports_outlined, "Servers",
                     selectedSection == LauncherSection.SERVERS, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.SERVERS) }
-                // Socials is not a rail entry: it opens from the Home dashboard and brings its own
-                // sidebar, so it is not listed next to the launcher's own sections.
                 RailIconItem(R.drawable.cleave_ic_public, stringResource(R.string.cleave_nav_discover),
                     discoverSelected(selectedSection), activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.DISCOVER) }
                 RailIconItem(R.drawable.cleave_ic_rocket_launch_filled, "Our other new releases",
                     selectedSection == LauncherSection.OTHER_RELEASES, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.OTHER_RELEASES) }
-                RailIconItem(R.drawable.cleave_ic_archive_filled, "Our modpacks",
-                    selectedSection == LauncherSection.MODPACKS, activeAccent, expandedRail, compactRail,
-                    guideKey = CleaveGuideState.MODPACKS) { onNavigate(LauncherSection.MODPACKS) }
 
                 HorizontalDivider(modifier = Modifier.width(28.dp).padding(vertical = CleaveSpacing.xxs), color = CleaveSurface.borderSoft)
 
-                // On Home these two utility destinations move to the right rail. The team entry
-                // remains here, so it is still reachable from every screen without duplicating the
-                // profile shortcut.
-                if (selectedSection != LauncherSection.HOME) {
-                    RailIconItem(R.drawable.cleave_ic_settings_filled, stringResource(R.string.cleave_nav_settings),
-                        settingsSelected(selectedSection), activeAccent, expandedRail, compactRail,
-                        onClick = { onNavigate(LauncherSection.SETTINGS) }, guideKey = CleaveGuideState.SETTINGS)
-                }
-
+                // Every remaining destination lives in this one sidebar. The old right-hand
+                // utility rail moved here, so no launcher option is ever shown twice and the
+                // right edge of the screen stays free of navigation.
+                AccountAvatarRailButton(
+                    account = account,
+                    selected = selectedSection == LauncherSection.ACCOUNTS || selectedSection == LauncherSection.ADD_ACCOUNT || selectedSection == LauncherSection.OFFLINE_ACCOUNT,
+                    expanded = expandedRail,
+                    compact = compactRail,
+                    onClick = { onNavigate(LauncherSection.ACCOUNTS) }
+                )
+                RailIconItem(R.drawable.cleave_ic_person_outlined, "Profile",
+                    selectedSection == LauncherSection.SOCIALS, activeAccent, expandedRail, compactRail) { onOpenProfile() }
+                RailIconItem(R.drawable.cleave_ic_videogame_asset_outlined, "Instances",
+                    selectedSection == LauncherSection.INSTANCE_SELECTOR, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.INSTANCE_SELECTOR) }
+                RailIconItem(R.drawable.cleave_ic_folder_outlined, "Files",
+                    selectedSection == LauncherSection.FILES, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.FILES) }
+                RailIconItem(R.drawable.cleave_ic_build_outlined, "Quick Tools",
+                    selectedSection == LauncherSection.QUICK_TOOLS, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.QUICK_TOOLS) }
+                RailIconItem(R.drawable.cleave_ic_description_outlined, "Logs",
+                    selectedSection == LauncherSection.LOGS, activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.LOGS) }
                 RailIconItem(R.drawable.cleave_ic_group_outlined, stringResource(R.string.cleave_nav_contribution),
                     selectedSection == LauncherSection.CONTRIBUTION || selectedSection == LauncherSection.CONTRIBUTION_DETAIL,
                     activeAccent, expandedRail, compactRail) { onNavigate(LauncherSection.CONTRIBUTION) }
-
-                if (selectedSection != LauncherSection.HOME) {
-                    AccountAvatarRailButton(
-                        account = account,
-                        selected = selectedSection == LauncherSection.ACCOUNTS || selectedSection == LauncherSection.ADD_ACCOUNT || selectedSection == LauncherSection.OFFLINE_ACCOUNT,
-                        expanded = expandedRail,
-                        compact = compactRail,
-                        onClick = { onNavigate(LauncherSection.ACCOUNTS) }
-                    )
-                }
+                RailIconItem(R.drawable.cleave_ic_settings_filled, stringResource(R.string.cleave_nav_settings),
+                    settingsSelected(selectedSection), activeAccent, expandedRail, compactRail,
+                    onClick = { onNavigate(LauncherSection.SETTINGS) }, guideKey = CleaveGuideState.SETTINGS)
             }
-        }
-    }
-}
-
-/** Utility rail shown beside the centered character on Home. The first three match the
- * settings, profile and avatar destinations called out in the dashboard reference. */
-@Composable
-fun CleaveHomeUtilityRail(
-    selectedSection: LauncherSection,
-    onNavigate: (LauncherSection) -> Unit,
-    onOpenProfile: () -> Unit,
-    onQuickTools: () -> Unit,
-    onInstances: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val account = PojavAccountBridge.current
-    val activeAccent = CleaveThemeManager.currentAccent()
-    val scrollState = rememberScrollState()
-    val configuration = LocalConfiguration.current
-    val compactRail = configuration.screenHeightDp < CLEAVE_COMPACT_HEIGHT_THRESHOLD_DP
-    val expandedRail = configuration.screenWidthDp >= 900 && !compactRail
-
-    Surface(
-        modifier = modifier
-            .width(if (expandedRail) CleaveMetrics.expandedNavigationRailWidth else CleaveMetrics.navigationRailWidth)
-            .fillMaxHeight()
-            .padding(start = CleaveSpacing.xs, end = 2.dp, top = CleaveSpacing.smPlus, bottom = CleaveSpacing.smPlus)
-            .liquidGlass(shape = CircleShape, tint = CleaveSurface.glassTint, strength = 0.94f, elevation = CleaveMetrics.glassRailElevation),
-        shape = CircleShape,
-        color = Color.Transparent,
-        contentColor = Color.White
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .verticalScroll(scrollState)
-                .padding(vertical = if (compactRail) CleaveSpacing.xs else CleaveSpacing.smPlus),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(if (compactRail) CleaveSpacing.xs else CleaveSpacing.sm)
-        ) {
-            RailIconItem(
-                R.drawable.cleave_ic_settings_filled,
-                stringResource(R.string.cleave_nav_settings),
-                settingsSelected(selectedSection), activeAccent, expandedRail, compactRail,
-                guideKey = CleaveGuideState.SETTINGS
-            ) { onNavigate(LauncherSection.SETTINGS) }
-            RailIconItem(
-                R.drawable.cleave_ic_person_outlined,
-                "Profile",
-                selectedSection == LauncherSection.SOCIALS,
-                activeAccent, expandedRail, compactRail
-            ) { onOpenProfile() }
-            AccountAvatarRailButton(
-                account = account,
-                selected = selectedSection == LauncherSection.ACCOUNTS ||
-                    selectedSection == LauncherSection.ADD_ACCOUNT ||
-                    selectedSection == LauncherSection.OFFLINE_ACCOUNT,
-                expanded = expandedRail,
-                compact = compactRail,
-                onClick = { onNavigate(LauncherSection.ACCOUNTS) }
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.width(28.dp).padding(vertical = CleaveSpacing.xxs),
-                color = CleaveSurface.borderSoft
-            )
-
-            RailIconItem(
-                R.drawable.cleave_ic_build_outlined,
-                "Quick Tools",
-                selectedSection == LauncherSection.QUICK_TOOLS,
-                activeAccent, expandedRail, compactRail
-            ) { onQuickTools() }
-            RailIconItem(
-                R.drawable.cleave_ic_videogame_asset_outlined,
-                "Instances",
-                selectedSection == LauncherSection.INSTANCE_SELECTOR,
-                activeAccent, expandedRail, compactRail
-            ) { onInstances() }
-            RailIconItem(
-                R.drawable.cleave_ic_dashboard_filled,
-                stringResource(R.string.cleave_nav_library),
-                librarySelected(selectedSection), activeAccent, expandedRail, compactRail
-            ) { onNavigate(LauncherSection.LIBRARY) }
-            RailIconItem(
-                R.drawable.cleave_ic_sports_esports_outlined,
-                "Servers",
-                selectedSection == LauncherSection.SERVERS,
-                activeAccent, expandedRail, compactRail
-            ) { onNavigate(LauncherSection.SERVERS) }
-            RailIconItem(
-                R.drawable.cleave_ic_public,
-                stringResource(R.string.cleave_nav_discover),
-                discoverSelected(selectedSection), activeAccent, expandedRail, compactRail
-            ) { onNavigate(LauncherSection.DISCOVER) }
-            RailIconItem(
-                R.drawable.cleave_ic_folder_outlined,
-                "Files",
-                selectedSection == LauncherSection.FILES,
-                activeAccent, expandedRail, compactRail
-            ) { onNavigate(LauncherSection.FILES) }
-            RailIconItem(
-                R.drawable.cleave_ic_description_outlined,
-                "Logs",
-                settingsSelected(selectedSection), activeAccent, expandedRail, compactRail
-            ) { onNavigate(LauncherSection.LOGS) }
         }
     }
 }
@@ -400,6 +305,15 @@ private fun RailIconItem(
         else -> 42.dp
     }
     val itemShape = RoundedCornerShape(CleaveRadii.control)
+    // Compact rails trade the always-on caption for a long-press tooltip, so every entry can
+    // still be identified without widening the sidebar.
+    var showTip by remember { mutableStateOf(false) }
+    LaunchedEffect(showTip) {
+        if (showTip) {
+            delay(1400)
+            showTip = false
+        }
+    }
     Box(
         modifier = Modifier
             .then(if (guideKey != null) Modifier.guideAnchor(guideKey) else Modifier)
@@ -410,10 +324,27 @@ private fun RailIconItem(
             .accentRing(liveAccent, itemShape, selected, motionOn, CleaveSpacing.hairline)
             .border(BorderStroke(CleaveSpacing.hairline, if (selected) liveAccent else CleaveSurface.borderSoft), itemShape)
             .bringFocusedItemIntoView()
-            .clickable(role = Role.Tab, onClick = onClick)
+            .combinedClickable(role = Role.Tab, onClick = onClick, onLongClick = { showTip = true })
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center
     ) {
+        if (showTip && !expanded) {
+            Popup(alignment = Alignment.CenterEnd, offset = IntOffset(14, 0), onDismissRequest = { showTip = false }) {
+                Surface(
+                    shape = RoundedCornerShape(CleaveRadii.controlSmall),
+                    color = CleaveSurface.panelRaised,
+                    border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft)
+                ) {
+                    Text(
+                        text = label,
+                        color = CleaveSurface.textPrimary,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(horizontal = CleaveSpacing.sm, vertical = CleaveSpacing.xxs)
+                    )
+                }
+            }
+        }
         if (expanded) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Icon(painter = painterResource(iconRes), contentDescription = label, tint = iconTint, modifier = Modifier.size(19.dp))

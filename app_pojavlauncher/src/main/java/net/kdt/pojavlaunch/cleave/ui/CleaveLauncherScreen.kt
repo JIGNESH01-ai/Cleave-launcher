@@ -188,13 +188,18 @@ fun CleaveLauncherScreen(activity: FragmentActivity) {
         Box(modifier = Modifier.fillMaxSize().padding(CleaveWindowInsets.padding())) {
             Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                // Socials has its own navigation. The utility rail at the far right stays in the
-                // shell for every destination.
+                // Socials has its own navigation; every other destination is reached from this
+                // single left sidebar. There is no second rail - the right edge of the screen
+                // belongs to page content only.
                 if (section != LauncherSection.SOCIALS) {
                     CleaveNavigationRail(
                         selectedSection = section,
                         onNavigate = navigate,
-                        onCreateInstance = { CleaveNav.navigate(LauncherSection.CREATE_INSTANCE) }
+                        onCreateInstance = { CleaveNav.navigate(LauncherSection.CREATE_INSTANCE) },
+                        onOpenProfile = {
+                            SocialsNavigation.requestMyProfile()
+                            navigate(LauncherSection.SOCIALS)
+                        }
                     )
                 }
                 Box(
@@ -274,18 +279,6 @@ fun CleaveLauncherScreen(activity: FragmentActivity) {
                         )
                     }
                 }
-                // Keep Home's utility shortcuts pinned to the launcher shell so they remain
-                // available while any destination from this rail is open.
-                CleaveHomeUtilityRail(
-                    selectedSection = section,
-                    onNavigate = navigate,
-                    onOpenProfile = {
-                        SocialsNavigation.requestMyProfile()
-                        navigate(LauncherSection.SOCIALS)
-                    },
-                    onQuickTools = { navigate(LauncherSection.QUICK_TOOLS) },
-                    onInstances = { navigate(LauncherSection.INSTANCE_SELECTOR) }
-                )
             }
             CleaveFooterBar(activity)
             }

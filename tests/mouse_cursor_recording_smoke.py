@@ -168,33 +168,37 @@ check("the insets are read the way this androidx version exposes them",
 check("the reserve never double-counts the system bars",
       "int mask = WindowInsetsCompat.Type.displayCutout();" not in launcher)
 
-print("9. the dashboard skin switches without a restart")
+print("9. one permanent premium home and one left sidebar")
 cleave_prefs = read(os.path.join(JAVA, "cleave", "bridge"), "CleavePreferences.kt")
-check("two skins, named as the players named them",
-      'PREMIUM("Old UI (dashboard)")' in cleave_prefs and 'CLEAN("New UI (hero)")' in cleave_prefs)
-check("the choice is persisted", 'putString(KEY_UI_STYLE, value.name)' in cleave_prefs)
-check("the choice is Compose state, so no restart is needed",
-      "var uiStyle by mutableStateOf" in cleave_prefs)
+check("the Old UI / New UI switcher is gone for good",
+      "CleaveLauncherUiStyle" not in cleave_prefs and "KEY_UI_STYLE" not in cleave_prefs)
 home = read(os.path.join(JAVA, "cleave", "ui", "screens"), "HomeScreen.kt")
-check("the switch sits at the top of the dashboard", "CleaveUiStyleSwitch" in home)
-check("the two layouts animate into position",
-      "animateDpAsState" in home and "animateFloatAsState" in home)
-check("the pills move with a sliding highlight", 'label = "uiStylePill"' in home)
-# "The old UI" is a layout, not a colour scheme: the dashboard the players screenshotted put the
-# utility tiles and the active-world card on the left and the docked 3D skin card on the right. If
-# the switch only changed padding, picking "old UI" would show them a different launcher.
-classic_block = home[home.index("if (CleavePreferences.uiStyle == CleaveLauncherUiStyle.PREMIUM)"):]
-classic_block = classic_block[:classic_block.index("} else {")]
-check("the old skin is its own composition", "ClassicHomeDashboard(" in classic_block)
-check("the old skin keeps the switch, so it is never a dead end",
-      "CleaveUiStyleSwitch" in classic_block)
-check("the dashboard and the docked skin card are both drawn",
-      "WideHomeDashboard(" in home and "CompactHomeDashboard(" in home
-      and "ActionMenuCard(" in home[home.index("private fun ClassicHomeDashboard"):])
-check("the split matches the layout the screenshot showed",
-      "maxWidth >= 500.dp" in home and "ContentWeight" in home and "ActionMenuWeight" in home)
+check("no switcher on the home page", "CleaveUiStyleSwitch" not in home)
+check("no duplicated home screens",
+      "ClassicHomeDashboard" not in home and "WideHomeDashboard" not in home
+      and "CompactHomeDashboard" not in home and "ActionMenuCard(" not in home
+      and "HomeCharacterStage" not in home)
+check("the premium dashboard is the only home", "PremiumHomeDashboard(" in home)
+check("large CLEAVE branding anchors the dashboard",
+      '"CLEAVE LAUNCHER"' in home and "ic_cleave_mark" in home)
+check("the character stage is the hero of the page", "CleaveSkinPreview3D" in home)
+check("the PLAY button is white with black text",
+      'Text("PLAY"' in home and "contentColor = CleaveSurface.onAccent" in home)
+check("the launch facts sit beside the hero",
+      "SELECTED VERSION" in home and "MEMORY" in home)
+check("the home animates into place", "animateDpAsState" in home and "animateFloatAsState" in home)
+check("the account card serves the info column and the profile panel",
+      home.count('CleaveAccountHomeCard(accent, actions.cleaveAccount)') == 2)
 check("the old sections are still the ones the page names",
       "cleave_home_your_space" in home and "cleave_home_active_world" in home)
+shell = read(os.path.join(JAVA, "cleave", "ui"), "CleaveLauncherScreen.kt")
+nav = read(os.path.join(JAVA, "cleave", "ui"), "CleaveNavigationRail.kt")
+check("the right-hand utility rail is gone",
+      "CleaveHomeUtilityRail" not in shell and "CleaveHomeUtilityRail" not in nav)
+check("every destination lives in the one left sidebar",
+      all("LauncherSection." + name in nav for name in
+          ("HOME", "LIBRARY", "SERVERS", "FILES", "LOGS", "QUICK_TOOLS",
+           "INSTANCE_SELECTOR", "SETTINGS", "ACCOUNTS")))
 
 print("10. mouse settings live where they were asked for")
 section = read(os.path.join(JAVA, "cleave", "ui", "screens"), "CleaveMouseSettingsSection.kt")

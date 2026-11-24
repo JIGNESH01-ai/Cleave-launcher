@@ -61,7 +61,7 @@ Everything below exists in the codebase and is exercised by the CI smoke/unit su
 This project is a **rebrand and continuation of a real, working launcher codebase**. In particular:
 
 1. **Game launching has not been executed on a physical phone as part of this change set.** The launch path is the battle-tested PojavLauncher/MojoLauncher one, and the CI compiles the APK and runs ~100 smoke/unit tests, but *you* should treat the first run on your device as the acceptance test.
-2. **APK artefacts** are produced by GitHub Actions (`.github/workflows/cleave-debug.yml` builds `Cleave-Nightly.apk` and attaches it to the `debug-latest` prerelease; `release.yml` builds signed public releases — only with the release keystore secrets configured). **Signed public APKs cannot be produced without `CLEAVE_KEYSTORE_FILE` / `CLEAVE_KEYSTORE_PASSWORD` secrets.**
+2. **APK artefacts** are produced by GitHub Actions (`.github/workflows/cleave-debug.yml` builds `CLEAVE-Launcher.apk` and attaches it to the `debug-latest` prerelease; `release.yml` builds signed public releases — only with the release keystore secrets configured). **Signed public APKs cannot be produced without `CLEAVE_KEYSTORE_FILE` / `CLEAVE_KEYSTORE_PASSWORD` secrets.**
 3. **Update checking** targets this repository's GitHub Releases API (`releases/latest`). It works, but only after a public release exists.
 4. **In-game "Socials" and "Cleave account" sign-in** need the CLEAVE social backend: the complete, deployable definition ships in `supabase/` (SQL schema + the `functions/cleave-auth` edge function). **Until it is deployed to a Supabase project of your own and `SocialBackend.PROJECT_URL`/`PUBLISHABLE_KEY` (and `AuthType.java`) point at it, the Cleave-account buttons will report a backend error.** The stock configuration still points at the original upstream project, which serves the old, pre-rebrand function name — so CI's live probes for it skip with a visible warning instead of pretending to pass. Microsoft and offline accounts are unaffected.
 5. **CurseForge content** needs `CURSEFORGE_API_KEY` (or a `curseforge_key.txt`) at build time; without it the CurseForge source is disabled gracefully. Modrinth is keyless.
@@ -79,7 +79,7 @@ See [KNOWN_ISSUES.md](KNOWN_ISSUES.md) for the full list and [CHANGELOG.md](CHAN
 
 ## Install
 
-1. Grab the APK from this repository's **[Releases](https://github.com/JIGNESH01-ai/Cleave-launcher/releases)** — `Cleave-Nightly.apk` (testing, prerelease) or a public `v*` release when published.
+1. Grab the APK from this repository's **[Releases](https://github.com/JIGNESH01-ai/Cleave-launcher/releases)** — `CLEAVE-Launcher.apk` (testing, prerelease) or a public `v*` release when published.
 2. Sideload it (allow "install unknown apps" for your browser/file manager).
 3. First run: CLEAVE will offer to import game files from a previous launcher if present; otherwise create a profile (Microsoft sign-in or offline) and press **PLAY**. Minecraft Java is downloaded from Mojang's servers on first launch.
 
@@ -99,7 +99,7 @@ git submodule update --init --recursive   # glfw, mojoexec, SDL
 Debug APK output: `app_pojavlauncher/build/outputs/apk/full/debug/app_pojavlauncher-full-debug.apk`.
 
 CI (`.github/workflows/`):
-- `cleave-debug.yml` — on every push to `v3_openjdk` / `arena/**`: runs the smoke/unit suite, builds `Cleave-Nightly.apk`, verifies it (zipalign, apksigner, package name), uploads the artifact and publishes the `debug-latest` prerelease
+- `cleave-debug.yml` — on every push to `v3_openjdk` / `arena/**`: runs the smoke/unit suite, builds `CLEAVE-Launcher.apk`, verifies it (zipalign, apksigner, package name), uploads the artifact and publishes the `debug-latest` prerelease
 - `android.yml` / `abi-splits.yml` — debug APK(s) and ABI splits
 - `release.yml` — manual, confirmation-gated public release (requires `CLEAVE_KEYSTORE_*` secrets; refuses to publish unsigned builds)
 - `cleave-release.yml` — release channel definition

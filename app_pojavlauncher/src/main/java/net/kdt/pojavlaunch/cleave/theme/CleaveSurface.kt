@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import net.kdt.pojavlaunch.cleave.bridge.CleavePreferences
 
 object CleaveSurface {
-    val canvas = Color(0xFF07131D)
+    val canvas = Color(0xFF000000)
 
     /**
      * Scales the alpha of a surface colour by the "Layout transparency" setting.
@@ -59,16 +59,16 @@ object CleaveSurface {
     val border = Color(0x78F2F7F5)
     val borderSoft = Color(0x48F2F7F5)
     val borderHighlight = Color(0xDDF5FFFA)
-    val glassTint = Color(0xFF7A8582)
-    val glassBlue = Color(0xFF91E9FF)
-    val glassViolet = Color(0xFFB7A9FF)
-    val glassRose = Color(0xFFF3A9D9)
+    val glassTint = Color(0xFF7E8589)
+    val glassBlue = Color(0xFFB8C0C8)
+    val glassViolet = Color(0xFF9AA3AB)
+    val glassRose = Color(0xFFD3D9DE)
     val auroraCyan = Color(0xFF37DCEC)
     val auroraViolet = Color(0xFF7A71F5)
     val glassShadow = Color(0x66000610)
 
-    /** Static fallback used to define the built-in CLEAVE palette and wallpaper presets. */
-    val accentDefault = Color(0xFF8DEFE0)
+    /** Static fallback: the CLEAVE silver-white accent of the black-and-white design. */
+    val accentDefault = Color(0xFFF5F7FA)
 
     /** Current launcher accent; UI controls use this instead of a baked-in color. */
     val accent: Color
@@ -77,28 +77,28 @@ object CleaveSurface {
         @Composable get() = accent
     val onAction: Color
         @Composable get() = onAccent
-    val accentSecondary = Color(0xFFC1B5FF)
-    val accentGlow = Color(0x668DEFE0)
-    val accentContainerDefault = Color(0x5539C8C1)
+    val accentSecondary = Color(0xFFB8C0C8)
+    val accentGlow = Color(0x55F5F7FA)
+    val accentContainerDefault = Color(0x33F5F7FA)
     val accentContainer: Color
         @Composable get() = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.33f)
-    val onAccentDefault = Color(0xFF06201D)
+    val onAccentDefault = Color(0xFF0A0A0C)
     val onAccent: Color
         @Composable get() = MaterialTheme.colorScheme.onPrimary
-    val onAccentContainer = Color(0xFFBDFAF3)
-    val accentLight = Color(0xFF006D73)
+    val onAccentContainer = Color(0xFF101418)
+    val accentLight = Color(0xFF4A5058)
     val lightPanel = Color(0xFFFCFEFF)
     val lightTextPrimary = Color(0xFF14212B)
     val errorDarkContainer = Color(0xFF7A2635)
     val dangerContainer = Color(0xFF3B1A1E)
     val warningContainer = Color(0xFF3A2E16)
-    val modrinthBrand = Color(0xFF1BD96A)
-    val curseForgeBrand = Color(0xFFF16436)
+    val modrinthBrand = Color(0xFF9AA3AB)
+    val curseForgeBrand = Color(0xFF7E8589)
     val shadowSoft = Color(0x3A000000)
     val scrimSoft = Color(0x33000000)
     val textPrimary = Color(0xFFF1F6FA)
-    val textSecondary = Color(0xFFC8D1CF)
-    val textMuted = Color(0xFF7D909D)
+    val textSecondary = Color(0xFFC9CFD5)
+    val textMuted = Color(0xFF8A929A)
     val success = Color(0xFF73E5B0)
     val warning = Color(0xFFFFC777)
     val danger = Color(0xFFFF7189)

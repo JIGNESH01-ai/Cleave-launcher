@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- CLEAVE glass palette, ported from mirai-launcher- ui/theme/CleaveSurface.kt -->
+<!-- CLEAVE monochrome glass palette: black canvas, graphite panels, silver-white accent. -->
 <resources>
-    <color name="cleave_canvas">#FF07131D</color>
+    <color name="cleave_canvas">#FF000000</color>
     <color name="cleave_splash_bg">#FF000000</color>
-    <color name="cleave_panel">#9D172B3A</color>
-    <color name="cleave_panel_raised">#B0223B4E</color>
-    <color name="cleave_panel_solid">#FF0F2130</color>
-    <color name="cleave_panel_raised_solid">#FF1B3243</color>
-    <color name="cleave_border">#78E6FAFF</color>
-    <color name="cleave_border_soft">#48E6FAFF</color>
-    <color name="cleave_accent">#FF8DEFE0</color>
-    <color name="cleave_action">#FF2A9D92</color>
-    <color name="cleave_on_accent">#FF06201D</color>
-    <color name="cleave_glass_blue">#FF91E9FF</color>
-    <color name="cleave_glass_violet">#FFB7A9FF</color>
+    <color name="cleave_panel">#9D2B2E30</color>
+    <color name="cleave_panel_raised">#B044484C</color>
+    <color name="cleave_panel_solid">#FF17191C</color>
+    <color name="cleave_panel_raised_solid">#FF26292D</color>
+    <color name="cleave_border">#78F2F7F5</color>
+    <color name="cleave_border_soft">#48F2F7F5</color>
+    <color name="cleave_accent">#FFF5F7FA</color>
+    <color name="cleave_action">#FFB8C0C8</color>
+    <color name="cleave_on_accent">#FF0A0A0C</color>
+    <color name="cleave_glass_blue">#FFB8C0C8</color>
+    <color name="cleave_glass_violet">#FF9AA3AB</color>
     <color name="cleave_text_primary">#FFF1F6FA</color>
-    <color name="cleave_text_secondary">#FFA8B9C5</color>
-    <color name="cleave_text_muted">#FF7D909D</color>
+    <color name="cleave_text_secondary">#FFC9CFD5</color>
+    <color name="cleave_text_muted">#FF8A929A</color>
     <color name="cleave_success">#FF73E5B0</color>
     <color name="cleave_warning">#FFFFC777</color>
     <color name="cleave_danger">#FFFF7189</color>

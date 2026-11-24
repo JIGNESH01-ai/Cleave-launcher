@@ -4,8 +4,9 @@
  *   MiraiLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/LauncherScreen.kt
  *     (LauncherScreen, ActionMenuCardContent, VersionsContent)
  *   MiraiLauncher/src/main/java/com/movtery/zalithlauncher/ui/screens/content/home/MiraiHomeDashboard.kt
- *     (MiraiHomeDashboard, WideHomeDashboard, CompactHomeDashboard, LiquidHomeHero, ActiveWorldPanel,
- *      TaskSummaryPanel, RecentWorldsPanel, RecentWorldRow, QuickToolsPanel, HomeToolAction)
+ *     (ActiveWorldPanel, TaskSummaryPanel, RecentWorldsPanel, RecentWorldRow, QuickToolsPanel, HomeToolAction)
+ * The 2026 CLEAVE redesign: one permanent premium home (no skin switcher), a darkened character
+ * hero with the launch facts beside it, and dashboard content in a right-hand content column.
  * Data comes from PojavInstanceBridge / PojavAccountBridge / PojavTaskBridge; PLAY goes through PojavLaunchBridge.
  * Zalith Launcher 2 Copyright (C) 2025 MovTery <movtery228@qq.com> and contributors
  *
@@ -69,8 +70,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import net.kdt.pojavlaunch.cleave.bridge.CleavePreferences
-import net.kdt.pojavlaunch.cleave.bridge.CleaveLauncherUiStyle
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,6 +84,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.ContentScale
@@ -99,12 +99,14 @@ import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import net.kdt.pojavlaunch.LauncherPreferences
 import net.kdt.pojavlaunch.R
 import net.kdt.pojavlaunch.cleave.bridge.CleaveInstance
 import net.kdt.pojavlaunch.cleave.bridge.GameDownloadTarget
 import net.kdt.pojavlaunch.cleave.bridge.PojavAccountBridge
 import net.kdt.pojavlaunch.cleave.bridge.PojavInstanceBridge
 import net.kdt.pojavlaunch.cleave.bridge.PojavLaunchBridge
+import net.kdt.pojavlaunch.cleave.bridge.PojavSettingsBridge
 import net.kdt.pojavlaunch.cleave.bridge.PojavNavigator
 import net.kdt.pojavlaunch.cleave.bridge.PojavTaskBridge
 import net.kdt.pojavlaunch.cleave.components.CleaveImageWell
@@ -126,10 +128,6 @@ import net.kdt.pojavlaunch.contracts.OpenDocumentWithExtension
 import kotlin.math.abs
 import kotlin.math.exp
 import kotlin.math.roundToInt
-
-private const val ContentWeight = 7.4f
-private const val ActionMenuWeight = 2.6f
-private val ActionMenuOuterPadding = 12.dp
 
 /** Degrees of doll rotation per pixel of horizontal drag (mirai LauncherScreen). */
 private const val DOLL_DRAG_DEG_PER_PX = 0.45f
@@ -212,53 +210,32 @@ fun HomeScreen(activity: FragmentActivity, navigate: (LauncherSection) -> Unit) 
         instanceSelector = { navigate(LauncherSection.INSTANCE_SELECTOR) }
     )
 
-    // "The old UI" is this dashboard, and it is a different composition rather than the same one
-    // with different padding: the utility tiles under YOUR SPACE, the active-world card, tasks and
-    // recent worlds below them, and the docked 3D skin card with its own PLAY on the right. The
-    // character stage that replaced it is the Clean skin. Reading the preference as Compose state is
-    // what makes the switch repaint the home page on the spot, with no restart.
-    if (CleavePreferences.uiStyle == CleaveLauncherUiStyle.PREMIUM) {
-        val accent = CleaveThemeManager.currentAccent()
-        val taskCount = PojavTaskBridge.taskCount
-        val recent = remember(instances, selected) {
-            instances.filterNot { it == selected }.take(8).ifEmpty { instances.take(8) }
-        }
-        Column(modifier = Modifier.fillMaxSize()) {
-            // The switch stays on the page in both skins, so choosing the old look is never a trap.
-            CleaveUiStyleSwitch(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = CleaveSpacing.mdPlus, end = CleaveSpacing.mdPlus, top = CleaveSpacing.xs)
-            )
-            ClassicHomeDashboard(
-                selected = selected,
-                instances = instances,
-                recent = recent,
-                count = instances.size,
-                accent = accent,
-                taskCount = taskCount,
-                actions = actions
-            )
-        }
-    } else {
-        HomeCharacterStage(
-            selected = selected,
-            actions = actions,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = CleaveSpacing.mdPlus, end = CleaveSpacing.xs, top = CleaveSpacing.smPlus, bottom = CleaveSpacing.smPlus)
-        )
+    // One permanent home: the character hero and the launch facts in the center, dashboard
+    // content in the right-hand column. There is no second skin and no switcher.
+    val accent = CleaveThemeManager.currentAccent()
+    val taskCount = PojavTaskBridge.taskCount
+    val recent = remember(instances, selected) {
+        instances.filterNot { it == selected }.take(8).ifEmpty { instances.take(8) }
     }
+    PremiumHomeDashboard(
+        selected = selected,
+        instances = instances,
+        recent = recent,
+        count = instances.size,
+        accent = accent,
+        taskCount = taskCount,
+        actions = actions
+    )
 }
 
 /**
- * Home as it was before the character stage became the hero: Mirai's LauncherScreen split, the
- * content dashboard on the left (weight 7.4f) and the docked 3D skin [ActionMenuCard] on the right
- * (weight 2.6f) whenever the window is 500.dp wide or more. Inside the dashboard, landscape and at
- * least 720.dp wide gets [WideHomeDashboard]; anything smaller scrolls as [CompactHomeDashboard].
+ * The premium CLEAVE home. Center: brand, the 360-degree character stage, the selected
+ * account / version / memory facts and the big white PLAY button, then the quick-launch tiles.
+ * Right: player profile, download activity, version details and recent worlds. The right edge
+ * is content only - navigation lives exclusively in the left sidebar.
  */
 @Composable
-private fun ClassicHomeDashboard(
+private fun PremiumHomeDashboard(
     selected: CleaveInstance?,
     instances: List<CleaveInstance>,
     recent: List<CleaveInstance>,
@@ -267,117 +244,131 @@ private fun ClassicHomeDashboard(
     taskCount: Int,
     actions: HomeActions
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val showActionMenu = maxWidth >= 500.dp
-        Row(modifier = Modifier.fillMaxSize()) {
-            BoxWithConstraints(
-                modifier = Modifier
-                    .weight(if (showActionMenu) ContentWeight else 1f)
-                    .fillMaxHeight()
-                    .padding(start = CleaveSpacing.mdPlus, end = CleaveSpacing.smCompact, top = CleaveSpacing.smPlus)
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = CleaveSpacing.smPlus),
+        horizontalArrangement = Arrangement.spacedBy(CleaveSpacing.mdPlus)
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(2.25f)
+                .fillMaxHeight()
+                .padding(top = CleaveSpacing.smPlus),
+            verticalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
+        ) {
+            BrandHeader()
+            Row(
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(CleaveSpacing.mdPlus)
             ) {
-                if (maxWidth >= 720.dp && maxWidth > maxHeight) {
-                    WideHomeDashboard(selected, recent, count, accent, taskCount, actions)
-                } else {
-                    CompactHomeDashboard(selected, recent, count, accent, taskCount, actions)
-                }
-            }
-            if (showActionMenu) {
-                ActionMenuCard(
-                    selected = selected,
-                    instances = instances,
-                    actions = actions,
-                    modifier = Modifier
-                        .guideAnchor(CleaveGuideState.PLAY)
-                        .weight(ActionMenuWeight)
-                        .fillMaxHeight()
-                        .padding(
-                            top = ActionMenuOuterPadding,
-                            bottom = ActionMenuOuterPadding,
-                            end = ActionMenuOuterPadding
-                        )
+                CharacterStage(
+                    account = PojavAccountBridge.current,
+                    accent = accent,
+                    onOpenAccounts = actions.accounts,
+                    modifier = Modifier.weight(1.12f).fillMaxHeight()
                 )
+                LaunchInfoColumn(selected, accent, actions, Modifier.weight(1f).fillMaxHeight())
             }
+            HomeSectionLabel(stringResource(R.string.cleave_home_your_space), null)
+            QuickTiles(count, accent, actions, Modifier.fillMaxWidth().height(78.dp), scrollable = false)
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .padding(top = CleaveSpacing.smPlus),
+            verticalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
+        ) {
+            CleaveAccountHomeCard(accent, actions.cleaveAccount)
+            TaskSummaryPanel(taskCount, accent, Modifier.fillMaxWidth().height(74.dp))
+            ActiveWorldPanel(selected, accent, actions, Modifier.fillMaxWidth().height(186.dp))
+            RecentWorldsPanel(recent, selected, accent, actions, Modifier.fillMaxWidth().height(212.dp), lazy = true)
+            QuickToolsPanel(accent, actions, Modifier.fillMaxWidth(), scrollable = false)
         }
     }
 }
 
-/** The Clean skin's home: the 360° character is the hero, with instance selection and Play
- * directly below it. Everything else lives in the utility rails and their destinations. The Premium
- * skin renders [ClassicHomeDashboard] instead - see [HomeScreen]. */
+/** The wordmark that anchors the dashboard: CL mark, CLEAVE LAUNCHER, tagline. */
 @Composable
-private fun HomeCharacterStage(
-    selected: CleaveInstance?,
-    actions: HomeActions,
+private fun BrandHeader() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(RoundedCornerShape(CleaveRadii.control))
+                .background(CleaveSurface.panelRaised),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_cleave_mark),
+                contentDescription = "CLEAVE",
+                tint = Color.Unspecified,
+                modifier = Modifier.size(26.dp)
+            )
+        }
+        Column {
+            Text(
+                text = "CLEAVE LAUNCHER",
+                color = CleaveSurface.textPrimary,
+                fontSize = 19.sp,
+                letterSpacing = 2.4.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1
+            )
+            Text(
+                text = "Minecraft Java, Anywhere.",
+                color = CleaveSurface.textMuted,
+                fontSize = 9.5.sp,
+                letterSpacing = 0.9.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1
+            )
+        }
+    }
+}
+
+/**
+ * The 360-degree character hero on a darkened stage. Drag left/right to rotate; the fling
+ * physics keep spinning after release. Tapping the stage opens Accounts.
+ */
+@Composable
+private fun CharacterStage(
+    account: net.kdt.pojavlaunch.cleave.bridge.CleaveAccount?,
+    accent: Color,
+    onOpenAccounts: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val account = PojavAccountBridge.current
-    val accent = CleaveThemeManager.currentAccent()
-    val vanilla = stringResource(R.string.cleave_home_vanilla)
     var dollAzimuth by remember(account?.username) { mutableFloatStateOf(28f) }
     val flingScope = rememberCoroutineScope()
     val velocityTracker = remember(account?.username) { VelocityTracker() }
     var flingJob by remember(account?.username) { mutableStateOf<Job?>(null) }
-    val versionLabel = remember(selected, vanilla) {
-        selected?.let { instanceVersionLabel(it.versionId, vanilla) } ?: "Choose a Minecraft instance"
-    }
-    // Premium UI is the older, heavier skin - wide glass stage, pill buttons, generous padding.
-    // Clean UI is the newer flat one: the same controls, tighter rows, smaller stage. Reading the
-    // preference as Compose state is what makes the switch take effect on the spot.
-    val clean = CleavePreferences.uiStyle == CleaveLauncherUiStyle.CLEAN
-    val stageGap by animateDpAsState(if (clean) CleaveSpacing.xs else CleaveSpacing.sm, label = "stageGap")
-    val stagePadding by animateDpAsState(if (clean) CleaveSpacing.xs else CleaveSpacing.smPlus, label = "stagePadding")
-    val buttonHeight by animateDpAsState(if (clean) 40.dp else 46.dp, label = "playHeight")
-    val buttonRadius by animateDpAsState(if (clean) 14.dp else 999.dp, label = "playRadius")
-    val panelAlpha by animateFloatAsState(if (clean) 0.55f else 0.8f, label = "panelAlpha")
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(stageGap)
+    var userDragged by remember(account?.username) { mutableStateOf(false) }
+    val hintAlpha by animateFloatAsState(
+        targetValue = if (userDragged) 0f else 1f,
+        animationSpec = tween(260, easing = FastOutSlowInEasing),
+        label = "rotateHint"
+    )
+    val shape = RoundedCornerShape(CleaveRadii.card)
+    Surface(
+        modifier = modifier.liquidGlass(shape = shape, strength = 0.55f, elevation = CleaveMetrics.glassSubtleElevation),
+        shape = shape,
+        color = CleaveSurface.panel.copy(alpha = 0.5f),
+        border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft)
     ) {
-        CleaveUiStyleSwitch(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = stagePadding, vertical = CleaveSpacing.xxs)
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = stagePadding, vertical = CleaveSpacing.xs),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(if (clean) "CHARACTER" else "YOUR CHARACTER", color = CleaveSurface.textSecondary,
-                    fontSize = if (clean) 9.sp else 10.sp,
-                    fontWeight = FontWeight.ExtraBold, letterSpacing = 1.4.sp)
-                Text(account?.username ?: "CLEAVE", color = CleaveSurface.textPrimary,
-                    style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
-            }
-            Surface(
-                onClick = actions.accounts,
-                shape = RoundedCornerShape(999.dp),
-                color = if (account == null) accent.copy(alpha = 0.16f) else CleaveSurface.panel.copy(alpha = 0.8f),
-                border = BorderStroke(CleaveSpacing.hairline, if (account == null) accent.copy(alpha = 0.7f) else CleaveSurface.borderSoft)
-            ) {
-                Text(
-                    if (account == null) "ADD MINECRAFT ACCOUNT" else "DRAG TO ROTATE",
-                    color = if (account == null) accent else CleaveSurface.textSecondary,
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                )
-            }
-        }
-
         Box(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = CleaveSpacing.smPlus)
+                .fillMaxSize()
                 .clipToBounds()
                 .drawWithCache {
                     val glow = Brush.radialGradient(
-                        colors = listOf(accent.copy(alpha = 0.18f), Color.Transparent),
-                        center = Offset(size.width * 0.5f, size.height * 0.58f),
-                        radius = size.minDimension * 0.54f
+                        colors = listOf(accent.copy(alpha = 0.13f), Color.Transparent),
+                        center = Offset(size.width * 0.5f, size.height * 0.62f),
+                        radius = size.minDimension * 0.62f
                     )
                     onDrawBehind { drawRect(glow) }
                 }
@@ -387,6 +378,7 @@ private fun HomeCharacterStage(
                             flingJob?.cancel()
                             flingJob = null
                             velocityTracker.resetTracking()
+                            userDragged = true
                         },
                         onDragEnd = {
                             val releaseVelocity = -velocityTracker.calculateVelocity().x * DOLL_DRAG_DEG_PER_PX
@@ -412,6 +404,7 @@ private fun HomeCharacterStage(
                         onDragCancel = { flingJob?.cancel(); flingJob = null },
                         onHorizontalDrag = { change, dragAmount ->
                             velocityTracker.addPosition(change.uptimeMillis, change.position)
+                            userDragged = true
                             dollAzimuth = (dollAzimuth - dragAmount * DOLL_DRAG_DEG_PER_PX).mod(360f)
                         }
                     )
@@ -428,382 +421,113 @@ private fun HomeCharacterStage(
                 cameraDistance = 48,
                 modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp, vertical = 8.dp)
             )
-        }
-
-        Surface(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = stagePadding),
-            shape = RoundedCornerShape(CleaveRadii.cardSmall),
-            color = CleaveSurface.panel.copy(alpha = panelAlpha),
-            border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft),
-            onClick = actions.instanceSelector
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = CleaveSpacing.smPlus, vertical = CleaveSpacing.xs),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier.align(Alignment.TopStart).padding(CleaveSpacing.smPlus)
             ) {
-                Icon(painterResource(R.drawable.cleave_ic_videogame_asset_outlined), contentDescription = null,
-                    tint = accent, modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(CleaveSpacing.xs))
-                Text(selected?.name ?: "Select instance", color = CleaveSurface.textPrimary,
-                    fontWeight = FontWeight.Bold, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Spacer(Modifier.width(CleaveSpacing.xs))
-                Text(versionLabel, color = accent, fontWeight = FontWeight.SemiBold,
-                    fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text("YOUR CHARACTER", color = CleaveSurface.textMuted, fontSize = 8.5.sp,
+                    fontWeight = FontWeight.ExtraBold, letterSpacing = 1.3.sp)
+                Text(account?.username ?: "No account yet", color = CleaveSurface.textPrimary,
+                    fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1)
             }
-        }
-
-        Surface(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = stagePadding).height(buttonHeight)
-                .guideAnchor(CleaveGuideState.PLAY),
-            shape = RoundedCornerShape(buttonRadius),
-            color = accent,
-            contentColor = CleaveSurface.onAccent,
-            onClick = if (selected != null) actions.play else actions.instanceSelector
-        ) {
-            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center) {
-                Text("PLAY", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.ExtraBold,
-                    color = CleaveSurface.onAccent)
-                Spacer(Modifier.width(CleaveSpacing.xs))
-                Icon(painterResource(R.drawable.cleave_ic_play_arrow_filled), contentDescription = "Play",
-                    tint = CleaveSurface.onAccent, modifier = Modifier.size(18.dp))
+            Surface(
+                onClick = onOpenAccounts,
+                shape = RoundedCornerShape(999.dp),
+                color = if (account == null) accent.copy(alpha = 0.16f) else CleaveSurface.panel.copy(alpha = 0.8f),
+                border = BorderStroke(CleaveSpacing.hairline, if (account == null) accent.copy(alpha = 0.7f) else CleaveSurface.borderSoft),
+                modifier = Modifier.align(Alignment.TopEnd).padding(CleaveSpacing.smPlus)
+            ) {
+                Text(
+                    if (account == null) "ADD MINECRAFT ACCOUNT" else "DRAG TO ROTATE",
+                    color = if (account == null) accent else CleaveSurface.textSecondary,
+                    fontSize = 8.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp).graphicsLayer { alpha = if (account == null) 1f else hintAlpha }
+                )
             }
         }
     }
 }
 
 /**
- * The docked right-hand card of [ClassicHomeDashboard]: the 3D rotatable skin stage, an instance
- * menu and the PLAY button. [HomeCharacterStage] is the other skin's take on the same controls.
+ * The launch facts beside the hero: who is playing, what runs next, how much memory it gets,
+ * and the big white PLAY button. Selected account information lives here and in the profile
+ * card on the right - the same [CleaveAccountHomeCard] in both places.
  */
 @Composable
-private fun ActionMenuCard(
+private fun LaunchInfoColumn(
     selected: CleaveInstance?,
-    instances: List<CleaveInstance>,
+    accent: Color,
     actions: HomeActions,
     modifier: Modifier = Modifier
 ) {
-    val account = PojavAccountBridge.current
-    val accent = CleaveThemeManager.currentAccent()
+    val context = androidx.compose.ui.platform.LocalContext.current
     val vanilla = stringResource(R.string.cleave_home_vanilla)
-    var dollAzimuth by remember(account?.username) { mutableFloatStateOf(28f) }
-    val flingScope = rememberCoroutineScope()
-    val dollVelocityTracker = remember(account?.username) { VelocityTracker() }
-    var dollFlingJob by remember(account?.username) { mutableStateOf<Job?>(null) }
-    var showInstanceMenu by remember { mutableStateOf(false) }
-
-    // The loader and the version of the game: "Fabric 1.16.5". The loader's own version
-    // ("0.16.10") is not what the player picked and does not belong on the card.
-    val versionSubtitle = remember(selected, vanilla) {
-        when {
-            selected == null -> "Select Instance"
-            loaderLabel(selected.versionId, vanilla) == vanilla ->
-                "Minecraft ${GameDownloadTarget.minecraftVersionIn(selected.versionId) ?: selected.versionId}"
-            else -> instanceVersionLabel(selected.versionId, vanilla)
-        }
+    val versionLabel = remember(selected, vanilla) {
+        selected?.let { instanceVersionLabel(it.versionId, vanilla) } ?: "No instance selected"
     }
-
-    Surface(
-        modifier = modifier.liquidGlass(shape = RoundedCornerShape(CleaveRadii.card), strength = 0.75f),
-        shape = RoundedCornerShape(CleaveRadii.card),
-        color = CleaveSurface.panel,
-        border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            // 3D Skin & Cape Stage on Dark Pedestal (Mirai LauncherScreen ActionMenuCardContent)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = CleaveSpacing.smCompact, start = CleaveSpacing.sm, end = CleaveSpacing.sm)
-                    .clip(RoundedCornerShape(CleaveRadii.control))
-                    .pointerInput(actions) {
-                        detectTapGestures(onTap = { actions.accounts() })
-                    }
-                    .pointerInput(account?.username) {
-                        detectHorizontalDragGestures(
-                            onDragStart = {
-                                dollFlingJob?.cancel()
-                                dollFlingJob = null
-                                dollVelocityTracker.resetTracking()
-                            },
-                            onDragEnd = {
-                                val releaseVelocity = -dollVelocityTracker.calculateVelocity().x * DOLL_DRAG_DEG_PER_PX
-                                dollFlingJob?.cancel()
-                                if (abs(releaseVelocity) < DOLL_FLING_MIN_VELOCITY) {
-                                    dollFlingJob = null
-                                    return@detectHorizontalDragGestures
-                                }
-                                dollFlingJob = flingScope.launch {
-                                    var velocity = releaseVelocity
-                                    var lastFrame = withFrameNanos { it }
-                                    while (abs(velocity) > DOLL_FLING_STOP_VELOCITY) {
-                                        ensureActive()
-                                        val now = withFrameNanos { it }
-                                        val dt = ((now - lastFrame) / 1_000_000_000f).coerceIn(0f, 0.05f)
-                                        lastFrame = now
-                                        dollAzimuth = (dollAzimuth + velocity * dt).mod(360f)
-                                        velocity *= exp(-DOLL_FLING_FRICTION * dt)
-                                    }
-                                    dollFlingJob = null
-                                }
-                            },
-                            onDragCancel = {
-                                dollFlingJob?.cancel()
-                                dollFlingJob = null
-                            },
-                            onHorizontalDrag = { change, dragAmount ->
-                                dollVelocityTracker.addPosition(change.uptimeMillis, change.position)
-                                dollAzimuth = (dollAzimuth - dragAmount * DOLL_DRAG_DEG_PER_PX).mod(360f)
-                            }
-                        )
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                CleaveSkinPreview3D(
-                    account = account,
-                    azimuth = dollAzimuth.roundToInt(),
-                    interactionEnabled = false,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = CleaveSpacing.mdPlus)
-                )
-
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(y = (-4).dp),
-                    shape = RoundedCornerShape(CleaveRadii.compact),
-                    color = CleaveSurface.canvas,
-                    border = BorderStroke(CleaveSpacing.hairline, accent.copy(alpha = 0.45f))
-                ) {
-                    Text(
-                        text = account?.username ?: "+ Add Account",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = if (account != null) Color.White else accent,
-                        maxLines = 1,
-                        modifier = Modifier.padding(horizontal = CleaveSpacing.smPlus, vertical = CleaveSpacing.tiny)
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(CleaveSpacing.sm)
-            ) {
-                // Compact 2-line Instance Selector Pill (Mirai VersionsContent)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = CleaveSpacing.smPlus)
-                ) {
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(CleaveRadii.cardSmall),
-                        color = CleaveSurface.panel,
-                        border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft),
-                        onClick = {
-                            if (instances.isNotEmpty()) showInstanceMenu = true else actions.library()
-                        }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = CleaveSpacing.smPlus, vertical = CleaveSpacing.smTight),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(CleaveSpacing.xxs)
-                        ) {
-                            Text(
-                                text = selected?.name ?: stringResource(R.string.cleave_home_no_active_world),
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = versionSubtitle,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = accent,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-
-                    DropdownMenu(
-                        expanded = showInstanceMenu,
-                        onDismissRequest = { showInstanceMenu = false }
-                    ) {
-                        instances.forEach { instance ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(CleaveSpacing.sm)
-                                    ) {
-                                        CleaveImageWell(
-                                            image = instance.icon,
-                                            fallback = R.drawable.cleave_ic_videogame_asset_outlined,
-                                            size = 24.dp,
-                                            radius = CleaveRadii.tiny
-                                        )
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(instance.name, fontWeight = FontWeight.Bold, maxLines = 1)
-                                            Text(instance.versionId, style = MaterialTheme.typography.labelSmall, color = CleaveSurface.textSecondary, maxLines = 1)
-                                        }
-                                    }
-                                },
-                                onClick = {
-                                    actions.select(instance)
-                                    showInstanceMenu = false
-                                }
-                            )
-                        }
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = "Manage All Instances...",
-                                    color = accent,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            },
-                            onClick = {
-                                showInstanceMenu = false
-                                actions.library()
-                            }
-                        )
-                    }
-                }
-
-                // Vibrant Pill PLAY Button (Mirai VersionsContent)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = CleaveSpacing.smPlus)
-                        .padding(bottom = CleaveSpacing.smPlus)
-                        .height(42.dp),
-                    shape = RoundedCornerShape(CleaveRadii.panel),
-                    color = accent,
-                    contentColor = CleaveSurface.onAccent,
-                    onClick = if (selected != null) actions.play else actions.create
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "PLAY",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = CleaveSurface.onAccent
-                        )
-                        Spacer(Modifier.width(CleaveSpacing.xs))
-                        Icon(
-                            painter = painterResource(R.drawable.cleave_ic_play_arrow_filled),
-                            contentDescription = stringResource(R.string.cleave_home_play),
-                            tint = CleaveSurface.onAccent,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun WideHomeDashboard(
-    selected: CleaveInstance?,
-    recent: List<CleaveInstance>,
-    count: Int,
-    accent: Color,
-    taskCount: Int,
-    actions: HomeActions
-) {
+    val ramMb = LauncherPreferences.PREF_RAM_ALLOCATION
+    val safeMaxMb = remember(context) { PojavSettingsBridge.safeMaxRam(context) }
+    val playHeight by animateDpAsState(
+        targetValue = if (selected != null) 52.dp else 46.dp,
+        label = "playHeight"
+    )
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = CleaveSpacing.smPlus),
-        verticalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(CleaveSpacing.sm)
     ) {
-        SameVersionNudgeStrip(selected = selected, accent = accent, onOpenSocials = actions.socials)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.57f),
-            horizontalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
-        ) {
-            // The hero banner is gone: the active world now opens the page, and everything that
-            // used to sit below it moves up into the space it took.
-            ActiveWorldPanel(selected, accent, actions, Modifier.weight(1.55f).fillMaxHeight())
-            Column(
-                modifier = Modifier
-                    .weight(0.85f)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
-            ) {
-                TaskSummaryPanel(taskCount, accent, Modifier.height(74.dp))
-                QuickToolsPanel(accent, actions, Modifier.weight(1f), scrollable = true)
-            }
-        }
-        QuickTiles(count, accent, actions, Modifier.fillMaxWidth().height(78.dp), scrollable = false)
         CleaveAccountHomeCard(accent, actions.cleaveAccount)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.43f),
-            horizontalArrangement = Arrangement.spacedBy(CleaveSpacing.smPlus)
-        ) {
-            RecentWorldsPanel(recent, selected, accent, actions, Modifier.weight(1f).fillMaxHeight(), lazy = true)
-        }
-    }
-}
 
-@Composable
-private fun CompactHomeDashboard(
-    selected: CleaveInstance?,
-    recent: List<CleaveInstance>,
-    count: Int,
-    accent: Color,
-    taskCount: Int,
-    actions: HomeActions
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = CleaveSpacing.xxl),
-        verticalArrangement = Arrangement.spacedBy(CleaveSpacing.md)
-    ) {
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(CleaveSpacing.sm)) {
-                SameVersionNudgeStrip(selected = selected, accent = accent, onOpenSocials = actions.socials)
-                HomeSectionLabel(stringResource(R.string.cleave_home_your_space), null)
-                QuickTiles(count, accent, actions, Modifier.fillMaxWidth(), scrollable = true)
+        Surface(
+            modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = actions.instanceSelector),
+            shape = RoundedCornerShape(CleaveRadii.panelSmall),
+            color = CleaveSurface.panelRaised,
+            border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft)
+        ) {
+            Column(modifier = Modifier.padding(horizontal = CleaveSpacing.md, vertical = CleaveSpacing.sm)) {
+                Text("SELECTED VERSION", color = CleaveSurface.textMuted, fontSize = 8.sp,
+                    fontWeight = FontWeight.ExtraBold, letterSpacing = 1.2.sp)
+                Text(selected?.name ?: "Choose a Minecraft instance", color = CleaveSurface.textPrimary,
+                    fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(versionLabel, color = accent, fontSize = 10.5.sp, fontWeight = FontWeight.SemiBold,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
-        // On a phone the side action panel is collapsed, so the play step points at the world card here.
-        item {
-            ActiveWorldPanel(
-                selected, accent, actions,
-                Modifier
-                    .fillMaxWidth()
-                    .height(190.dp)
-                    .guideAnchor(CleaveGuideState.PLAY)
-            )
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(CleaveRadii.panelSmall),
+            color = CleaveSurface.panelRaised,
+            border = BorderStroke(CleaveSpacing.hairline, CleaveSurface.borderSoft)
+        ) {
+            Column(modifier = Modifier.padding(horizontal = CleaveSpacing.md, vertical = CleaveSpacing.sm)) {
+                Text("MEMORY", color = CleaveSurface.textMuted, fontSize = 8.sp,
+                    fontWeight = FontWeight.ExtraBold, letterSpacing = 1.2.sp)
+                Text("$ramMb MB allocated for Minecraft", color = CleaveSurface.textPrimary,
+                    fontSize = 13.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                Text("Safe ceiling $safeMaxMb MB for this device", color = CleaveSurface.textSecondary,
+                    fontSize = 10.sp, maxLines = 1)
+            }
         }
-        item { TaskSummaryPanel(taskCount, accent, Modifier.fillMaxWidth().height(74.dp)) }
-        item { RecentWorldsPanel(recent, selected, accent, actions, Modifier.fillMaxWidth(), lazy = false) }
-        item { QuickToolsPanel(accent, actions, Modifier.fillMaxWidth(), scrollable = false) }
-        item { CleaveAccountHomeCard(accent, actions.cleaveAccount) }
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(playHeight)
+                .guideAnchor(CleaveGuideState.PLAY),
+            shape = RoundedCornerShape(16.dp),
+            color = accent,
+            contentColor = CleaveSurface.onAccent,
+            onClick = if (selected != null) actions.play else actions.instanceSelector
+        ) {
+            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center) {
+                Text("PLAY", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold,
+                    color = CleaveSurface.onAccent, letterSpacing = 2.sp)
+                Spacer(Modifier.width(CleaveSpacing.xs))
+                Icon(painterResource(R.drawable.cleave_ic_play_arrow_filled), contentDescription = "Play",
+                    tint = CleaveSurface.onAccent, modifier = Modifier.size(20.dp))
+            }
+        }
     }
 }
 
@@ -859,9 +583,9 @@ private fun QuickTiles(count: Int, accent: Color, actions: HomeActions, modifier
             // instance lives on the rail's + button and in the library, where it is not competing
             // with the one thing the launcher can do that no other launcher can.
             Triple(R.drawable.cleave_ic_people, stringResource(R.string.cleave_home_quick_socials) to socialSubtitle, accent to actions.socials),
-            Triple(R.drawable.cleave_ic_search, stringResource(R.string.cleave_home_quick_explore) to stringResource(R.string.cleave_home_quick_explore_sub), CleaveSurface.glassBlue to actions.explore),
-            Triple(R.drawable.cleave_ic_dashboard_filled, stringResource(R.string.cleave_home_quick_library) to stringResource(R.string.cleave_home_quick_library_sub, count), CleaveSurface.glassViolet to actions.library),
-            Triple(R.drawable.cleave_ic_folder_outlined, stringResource(R.string.cleave_home_quick_files) to stringResource(R.string.cleave_home_quick_files_sub), CleaveSurface.glassRose to actions.fileManager)
+            Triple(R.drawable.cleave_ic_search, stringResource(R.string.cleave_home_quick_explore) to stringResource(R.string.cleave_home_quick_explore_sub), CleaveSurface.textSecondary to actions.explore),
+            Triple(R.drawable.cleave_ic_dashboard_filled, stringResource(R.string.cleave_home_quick_library) to stringResource(R.string.cleave_home_quick_library_sub, count), CleaveSurface.glassTint to actions.library),
+            Triple(R.drawable.cleave_ic_folder_outlined, stringResource(R.string.cleave_home_quick_files) to stringResource(R.string.cleave_home_quick_files_sub), CleaveSurface.textSecondary to actions.fileManager)
         )
         tiles.forEach { (icon, texts, style) ->
             QuickActionTile(
@@ -990,7 +714,7 @@ private fun TaskSummaryPanel(taskCount: Int, accent: Color, modifier: Modifier) 
     Surface(
         modifier = modifier.liquidGlass(
             shape = shape,
-            tint = if (taskCount > 0) accent else CleaveSurface.glassBlue,
+            tint = if (taskCount > 0) accent else CleaveSurface.textSecondary,
             strength = 0.5f,
             elevation = CleaveMetrics.glassSubtleElevation
         ),
@@ -1010,13 +734,13 @@ private fun TaskSummaryPanel(taskCount: Int, accent: Color, modifier: Modifier) 
                 modifier = Modifier
                     .size(38.dp)
                     .clip(RoundedCornerShape(CleaveRadii.control))
-                    .background((if (taskCount > 0) accent else CleaveSurface.glassBlue).copy(alpha = 0.16f)),
+                    .background((if (taskCount > 0) accent else CleaveSurface.textSecondary).copy(alpha = 0.16f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(R.drawable.cleave_ic_schedule_outlined),
                     contentDescription = null,
-                    tint = if (taskCount > 0) accent else CleaveSurface.glassBlue,
+                    tint = if (taskCount > 0) accent else CleaveSurface.textSecondary,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -1141,15 +865,15 @@ private fun QuickToolsPanel(accent: Color, actions: HomeActions, modifier: Modif
             verticalArrangement = Arrangement.spacedBy(CleaveSpacing.xs)
         ) {
             HomeSectionLabel(stringResource(R.string.cleave_home_quick_tools), null)
-            HomeToolAction(stringResource(R.string.cleave_download_title), R.drawable.cleave_ic_download, CleaveSurface.modrinthBrand, actions.downloads)
-            HomeToolAction(stringResource(R.string.cleave_content_title), R.drawable.cleave_ic_extension_outlined, CleaveSurface.success, actions.content)
+            HomeToolAction(stringResource(R.string.cleave_download_title), R.drawable.cleave_ic_download, CleaveSurface.textSecondary, actions.downloads)
+            HomeToolAction(stringResource(R.string.cleave_content_title), R.drawable.cleave_ic_extension_outlined, CleaveSurface.glassTint, actions.content)
             HomeToolAction(stringResource(R.string.mcl_option_customcontrol), R.drawable.cleave_ic_touch_app_outlined, accent, actions.controls)
-            HomeToolAction(stringResource(R.string.main_install_jar_file), R.drawable.cleave_ic_java, CleaveSurface.glassBlue, actions.runJar)
-            HomeToolAction(stringResource(R.string.cleave_logs_title), R.drawable.cleave_ic_terminal_outlined, CleaveSurface.warning, actions.logs)
-            HomeToolAction(stringResource(R.string.main_share_logs), R.drawable.cleave_ic_share_filled, CleaveSurface.glassViolet, actions.shareLogs)
-            HomeToolAction(stringResource(R.string.cleave_files_title), R.drawable.cleave_ic_folder_filled, CleaveSurface.glassBlue, actions.fileManager)
-            HomeToolAction(stringResource(R.string.mcl_button_open_directory), R.drawable.cleave_ic_folder_outlined, CleaveSurface.glassRose, actions.files)
-            HomeToolAction(stringResource(R.string.preference_remap_controller_title), R.drawable.cleave_ic_sports_esports_outlined, CleaveSurface.auroraCyan, actions.gamepad)
+            HomeToolAction(stringResource(R.string.main_install_jar_file), R.drawable.cleave_ic_java, CleaveSurface.textSecondary, actions.runJar)
+            HomeToolAction(stringResource(R.string.cleave_logs_title), R.drawable.cleave_ic_terminal_outlined, CleaveSurface.glassTint, actions.logs)
+            HomeToolAction(stringResource(R.string.main_share_logs), R.drawable.cleave_ic_share_filled, CleaveSurface.glassTint, actions.shareLogs)
+            HomeToolAction(stringResource(R.string.cleave_files_title), R.drawable.cleave_ic_folder_filled, CleaveSurface.textSecondary, actions.fileManager)
+            HomeToolAction(stringResource(R.string.mcl_button_open_directory), R.drawable.cleave_ic_folder_outlined, CleaveSurface.textSecondary, actions.files)
+            HomeToolAction(stringResource(R.string.preference_remap_controller_title), R.drawable.cleave_ic_sports_esports_outlined, CleaveSurface.glassTint, actions.gamepad)
         }
     }
 }
@@ -1231,50 +955,3 @@ private fun SameVersionNudgeStrip(
     }
 }
 
-
-/**
- * The dashboard's own switch between the two launcher skins.
- *
- * It sits at the very top because that is where a player looks for "make this look like the other
- * one", and it is a pair of pills with a sliding highlight rather than a checkbox: pressing a name
- * and watching the page move into its new position is the whole point of the choice, and a
- * confirmation dialog or a restart would take that away.
- */
-@Composable
-private fun CleaveUiStyleSwitch(modifier: Modifier = Modifier) {
-    val selected = CleavePreferences.uiStyle
-    val accent = CleaveThemeManager.currentAccent()
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(999.dp))
-            .background(CleaveSurface.panel.copy(alpha = 0.45f))
-            .border(CleaveSpacing.hairline, CleaveSurface.borderSoft, RoundedCornerShape(999.dp))
-            .padding(3.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CleaveLauncherUiStyle.values().forEach { style ->
-            val active = style == selected
-            // Animated on alpha rather than on the color itself: this Compose build has no colour
-            // animator here, and a fading fill reads the same while sliding into place.
-            val pillAlpha by animateFloatAsState(
-                if (active) 1f else 0f,
-                animationSpec = tween(260, easing = FastOutSlowInEasing),
-                label = "uiStylePill"
-            )
-            Text(
-                text = style.label,
-                modifier = Modifier
-                    .weight(1f)
-                    .clip(RoundedCornerShape(999.dp))
-                    .background(accent.copy(alpha = 0.28f * pillAlpha))
-                    .clickable { CleavePreferences.saveUiStyle(style) }
-                    .padding(vertical = 7.dp),
-                color = if (active) CleaveSurface.textPrimary else CleaveSurface.textSecondary,
-                fontSize = 11.sp,
-                fontWeight = if (active) FontWeight.ExtraBold else FontWeight.SemiBold,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-        }
-    }
-}

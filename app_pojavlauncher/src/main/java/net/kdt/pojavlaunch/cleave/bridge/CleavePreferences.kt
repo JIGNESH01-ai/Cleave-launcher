@@ -31,21 +31,6 @@ import net.kdt.pojavlaunch.prefs.LauncherPreferences
 /** Color theme types kept from Zalith/CLEAVE. Only CLEAVE and CUSTOM are reachable from the port. */
 enum class CleaveColorTheme { CLEAVE, CUSTOM }
 
-/**
- * The two home screens the launcher can draw.
- *
- * [PREMIUM] is the original dashboard - the utility tiles under "YOUR SPACE", the active-world card,
- * tasks and recent worlds below it, and the docked 3D skin card with its own PLAY on wide screens,
- * with the large glass stage, wide padding and pill-shaped buttons that go with it. Players asked
- * for "the old UI" back, so that is what the pill is labelled, rather than a name to decode.
- * [CLEAN] is the newer one: the same controls and the same data, flat panels, tighter rows and the
- * rotatable character as the hero of the page, which reads better on a phone held sideways.
- *
- * Both are live - the player picks one at the top of the dashboard and the home page composes into
- * it, because restarting the launcher to try a skin is not a choice, it is a chore.
- */
-enum class CleaveLauncherUiStyle(val label: String) { PREMIUM("Old UI (dashboard)"), CLEAN("New UI (hero)") }
-
 /** Page transition types, from mirai utils/animation/TransitionAnimationType.kt. */
 enum class CleaveTransitionType { CLOSE, JELLY_BOUNCE, BOUNCE, SLICE_IN }
 
@@ -60,7 +45,6 @@ object CleavePreferences {
     const val KEY_COLOR_THEME = "launcherColorTheme"
     const val KEY_CUSTOM_COLOR = "launcherCustomColor"
     const val KEY_BACKGROUND_OPACITY = "launcherBackgroundOpacity"
-    const val KEY_UI_STYLE = "launcherUiStyle"
     const val KEY_FULL_SCREEN = "launcherFullScreen"
     const val KEY_ANIMATE_SPEED = "launcherAnimateSpeed"
     const val KEY_SELECTED_WALLPAPER = "selected_wallpaper_id"
@@ -122,9 +106,6 @@ object CleavePreferences {
         private set
     /** 25 = barely there glass, 100 = the card colours exactly as designed. */
     var layoutTransparency by mutableIntStateOf(DEFAULT_LAYOUT_TRANSPARENCY)
-        private set
-    /** The dashboard skin, as state so switching it recomposes the shell instead of restarting it. */
-    var uiStyle by mutableStateOf(CleaveLauncherUiStyle.CLEAN)
         private set
 
     var fullScreen by mutableStateOf(true)
@@ -221,9 +202,6 @@ object CleavePreferences {
         backgroundOpacity = p.getInt(KEY_BACKGROUND_OPACITY, DEFAULT_BACKGROUND_OPACITY).coerceIn(20, 100)
         layoutTransparency = p.getInt(KEY_LAYOUT_TRANSPARENCY, DEFAULT_LAYOUT_TRANSPARENCY).coerceIn(25, 100)
         fullScreen = p.getBoolean(KEY_FULL_SCREEN, true)
-        uiStyle = runCatching {
-            CleaveLauncherUiStyle.valueOf(p.getString(KEY_UI_STYLE, CleaveLauncherUiStyle.CLEAN.name)!!)
-        }.getOrDefault(CleaveLauncherUiStyle.CLEAN)
         animateSpeed = p.getInt(KEY_ANIMATE_SPEED, DEFAULT_ANIMATE_SPEED).coerceIn(0, 10)
         selectedWallpaper = p.getString(KEY_SELECTED_WALLPAPER, DEFAULT_WALLPAPER) ?: DEFAULT_WALLPAPER
         lastSection = p.getString(KEY_LAST_SECTION, "HOME") ?: "HOME"
@@ -276,19 +254,6 @@ object CleavePreferences {
         discordClickableLinks = value
         edit { putBoolean(KEY_DISCORD_CLICKABLE_LINKS, value) }
     }
-
-    /**
-     * Choose the dashboard skin. Persisted and applied by recomposition on the next frame - the
-     * player is not asked to restart the launcher to see it, and the shell animates into place.
-     */
-    fun saveUiStyle(value: CleaveLauncherUiStyle) {
-        if (uiStyle == value) return
-        uiStyle = value
-        edit { putString(KEY_UI_STYLE, value.name) }
-    }
-
-    /** True while the flat, tight layout is on; call sites read it as Compose state. */
-    val uiIsClean: Boolean get() = uiStyle == CleaveLauncherUiStyle.CLEAN
 
     fun savePinnedJson(value: String) {
         pinnedJson = value

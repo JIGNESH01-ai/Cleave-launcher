@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checks that Cleave Nightly is the only testing channel and stays installable over the debug app."""
+"""Checks that the CLEAVE Launcher testing channel stays installable over the debug app."""
 from pathlib import Path
 import unittest
 
@@ -16,28 +16,28 @@ class NightlyChannelSmoke(unittest.TestCase):
         self.assertIn("initWith debug", nightly)
         self.assertIn("signingConfig signingConfigs.customDebug", nightly)
         self.assertIn('matchingFallbacks += List.of("debug")', nightly)
-        self.assertIn('resValue "string", "cleave_app_label", "Cleave Nightly"', nightly)
+        self.assertIn('resValue "string", "cleave_app_label", "CLEAVE Launcher"', nightly)
         self.assertNotIn("applicationIdSuffix", nightly)
         self.assertIn('onVariants(selector().withBuildType("nightly"))', GRADLE)
         self.assertIn("output.versionCode.set(CLEAVE_DEBUG_VERSION_CODE)", GRADLE)
 
     def test_ci_builds_and_publishes_only_nightly(self):
         self.assertIn(":app_pojavlauncher:assembleNoruntimeNightly", WORKFLOW)
-        self.assertIn("APK_NAME: Cleave-Nightly.apk", WORKFLOW)
+        self.assertIn("APK_NAME: CLEAVE-Launcher.apk", WORKFLOW)
         self.assertIn("apk/noruntime/nightly/app_pojavlauncher-noruntime-nightly.apk", WORKFLOW)
         self.assertNotIn("assembleNoruntimeDebug", WORKFLOW)
         self.assertNotIn('STAMPED_NAME="Cleave-Launcher-debug-', WORKFLOW)
         self.assertNotIn("$STAGE/DEBUG_BUILD.txt", WORKFLOW)
         self.assertIn('TAG="debug-latest"', WORKFLOW)
-        self.assertIn('INFO_NAME="NIGHTLY_BUILD.txt"', WORKFLOW)
+        self.assertIn('INFO_NAME="BUILD_INFO.txt"', WORKFLOW)
         # The testing build kept the debug identity, and the debug identity is now
         # com.cleave.launcher.debug: Cleave moved off net.kdt.pojavlaunch (see docs/APP_ID_MIGRATION.md).
         self.assertIn('package: name=\'com.cleave.launcher.debug\'', WORKFLOW)
         self.assertIn("Cleave-Launcher-debug*", WORKFLOW)
-        self.assertIn('--title "Cleave Nightly (latest)"', WORKFLOW)
+        self.assertIn('--title "CLEAVE Launcher"', WORKFLOW)
 
     def test_docs_advertise_the_nightly_download(self):
-        self.assertIn("Cleave-Nightly.apk", DOCS)
+        self.assertIn("CLEAVE-Launcher.apk", DOCS)
         self.assertIn("noruntimeNightly", DOCS)
         self.assertNotIn("download/debug-latest/Cleave-Launcher-debug.apk", DOCS)
 

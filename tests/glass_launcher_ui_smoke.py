@@ -36,7 +36,7 @@ assert '.bringFocusedItemIntoView()' in nav
 assert '.bringFocusedItemIntoView()' in game_menu and '.bringFocusedItemIntoView()' in client_components
 assert 'drawOutline(outline = outline, brush = sheen)' in glass
 assert 'drawOutline(outline = outline, brush = rim' in glass
-assert 'val accentDefault = Color(0xFF8DEFE0)' in surfaces # The old Cleave accent stays intact.
+assert 'val accentDefault = Color(0xFFF5F7FA)' in surfaces # The redesign's monochrome silver-white accent (user-mandated black-and-white theme).
 assert (main / 'assets/wallpapers/cleave_twilight.jpg').is_file() # Keep previously chosen wallpaper valid.
 assert 'cleave_twilight' in (main / 'java/net/kdt/pojavlaunch/cleave/theme/CleaveThemeManager.kt').read_text()
 assert 'DEFAULT_WALLPAPER = "wp_01_lush_caves"' in (main / 'java/net/kdt/pojavlaunch/cleave/bridge/CleavePreferences.kt').read_text()

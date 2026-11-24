@@ -1,26 +1,26 @@
-# Cleave Nightly and public releases
+# CLEAVE Launcher and public releases
 
-All non-release updates and testing happen on the **Cleave Nightly** APK. The public
+All non-release updates and testing happen on the **CLEAVE Launcher** APK. The public
 APK is only built when the owner asks for a release and confirms it.
 
-## The Cleave Nightly APK
+## The CLEAVE Launcher APK
 
 | | |
 |---|---|
 | Release tag | `debug-latest` (prerelease on GitHub Releases) |
-| Direct APK | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/Cleave-Nightly.apk` |
-| Commit-stamped APK | `Cleave-Nightly-<commit>.apk` on the same release |
-| Checksum | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/Cleave-Nightly.apk.sha256` |
-| Build info | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/NIGHTLY_BUILD.txt` (commit, versionCode, sha256) |
-| CI workflow | **Cleave Nightly (testing)** (`cleave-debug.yml`) |
-| CI artifact | `cleave-nightly-apk` |
+| Direct APK | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/CLEAVE-Launcher.apk` |
+| Commit-stamped APK | `CLEAVE-Launcher-<commit>.apk` on the same release |
+| Checksum | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/CLEAVE-Launcher.apk.sha256` |
+| Build info | `https://github.com/JIGNESH01-ai/Cleave-launcher/releases/download/debug-latest/BUILD_INFO.txt` (commit, versionCode, sha256) |
+| CI workflow | **CLEAVE Launcher (testing)** (`cleave-debug.yml`) |
+| CI artifact | `cleave-launcher-apk` |
 | Source | this branch (`version.properties` = `2.4.1`) |
 | Variant | `noruntimeNightly` |
 | applicationId | `com.cleave.launcher.debug` |
-| Label | Cleave Nightly |
+| Label | CLEAVE Launcher |
 | Signing | `app_pojavlauncher/debug.keystore` (alias `androiddebugkey`) |
 
-Cleave Nightly is the debug build with a different launcher label. It keeps the
+CLEAVE Launcher is the debug build with a different launcher label. It keeps the
 same applicationId, the same signing certificate and the same monotonically
 increasing versionCode as the old debug APK, so it installs straight over an
 existing **Cleave Launcher (Debug)** install, keeps that app's data, and behaves
@@ -29,7 +29,7 @@ release APK.
 
 The `debug-latest` tag is only the hosting anchor for the prerelease: it keeps the
 release sorted below every public `v*` release and keeps `releases/latest` on the
-stable build. Every APK asset on it is Cleave Nightly. On each publish the old
+stable build. Every APK asset on it is CLEAVE Launcher. On each publish the old
 `Cleave-Launcher-debug*.apk` files and `DEBUG_BUILD.txt` are removed, together with
 stamped nightlies from older commits, so there is only ever one testing build to
 download. Old debug download links are not updated anymore.
@@ -51,7 +51,7 @@ committed to Git (`apk/` is ignored).
 `.github/workflows/cleave-debug.yml` runs on every push to the working branch that
 touches the app sources, Gradle files, submodules or the workflow itself. It also
 has a manual trigger. The job builds the APK, checks that the package name really
-is `com.cleave.launcher.debug`, that the APK carries the Cleave Nightly label and that it is
+is `com.cleave.launcher.debug`, that the APK carries the CLEAVE Launcher label and that it is
 signed with the debug key, uploads it as an Actions artifact, and attaches
 it to the `debug-latest` GitHub Release (marked as a prerelease so `releases/latest`
 remains the public stable release).
@@ -137,7 +137,7 @@ current key alone: the signing step pins `LEGACY=false` rather than trusting whe
 key's secret is still present, so a leftover secret cannot quietly re-add a key that was published.
 Anyone still on v2.3.2 or older needs v2.3.3 once, and then every later release installs over it.
 
-Cleave Nightly keeps `app_pojavlauncher/debug.keystore`, the public AOSP debug key. That is the
+CLEAVE Launcher keeps `app_pojavlauncher/debug.keystore`, the public AOSP debug key. That is the
 convention for debug builds, it is what lets a nightly install over another debug build, and it is
 why the nightly channel can never become someone's update vector for the stable app: different
 applicationId, different signature, and it can never overwrite a release install.
@@ -188,4 +188,4 @@ To release a new version: raise `versionName` in `version.properties`, add
 `docs/releases/v<version>.md`, and run the release workflow.
 
 A release happens when the owner says so, and not before. Until then, changes are
-verified on Cleave Nightly.
+verified on CLEAVE Launcher.

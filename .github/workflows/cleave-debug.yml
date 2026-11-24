@@ -1,8 +1,8 @@
-name: Cleave Nightly (testing)
+name: CLEAVE Launcher (testing)
 
-# Builds the APK that all testing happens on - Cleave Nightly - and attaches it to the
+# Builds the APK that all testing happens on - CLEAVE Launcher - and attaches it to the
 # `debug-latest` GitHub Release (prerelease, so `releases/latest` stays on the public stable
-# release). The only APK on that tag is Cleave-Nightly.apk; older debug-named assets are removed on
+# release). The only APK on that tag is CLEAVE-Launcher.apk; older assets are removed on
 # every publish, so there is one testing build to download.
 # This workflow only ever builds the "noruntimeNightly" variant: same applicationId
 # (com.cleave.launcher.debug), same debug signing key and same monotonic versionCode as the old
@@ -26,7 +26,7 @@ concurrency:
 env:
   # One APK for every phone: the testing build carries both ARM architectures, so it installs
   # anywhere without a second file to choose between.
-  APK_NAME: Cleave-Nightly.apk
+  APK_NAME: CLEAVE-Launcher.apk
   APK_PATH: app_pojavlauncher/build/outputs/apk/noruntime/nightly/app_pojavlauncher-noruntime-nightly.apk
 
 jobs:
@@ -287,7 +287,7 @@ jobs:
           fi
           exit "$code"
 
-      - name: Check it is really the Cleave Nightly build
+      - name: Check it is really the CLEAVE Launcher build
         id: verify
         run: |
           set -euo pipefail
@@ -307,14 +307,14 @@ jobs:
           echo "version_code=$VCODE" >> "$GITHUB_OUTPUT"
           echo "::notice title=apk-verified::$BADGING"
 
-      - name: Upload Cleave Nightly APK
+      - name: Upload CLEAVE Launcher APK
         uses: actions/upload-artifact@v4
         with:
-          name: cleave-nightly-apk
+          name: cleave-launcher-apk
           path: ${{ env.APK_PATH }}
           retention-days: 30
 
-      - name: Publish Cleave Nightly to GitHub Release
+      - name: Publish CLEAVE Launcher to GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION_CODE: ${{ steps.verify.outputs.version_code }}
@@ -322,11 +322,11 @@ jobs:
         run: |
           set -euo pipefail
           # The tag stays debug-latest so the prerelease keeps its anchored position, but every
-          # APK on it is Cleave Nightly. Non-release updates and testing all land here.
+          # APK on it is CLEAVE Launcher. Non-release updates and testing all land here.
           TAG="debug-latest"
-          INFO_NAME="NIGHTLY_BUILD.txt"
+          INFO_NAME="BUILD_INFO.txt"
           SHORT="${GITHUB_SHA:0:7}"
-          STAMPED_NAME="Cleave-Nightly-$SHORT.apk"
+          STAMPED_NAME="CLEAVE-Launcher-$SHORT.apk"
           BUILT_AT="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
           STAGE="$(mktemp -d)"
           cp "$APK_PATH" "$STAGE/$APK_NAME"
@@ -334,7 +334,7 @@ jobs:
           ( cd "$STAGE" && sha256sum "$APK_NAME" > "$APK_NAME.sha256" )
           SHA256="$(cut -d' ' -f1 "$STAGE/$APK_NAME.sha256")"
           {
-            echo "kind: Cleave Nightly (testing only)"
+            echo "kind: CLEAVE Launcher (testing channel)"
             echo "name: $APK_NAME (universal, arm64 + arm32)"
             echo "stamped: $STAMPED_NAME"
             echo "branch: $GITHUB_REF_NAME"
@@ -367,7 +367,7 @@ jobs:
             for old_asset in $(gh release view "$TAG" --json assets --jq '.assets[].name'); do
               case "$old_asset" in
                 "$APK_NAME"|"$STAMPED_NAME"|"$APK_NAME.sha256"|"$INFO_NAME") ;;
-                Cleave-Launcher-debug*|Cleave-Nightly-*.apk|DEBUG_BUILD.txt) gh release delete-asset "$TAG" "$old_asset" --yes || true ;;
+                Cleave-Launcher-debug*|Cleave-Nightly*|NIGHTLY_BUILD.txt|DEBUG_BUILD.txt) gh release delete-asset "$TAG" "$old_asset" --yes || true ;;
                 *) ;;
               esac
             done
@@ -378,12 +378,12 @@ jobs:
               "$STAGE/$INFO_NAME"
             gh release edit "$TAG" \
               --prerelease \
-              --title "Cleave Nightly (latest)" \
+              --title "CLEAVE Launcher" \
               --notes-file "$STAGE/RELEASE_NOTES.md"
           else
             gh release create "$TAG" \
               --prerelease \
-              --title "Cleave Nightly (latest)" \
+              --title "CLEAVE Launcher" \
               --notes-file "$STAGE/RELEASE_NOTES.md" \
               "$STAGE/$APK_NAME" \
               "$STAGE/$STAMPED_NAME" \
