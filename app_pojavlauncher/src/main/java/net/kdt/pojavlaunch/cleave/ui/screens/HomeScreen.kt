@@ -99,7 +99,7 @@ import androidx.fragment.app.FragmentActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
-import net.kdt.pojavlaunch.LauncherPreferences
+import net.kdt.pojavlaunch.prefs.LauncherPreferences
 import net.kdt.pojavlaunch.R
 import net.kdt.pojavlaunch.cleave.bridge.CleaveInstance
 import net.kdt.pojavlaunch.cleave.bridge.GameDownloadTarget
